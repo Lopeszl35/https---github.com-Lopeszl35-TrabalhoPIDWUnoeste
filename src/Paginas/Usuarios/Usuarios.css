@@ -1,0 +1,8 @@
+.container-usuarios {
+    margin: 4em 0 0 6em;
+}
+
+.container-usuarios-active {
+    margin-left: 16em;
+    transition: 0.5s;
+}
