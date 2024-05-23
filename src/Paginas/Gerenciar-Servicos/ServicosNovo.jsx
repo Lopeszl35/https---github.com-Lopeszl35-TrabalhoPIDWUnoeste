@@ -7,6 +7,7 @@ import CurrencyInput from "react-currency-input-field";
 import { Container, Card, Alert } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
+import "./Servicos.css";
 
 function ServicosNovo() {
   const { show } = useOutletContext();

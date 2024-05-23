@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./Materiais.css";
+import "./Servicos.css";
 import {
   Container,
   Card,
@@ -87,19 +87,22 @@ function Servicos() {
       className={`container-materiais ${show ? "container-materiais-side-active" : ""}`}
     >
       <h1>
-        <FaListAlt /> Materiais Cadastrados
+        <FaListAlt /> Serviços
       </h1>
       <Container>
         <Card.Body className="mt-2 card-material">
           <Row>
             <Col lg="2">
-              <Button as={Link} to="/materiais/cadastro" variant="primary">
+              <Button as={Link} to="/servicos/cadastro" variant="primary">
                 <FaPlus /> Adicionar
               </Button>
             </Col>
             <Col lg="6">
               <Form>
                 <Form.Group className="mb-3">
+                  <select name="" id="">
+                    <option value="1">selecione</option>
+                  </select>
                   <Form.Control
                     type="text"
                     placeholder="Descrição"
