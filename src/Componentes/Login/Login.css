@@ -1,0 +1,19 @@
+.container-principal-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    background-color: #0b64f4;
+}
+
+.container-login {
+    border: solid 2px #ccc;
+    padding: 2em;
+    border-radius: 12px;
+    background-color: #f7f0f0;
+    width: 50vh;
+}
+
+.text-center {
+    margin-bottom: 2em;
+}
