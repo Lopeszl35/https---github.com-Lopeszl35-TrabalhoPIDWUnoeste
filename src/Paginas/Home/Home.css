@@ -1,0 +1,12 @@
+.container-home {
+    margin: 4em 0 0 6em;
+    text-align: center;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
