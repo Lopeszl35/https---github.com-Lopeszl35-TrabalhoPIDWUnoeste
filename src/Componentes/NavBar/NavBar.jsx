@@ -1,6 +1,8 @@
 import './NavBar.css';
 import { Link, Outlet } from 'react-router-dom';
-import { FaHome, FaKey, FaUser, FaComment, FaCogs, FaChartBar, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
+import { FaUser, FaChartBar, FaBars, FaTimes, FaSignOutAlt,} from "react-icons/fa";
+import { TbUserHeart } from "react-icons/tb";
+import { LiaUserLockSolid, LiaUser, LiaHomeSolid   } from "react-icons/lia";
 import { Container, Nav, Navbar, Button } from 'react-bootstrap';
 import { useState } from 'react';
 
@@ -20,13 +22,9 @@ function NavBar({ onLogout }) {
                                 <FaUser className='m-2' />
                                 <span>Perfil Usuário</span>
                             </Nav.Link>
-                            <Nav.Link as={Link} to="/">
-                                <FaComment className='m-2'/>
-                                <span>Comunicação Interna</span>
-                            </Nav.Link>
                         </Nav>
                         <Button variant="outline-light" onClick={onLogout}>
-                            <FaSignOutAlt /> Logout
+                            <FaSignOutAlt /> Sair
                         </Button>
                     </Container>
                 </Navbar>
@@ -34,30 +32,36 @@ function NavBar({ onLogout }) {
 
             <div className={`side-navbar ${show ? 'active-nav' : ''}`} id="sidebar">
                 <ul className="nav text-white w-100">
-                    <span className="nav-link h3 my-2">Saúde Solutions Connect</span>
+                    <span className="nav-link h3 my-2 tittle">CareConnect</span>
                 </ul>
                 <li className="nav-link">
                     <Link to='/home'>
-                        <FaHome />
-                        <span className="mx-2">Home</span>
+                        <LiaHomeSolid  />
+                        <span className="mx-2">Inicio</span>
                     </Link>
                 </li>
                 <li className="nav-link">
-                    <Link to='/materiais'>
-                        <FaCogs />
-                        <span className="mx-2">Materiais</span>
+                    <Link to='/pacientes'>
+                        <TbUserHeart  />
+                        <span className="mx-2">Pacientes</span>
                     </Link>
                 </li>
                 <li className="nav-link">
-                    <Link to='/produtos'>
-                        <FaKey />
-                        <span className="mx-2">Produtos</span>
+                    <Link to='/profissionais'>
+                        <LiaUserLockSolid Key />
+                        <span className="mx-2">Profissionais</span>
+                    </Link>
+                </li>
+                <li className="nav-link">
+                    <Link to='usuarios'>
+                        <LiaUser />
+                        <span className="mx-2">Usúarios</span>
                     </Link>
                 </li>
                 <li className="nav-link">
                     <Link to='/relatorios'>
                         <FaChartBar />
-                        <span className="mx-2">Gerar Relatórios</span>
+                        <span className="mx-2">Relatórios</span>
                     </Link>
                 </li>
             </div>
@@ -68,7 +72,7 @@ function NavBar({ onLogout }) {
                 </nav>
             </div>
 
-            <Container className='container-principal'>
+            <Container>
                 <Outlet context={{ show }} />
             </Container>
         </>
