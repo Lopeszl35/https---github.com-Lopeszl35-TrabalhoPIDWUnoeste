@@ -23,7 +23,10 @@ function Login({ onLoginSuccess }) {
     return (
         <div className="container-principal-login">
             <Container className="container-login">
-                <h1 className='text-center'>Login</h1>
+                <div className="d-flex justify-content-center mb-3">
+                    <img width={100} src="./img/Login/Logo-removebg-preview.png" alt="Logo" className="logo" />
+                </div>
+                <h1 className='text-center'>CareConnect</h1>
                 {error && <div className="alert alert-danger">{error}</div>}
                 <Form onSubmit={handleLogin}>
                     <Form.Floating className="mb-3">
