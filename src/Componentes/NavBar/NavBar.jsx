@@ -75,7 +75,7 @@ function NavBar({ onLogout }) {
         <li className="nav-link">
           <Link to="/servicos">
             <MdOutlineMedicalServices />
-            <span className="mx-2">Servicos</span>
+            <span className="mx-2">Áreas de Atendimento</span>
           </Link>
         </li>
       </div>

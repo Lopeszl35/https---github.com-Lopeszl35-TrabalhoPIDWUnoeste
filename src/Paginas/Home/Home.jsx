@@ -1,6 +1,9 @@
 import React from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { FaListAlt, FaFileCsv, FaPlus } from "react-icons/fa";
+import { FaFileCsv, } from "react-icons/fa";
+import { MdOutlineMedicalServices } from "react-icons/md";
+import { TbUserHeart } from "react-icons/tb";
+import { LiaUserLockSolid, } from "react-icons/lia";
 import { Link } from 'react-router-dom';
 import './Home.css';
 
@@ -10,35 +13,51 @@ function Home() {
             <Container>
                 <Row className="mt-5">
                     <Col>
-                        <h1>Bem-vindo ao Sistema de Gestão de Materiais</h1>
+                        <h1>Bem-vindo ao Sistema da <span className="text-warning">CareConnect</span></h1>
                         <p>Escolha uma das opções abaixo para começar:</p>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col lg='4' className="mb-4">
+                        <Card className='text-center'>
+                            <Card.Body>
+                                <TbUserHeart size={50} />
+                                <Card.Title>Pacientes</Card.Title>
+                                <Card.Text>
+                                    Visualize e gerencie os pacientes do sistema.
+                                </Card.Text>
+                                <Button as={Link} to='/pacientes' variant="primary">Acessar</Button>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    <Col lg='4' className="mb-4">
+                        <Card className='text-center'>
+                            <Card.Body>
+                                <LiaUserLockSolid size={50} />
+                                <Card.Title>Funcionários</Card.Title>
+                                <Card.Text>
+                                    Visualize e gerencie os funcionários do sistema.
+                                </Card.Text>
+                                <Button as={Link} to='/pacientes' variant="primary">Acessar</Button>
+                            </Card.Body>
+                        </Card>
                     </Col>
                 </Row>
                 <Row className="mt-4">
                     <Col lg='4' className="mb-4">
                         <Card className="text-center">
                             <Card.Body>
-                                <FaListAlt size={50} />
-                                <Card.Title>Materiais Cadastrados</Card.Title>
+                                <MdOutlineMedicalServices size={50} />
+                                <Card.Title>Áreas de Atendimento</Card.Title>
                                 <Card.Text>
-                                    Visualize e gerencie os materiais cadastrados.
+                                    Visualize e gerencie os serviços cadastrados.
                                 </Card.Text>
                                 <Button as={Link} to='/materiais' variant="primary">Acessar</Button>
                             </Card.Body>
                         </Card>
                     </Col>
-                    <Col lg='4' className="mb-4">
-                        <Card className="text-center">
-                            <Card.Body>
-                                <FaPlus size={50} />
-                                <Card.Title>Cadastrar Material</Card.Title>
-                                <Card.Text>
-                                    Adicione novos materiais ao sistema.
-                                </Card.Text>
-                                <Button as={Link} to='/materiais/cadastro' variant="success">Cadastrar</Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
+                </Row>
+                <Row>
                     <Col lg='4' className="mb-4">
                         <Card className="text-center">
                             <Card.Body>
