@@ -10,7 +10,7 @@ import {
 import { BsFileText } from "react-icons/bs";
 import { MdOutlineMedicalServices } from "react-icons/md";
 import { TbUserHeart } from "react-icons/tb";
-import { LiaUserLockSolid, LiaUser, LiaHomeSolid } from "react-icons/lia";
+import { LiaUserLockSolid, LiaHomeSolid } from "react-icons/lia";
 import { Container, Nav, Navbar, Button } from "react-bootstrap";
 import { useState } from "react";
 
@@ -58,12 +58,6 @@ function NavBar({ onLogout }) {
           <Link to="/profissionais">
             <LiaUserLockSolid Key />
             <span className="mx-2">Profissionais</span>
-          </Link>
-        </li>
-        <li className="nav-link">
-          <Link to="usuarios">
-            <LiaUser />
-            <span className="mx-2">Usúarios</span>
           </Link>
         </li>
         <li className="nav-link">

@@ -17,7 +17,7 @@ function Home() {
                         <p>Escolha uma das opções abaixo para começar:</p>
                     </Col>
                 </Row>
-                <Row>
+                <Row className="rows">
                     <Col lg='4' className="mb-4">
                         <Card className='text-center'>
                             <Card.Body>
@@ -38,12 +38,12 @@ function Home() {
                                 <Card.Text>
                                     Visualize e gerencie os funcionários do sistema.
                                 </Card.Text>
-                                <Button as={Link} to='/pacientes' variant="primary">Acessar</Button>
+                                <Button as={Link} to='/profissionais' variant="primary">Acessar</Button>
                             </Card.Body>
                         </Card>
                     </Col>
                 </Row>
-                <Row className="mt-4">
+                <Row className="mt-4 rows">
                     <Col lg='4' className="mb-4">
                         <Card className="text-center">
                             <Card.Body>
@@ -52,12 +52,10 @@ function Home() {
                                 <Card.Text>
                                     Visualize e gerencie os serviços cadastrados.
                                 </Card.Text>
-                                <Button as={Link} to='/materiais' variant="primary">Acessar</Button>
+                                <Button as={Link} to='/servicos' variant="primary">Acessar</Button>
                             </Card.Body>
                         </Card>
                     </Col>
-                </Row>
-                <Row>
                     <Col lg='4' className="mb-4">
                         <Card className="text-center">
                             <Card.Body>
@@ -66,7 +64,7 @@ function Home() {
                                 <Card.Text>
                                     Gere relatórios dos materiais cadastrados.
                                 </Card.Text>
-                                <Button as={Link} to='/relatorios' variant="info">Gerar</Button>
+                                <Button as={Link} to='/relatorios' variant="primary">Gerar</Button>
                             </Card.Body>
                         </Card>
                     </Col>

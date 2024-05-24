@@ -15,7 +15,6 @@ import Login from "./Componentes/Login/Login";
 import GerarRelatorios from "./Paginas/Relatorios/GerarRelatorios";
 import Pacientes from "./Paginas/Pacientes/Pacientes";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
-import Usuarios from "./Paginas/Usuarios/Usuarios";
 import Servicos from "./Paginas/Gerenciar-Servicos/Servicos";
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 
@@ -43,7 +42,6 @@ function AppRouter() {
             <Route path="home" element={<Home />} />
             <Route path="pacientes" element={<Pacientes />} />
             <Route path="profissionais" element={<Profissionais />} />
-            <Route path="usuarios" element={<Usuarios />} />
             <Route path="servicos" element={<Servicos />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="relatorios" element={<GerarRelatorios />} />
