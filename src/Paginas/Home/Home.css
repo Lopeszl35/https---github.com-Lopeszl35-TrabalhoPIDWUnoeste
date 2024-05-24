@@ -7,6 +7,6 @@
     transition: transform 0.2s;
 }
 
-.card:hover {
+.container-home .card:hover {
     transform: scale(1.05);
 }

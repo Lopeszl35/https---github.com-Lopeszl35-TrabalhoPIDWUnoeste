@@ -7,6 +7,8 @@ import {
   FaTimes,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { BsFileText } from "react-icons/bs";
+import { MdOutlineMedicalServices } from "react-icons/md";
 import { TbUserHeart } from "react-icons/tb";
 import { LiaUserLockSolid, LiaUser, LiaHomeSolid } from "react-icons/lia";
 import { Container, Nav, Navbar, Button } from "react-bootstrap";
@@ -66,13 +68,13 @@ function NavBar({ onLogout }) {
         </li>
         <li className="nav-link">
           <Link to="/relatorios">
-            <FaChartBar />
+            <BsFileText />
             <span className="mx-2">Relatórios</span>
           </Link>
         </li>
         <li className="nav-link">
           <Link to="/servicos">
-            <FaChartBar />
+            <MdOutlineMedicalServices />
             <span className="mx-2">Servicos</span>
           </Link>
         </li>

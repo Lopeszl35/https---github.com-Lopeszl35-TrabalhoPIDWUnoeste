@@ -1,13 +1,13 @@
-.container-materiais {
+.container-servicos {
     margin: 4em 0 0 6em;
 }
 
-.container-materiais-side-active {
+.container-servicos-side-active {
     margin-left: 16em;
     transition: 0.5s;
 }
 
-.card-material {
+.card-servicos {
     margin-bottom: 2em;
     border: solid 1px #ccc;
     padding: 0.7em;
@@ -19,7 +19,7 @@
     width: 120vh;
 }
 
-.container-add-material {
+.container-add-servico {
     margin: 5em 0 0 10em;
     border: solid 1px #ccc;
     background-color: #f1f0f0;
@@ -29,7 +29,7 @@
     width: 130vh;
 }
 
-.side-active-add-material {
+.side-active-add-servico {
     margin-left: 16em;
     transition: 0.5s;
 }

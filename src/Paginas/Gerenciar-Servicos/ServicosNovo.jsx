@@ -3,7 +3,6 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { Link, useOutletContext } from "react-router-dom";
-import CurrencyInput from "react-currency-input-field";
 import { Container, Card, Alert } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
@@ -16,10 +15,9 @@ function ServicosNovo() {
   const [validated, setValidated] = useState(false);
   const [descricao, setDescricao] = useState("");
   const [dataCadastro, setDataCadastro] = useState("");
-  const [preco, setPreco] = useState("");
-  const [nomeMaterial, setNomeMaterial] = useState("");
-  const [quantidade, setQuantidade] = useState("");
-  const [fornecedor, setFornecedor] = useState("");
+  const [nomeServico, setNomeServico] = useState("");
+  const [status, setStatus] = useState("Ativo");
+  const [profissional, setProfissional] = useState("");
   const [errors, setErrors] = useState({});
 
   const handleDescricaoChange = (e) => {
@@ -62,76 +60,48 @@ function ServicosNovo() {
     }
   };
 
-  const handlePrecoChange = (value) => {
-    setPreco(value);
-    if (value && parseFloat(value.replace("R$", "").replace(",", ".")) > 0) {
-      setErrors((prev) => ({ ...prev, preco: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        preco: "O preço é obrigatório e deve ser maior que zero",
-      }));
-    }
-  };
-
-  const handleNomeMaterialChange = (e) => {
+  const handleNomeServicoChange = (e) => {
     const value = e.target.value;
-    setNomeMaterial(value);
+    setNomeServico(value);
     if (value && value.length <= 100) {
-      setErrors((prev) => ({ ...prev, nomeMaterial: null }));
+      setErrors((prev) => ({ ...prev, nomeServico: null }));
     } else {
       if (value === "") {
         setErrors((prev) => ({
           ...prev,
-          nomeMaterial: "O campo nome do material é obrigatório",
+          nomeServico: "O campo nome do serviço é obrigatório",
         }));
       } else {
         setErrors((prev) => ({
           ...prev,
-          nomeMaterial: "O nome do material deve ter no máximo 100 caracteres",
+          nomeServico: "O nome do serviço deve ter no máximo 100 caracteres",
         }));
       }
     }
   };
 
-  const handleQuantidadeChange = (e) => {
+  const handleProfissionalChange = (e) => {
     const value = e.target.value;
-    setQuantidade(value);
-    if (value && parseInt(value) > 0) {
-      setErrors((prev) => ({ ...prev, quantidade: null }));
-    } else {
-      if (value === "") {
-        setErrors((prev) => ({
-          ...prev,
-          quantidade: "O campo quantidade é obrigatório",
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          quantidade: "A quantidade deve ser um número positivo",
-        }));
-      }
-    }
-  };
-
-  const handleFornecedorChange = (e) => {
-    const value = e.target.value;
-    setFornecedor(value);
+    setProfissional(value);
     if (value && value.length <= 100) {
-      setErrors((prev) => ({ ...prev, fornecedor: null }));
+      setErrors((prev) => ({ ...prev, profissional: null }));
     } else {
       if (value === "") {
         setErrors((prev) => ({
           ...prev,
-          fornecedor: "O campo fornecedor é obrigatório",
+          profissional: "O campo profissional responsável é obrigatório",
         }));
       } else {
         setErrors((prev) => ({
           ...prev,
-          fornecedor: "O nome do fornecedor deve ter no máximo 100 caracteres",
+          profissional: "O nome do profissional deve ter no máximo 100 caracteres",
         }));
       }
     }
+  };
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
   };
 
   function validarForm(event) {
@@ -155,46 +125,35 @@ function ServicosNovo() {
       newErrors.dataCadastro = "Não é permitido uma data de cadastro futura";
     }
 
-    if (!preco || parseFloat(preco.replace("R$", "").replace(",", ".")) <= 0) {
-      newErrors.preco = "O preço é obrigatório e deve ser maior que zero";
+    if (!nomeServico) {
+      newErrors.nomeServico = "O campo nome do serviço é obrigatório";
+    } else if (nomeServico.length > 100) {
+      newErrors.nomeServico = "O nome do serviço deve ter no máximo 100 caracteres";
     }
 
-    if (!nomeMaterial) {
-      newErrors.nomeMaterial = "O campo nome do material é obrigatório";
-    } else if (nomeMaterial.length > 100) {
-      newErrors.nomeMaterial =
-        "O nome do material deve ter no máximo 100 caracteres";
-    }
-
-    if (!quantidade || parseInt(quantidade) <= 0) {
-      newErrors.quantidade = "A quantidade deve ser um número positivo";
-    }
-
-    if (!fornecedor) {
-      newErrors.fornecedor = "O campo fornecedor é obrigatório";
-    } else if (fornecedor.length > 100) {
-      newErrors.fornecedor =
-        "O nome do fornecedor deve ter no máximo 100 caracteres";
+    if (!profissional) {
+      newErrors.profissional = "O campo profissional responsável é obrigatório";
+    } else if (profissional.length > 100) {
+      newErrors.profissional = "O nome do profissional deve ter no máximo 100 caracteres";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      const material = {
+      const servico = {
         id: 0,
-        nome: nomeMaterial,
-        quantidade: quantidade,
+        nome: nomeServico,
         descricao: descricao,
         dataCadastro: dataCadastro,
-        fornecedor: fornecedor,
-        preco: preco,
+        status: status,
+        profissional: profissional,
       };
 
-      const listaSalva = localStorage.getItem("materiais");
-      const materiais = listaSalva == null ? [] : JSON.parse(listaSalva);
-      material.id = materiais.length + 1;
-      materiais.push(material);
-      localStorage.setItem("materiais", JSON.stringify(materiais));
+      const listaSalva = localStorage.getItem("servicos");
+      const servicos = listaSalva == null ? [] : JSON.parse(listaSalva);
+      servico.id = servicos.length + 1;
+      servicos.push(servico);
+      localStorage.setItem("servicos", JSON.stringify(servicos));
 
       setShowMensagem(true);
     }
@@ -205,44 +164,43 @@ function ServicosNovo() {
   return (
     <>
       <Container>
-        <Card
-          className={`container-add-material ${show ? "side-active-add-material" : ""}`}
-        >
+        <Card className={`container-add-servico ${show ? "side-active-add-servico" : ""}`}>
           <Card.Header>
-            <h3>Adicionar Material</h3>
+            <h3>Adicionar Serviço</h3>
           </Card.Header>
           <Card.Body>
             <Form noValidate validated={validated} onSubmit={validarForm}>
               <Row className="mb-3">
-                <Form.Group as={Col} controlId="nomeMaterial">
-                  <Form.Label className="fw-bold">Nome do Material</Form.Label>
+                <Form.Group as={Col} controlId="nomeServico">
+                  <Form.Label className="fw-bold">Nome do Serviço</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Material"
-                    id="nomeMaterial"
+                    placeholder="Serviço"
+                    id="nomeServico"
                     required
-                    value={nomeMaterial}
-                    onChange={handleNomeMaterialChange}
-                    isInvalid={!!errors.nomeMaterial}
+                    value={nomeServico}
+                    onChange={handleNomeServicoChange}
+                    isInvalid={!!errors.nomeServico}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errors.nomeMaterial}
+                    {errors.nomeServico}
                   </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="quantidade">
-                  <Form.Label className="fw-bold">Quantidade</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Quantidade"
-                    id="quantidade"
+                <Form.Group as={Col} controlId="status">
+                  <Form.Label className="fw-bold">Status</Form.Label>
+                  <Form.Select
+                    id="status"
                     required
-                    value={quantidade}
-                    onChange={handleQuantidadeChange}
-                    isInvalid={!!errors.quantidade}
-                  />
+                    value={status}
+                    onChange={handleStatusChange}
+                    isInvalid={!!errors.status}
+                  >
+                    <option value="Ativo">Ativo</option>
+                    <option value="Inativo">Inativo</option>
+                  </Form.Select>
                   <Form.Control.Feedback type="invalid">
-                    {errors.quantidade}
+                    {errors.status}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Row>
@@ -263,61 +221,42 @@ function ServicosNovo() {
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="fornecedor">
-                <Form.Label className="fw-bold">Fornecedor</Form.Label>
+              <Form.Group className="mb-3" controlId="profissional">
+                <Form.Label className="fw-bold">Profissional Responsável</Form.Label>
                 <Form.Control
-                  placeholder="Fornecedor"
-                  id="fornecedor"
+                  type="text"
+                  placeholder="Profissional"
+                  id="profissional"
                   required
-                  value={fornecedor}
-                  onChange={handleFornecedorChange}
-                  isInvalid={!!errors.fornecedor}
+                  value={profissional}
+                  onChange={handleProfissionalChange}
+                  isInvalid={!!errors.profissional}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.fornecedor}
+                  {errors.profissional}
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="preco">
-                  <Form.Label className="fw-bold">Preço</Form.Label>
-                  <CurrencyInput
-                    id="preco"
-                    name="preco"
-                    placeholder="R$"
-                    prefix="R$"
-                    decimalsLimit={2}
-                    allowNegativeValue={false}
-                    required
-                    className="form-control"
-                    value={preco}
-                    onValueChange={handlePrecoChange}
-                    isInvalid={!!errors.preco}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.preco}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group as={Col} controlId="dataCadastro">
-                  <Form.Label className="fw-bold">Data Cadastro</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Data Cadastro"
-                    id="dataCadastro"
-                    required
-                    value={dataCadastro}
-                    onChange={handleDataCadastroChange}
-                    isInvalid={!!errors.dataCadastro}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.dataCadastro}
-                  </Form.Control.Feedback>
-                </Form.Group>
+              <Row>
+              <Form.Group as={Col} controlId="dataCadastro">
+                <Form.Label className="fw-bold">Data Cadastro</Form.Label>
+                <Form.Control
+                  type="date"
+                  placeholder="Data Cadastro"
+                  id="dataCadastro"
+                  required
+                  value={dataCadastro}
+                  onChange={handleDataCadastroChange}
+                  isInvalid={!!errors.dataCadastro}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.dataCadastro}
+                </Form.Control.Feedback>
+              </Form.Group>
               </Row>
 
-              <div className="d-flex justify-content-end">
-                <Link to={"/materiais"}>
+              <div className="d-flex justify-content-end mt-3">
+                <Link to={"/servicos"}>
                   <Button variant="secondary" className="me-2">
                     <FaArrowLeft className="me-2" />
                     Voltar
@@ -339,7 +278,7 @@ function ServicosNovo() {
           >
             <Alert.Heading>
               <FaCheckCircle className="me-2" />
-              Material salvo com sucesso!
+              Serviço salvo com sucesso!
             </Alert.Heading>
           </Alert>
         </Card>
