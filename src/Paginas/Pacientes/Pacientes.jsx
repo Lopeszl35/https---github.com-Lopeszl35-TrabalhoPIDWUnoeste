@@ -28,7 +28,7 @@ function Pacientes() {
                     id="pesquisar"
                   />
                 </Form>
-                <Button className="button-cadastro-paciente" as={Link} to="/pacientes/novo">
+                <Button className="button-cadastro-paciente" as={Link} to="/pacientes/CadastrarPacientes">
                   <CiCirclePlus /> Cadastrar Paciente
                 </Button>
               </Col>

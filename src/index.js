@@ -17,6 +17,7 @@ import Pacientes from "./Paginas/Pacientes/Pacientes";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
 import Servicos from "./Paginas/Gerenciar-Servicos/Servicos";
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
+import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 
 function AppRouter() {
   const [loggedIn, setLoggedIn] = React.useState(
@@ -41,6 +42,7 @@ function AppRouter() {
             <Route index element={<App />} />
             <Route path="home" element={<Home />} />
             <Route path="pacientes" element={<Pacientes />} />
+            <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
             <Route path="profissionais" element={<Profissionais />} />
             <Route path="servicos" element={<Servicos />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
