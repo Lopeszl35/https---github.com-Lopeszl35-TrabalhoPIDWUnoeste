@@ -2,7 +2,6 @@ import "./NavBar.css";
 import { Link, Outlet } from "react-router-dom";
 import {
   FaUser,
-  FaChartBar,
   FaBars,
   FaTimes,
   FaSignOutAlt,
