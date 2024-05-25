@@ -2,16 +2,16 @@ import { Card, Col, Container, Form, Row, Button, Table, Pagination } from "reac
 import { useOutletContext, Link } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { RiUserSearchLine } from "react-icons/ri";
-import { useState } from "react"; // Adicione essa linha
+import { useState } from "react"; 
 import "./Pacientes.css";
 
 function Pacientes() {
   const { show } = useOutletContext();
   const [pacientesFiltrados, setPacientesFiltrados] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const pacientesPerPage = 10; // Define quantos pacientes serão mostrados por página
+  const pacientesPerPage = 10; 
 
-  // Calcula o índice dos pacientes que serão mostrados na página atual
+  
   const indexOfLastPaciente = currentPage * pacientesPerPage;
   const indexOfFirstPaciente = indexOfLastPaciente - pacientesPerPage;
   const currentPacientes = pacientesFiltrados.slice(indexOfFirstPaciente, indexOfLastPaciente);
