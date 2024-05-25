@@ -7,7 +7,7 @@ function Pacientes() {
     return (
       <div>
         <Container className={`container-pacientes ${show ? "container-pacientes-active" : ""}`}>
-        
+        <h1>Cadastrar Paciente</h1>
         </Container>
       </div>
   );
