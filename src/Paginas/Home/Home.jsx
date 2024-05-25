@@ -62,7 +62,7 @@ function Home() {
                                 <FaFileCsv size={50} />
                                 <Card.Title>Gerar Relatórios</Card.Title>
                                 <Card.Text>
-                                    Gere relatórios dos materiais cadastrados.
+                                    Gere relatórios dos serviços oferecidos.
                                 </Card.Text>
                                 <Button as={Link} to='/relatorios' variant="primary">Gerar</Button>
                             </Card.Body>
