@@ -1,0 +1,9 @@
+.container-pacientes {
+    margin: 4em 0 0 10em;
+    width: 100vh;
+  }
+  
+  .container-pacientes-active {
+    margin: 4em 0 0 16em;
+    transition: 0.5s;
+  }
