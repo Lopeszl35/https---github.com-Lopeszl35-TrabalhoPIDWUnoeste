@@ -21,7 +21,7 @@ import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 
 function AppRouter() {
   const [loggedIn, setLoggedIn] = React.useState(
-    () => localStorage.getItem("isLoggedIn") === "true",
+    () => localStorage.getItem("isLoggedIn") === "true"
   );
 
   const handleLoginSuccess = () => {
@@ -34,12 +34,12 @@ function AppRouter() {
     setLoggedIn(false);
   };
 
-  if (loggedIn) {
-    return (
-      <Router>
-        <Routes>
+  return (
+    <Router>
+      <Routes>
+        {loggedIn ? (
           <Route path="/" element={<NavBar onLogout={handleLogout} />}>
-            <Route index element={<App />} />
+            <Route index element={<Navigate to="/home" />} />
             <Route path="home" element={<Home />} />
             <Route path="pacientes" element={<Pacientes />} />
             <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
@@ -47,21 +47,17 @@ function AppRouter() {
             <Route path="servicos" element={<Servicos />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="relatorios" element={<GerarRelatorios />} />
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/home" />} />
           </Route>
-        </Routes>
-      </Router>
-    );
-  }
-
-  return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={<Login onLoginSuccess={handleLoginSuccess} />}
-        />
-        <Route path="*" element={<Navigate to="/" />} />
+        ) : (
+          <>
+            <Route 
+              path="/" 
+              element={<Login onLoginSuccess={handleLoginSuccess} />} 
+            />
+            <Route path="*" element={<Navigate to="/" />} />
+          </>
+        )}
       </Routes>
     </Router>
   );
@@ -71,7 +67,7 @@ ReactDOM.render(
   <React.StrictMode>
     <AppRouter />
   </React.StrictMode>,
-  document.getElementById("root"),
+  document.getElementById("root")
 );
 
 reportWebVitals();
