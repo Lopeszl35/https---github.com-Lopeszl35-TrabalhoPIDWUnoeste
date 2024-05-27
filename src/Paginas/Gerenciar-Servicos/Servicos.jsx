@@ -215,7 +215,7 @@ function Servicos() {
               </Form>
             </Col>
             <Col lg="2">
-              <Button variant="secondary" onClick={handleBuscar}>
+              <Button variant="secondary" onClick={handleBuscar} >
                 <FaSearch /> Pesquisar
               </Button>
             </Col>
@@ -250,21 +250,21 @@ function Servicos() {
                   <td>{servico.profissional}</td>
                   <td className="d-flex flex-row">
                     <Button onClick={() => abrirModalEdicao(servico.id)}
-                      className="btn btn-primary m-1 w-100"
+                      className="btn btn-primary m-1 w-100 custom-button"
                     >
                       <FaEdit /> Editar
                     </Button>
                     <Button
-                      className="btn btn-danger m-1 w-100"
+                      className="btn btn-danger m-1 w-100 custom-button"
                       onClick={() => abrirModalConfirmacao(servico.id)}
                     >
                       <FaTrashAlt /> Excluir
                     </Button>
                     <Button
-                      className="btn btn-info m-1 w-100"
+                      className="btn btn-info m-1 w-100 custom-button"
                       onClick={() => abrirModalAtribuir(servico.id)}
                     >
-                      <FaUserPlus /> Atribuir a Paciente
+                      <FaUserPlus /> Atribuir paciente
                     </Button>
                   </td>
                 </tr>

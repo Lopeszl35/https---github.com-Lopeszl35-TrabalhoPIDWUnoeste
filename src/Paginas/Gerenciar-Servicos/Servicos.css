@@ -33,3 +33,11 @@
     margin-left: 16em;
     transition: 0.5s;
 }
+
+.custom-button {
+    padding: 10px 5px;
+    font-size: 0.9rem;
+    line-height: 1;
+    height: fit-content;
+    border-radius: 10px;
+  }
