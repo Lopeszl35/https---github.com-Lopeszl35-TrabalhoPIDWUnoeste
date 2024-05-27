@@ -16,7 +16,8 @@ import {
   FaSearch,
   FaEdit,
   FaTrashAlt,
-  FaRegSave
+  FaRegSave,
+  FaUserPlus
 } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 
@@ -30,7 +31,14 @@ function Servicos() {
   const [servicosFiltrados, setServicosFiltrados] = useState([]);
   const [servicoEditando, setServicoEditando] = useState(null);
   const [showEditarModal, setShowEditarModal] = useState(false);
+  const [showAtribuirModal, setShowAtribuirModal] = useState(false);
   const [errors, setErrors] = useState({});
+  const [pacienteSelecionado, setPacienteSelecionado] = useState("");
+  const [pacientes, setPacientes] = useState([
+    { id: 1, nome: "Paciente 1" },
+    { id: 2, nome: "Paciente 2" },
+    { id: 3, nome: "Paciente 3" },
+  ]);
 
   useEffect(() => {
     const listaSalva = localStorage.getItem("servicos");
@@ -44,6 +52,12 @@ function Servicos() {
     const servico = listaServicos.find((s) => s.id === id);
     setServicoEditando({ ...servico });
     setShowEditarModal(true);
+  };
+
+  const abrirModalAtribuir = (id) => {
+    const servico = listaServicos.find((s) => s.id === id);
+    setServicoEditando({ ...servico });
+    setShowAtribuirModal(true);
   };
 
   const handleExcluir = (id) => {
@@ -97,6 +111,16 @@ function Servicos() {
       setShowEditarModal(false);
       setServicoEditando(null);
       setErrors({});
+    }
+  };
+
+  const handleAtribuirServico = () => {
+    if (pacienteSelecionado) {
+      alert(`Serviço ${servicoEditando.nome} atribuído ao paciente ${pacienteSelecionado}.`);
+      setShowAtribuirModal(false);
+      setPacienteSelecionado("");
+    } else {
+      alert("Selecione um paciente.");
     }
   };
 
@@ -191,7 +215,7 @@ function Servicos() {
               </Form>
             </Col>
             <Col lg="2">
-              <Button variant="secondary" onClick={handleBuscar}>
+              <Button variant="secondary" onClick={handleBuscar} >
                 <FaSearch /> Pesquisar
               </Button>
             </Col>
@@ -226,15 +250,21 @@ function Servicos() {
                   <td>{servico.profissional}</td>
                   <td className="d-flex flex-row">
                     <Button onClick={() => abrirModalEdicao(servico.id)}
-                      className="btn btn-primary m-1 w-100"
+                      className="btn btn-primary m-1 w-100 custom-button"
                     >
                       <FaEdit /> Editar
                     </Button>
                     <Button
-                      className="btn btn-danger m-1 w-100"
+                      className="btn btn-danger m-1 w-100 custom-button"
                       onClick={() => abrirModalConfirmacao(servico.id)}
                     >
                       <FaTrashAlt /> Excluir
+                    </Button>
+                    <Button
+                      className="btn btn-info m-1 w-100 custom-button"
+                      onClick={() => abrirModalAtribuir(servico.id)}
+                    >
+                      <FaUserPlus /> Atribuir paciente
                     </Button>
                   </td>
                 </tr>
@@ -323,6 +353,38 @@ function Servicos() {
           </Button>
           <Button variant="success" onClick={handleSalvarEdicao}>
             <FaRegSave /> Salvar Alterações
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showAtribuirModal} onHide={() => setShowAtribuirModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Atribuir Serviço a Paciente</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3" controlId="formPaciente">
+              <Form.Label>Selecione o Paciente</Form.Label>
+              <Form.Select
+                value={pacienteSelecionado}
+                onChange={(e) => setPacienteSelecionado(e.target.value)}
+              >
+                <option value="">Selecione um paciente</option>
+                {pacientes.map((paciente) => (
+                  <option key={paciente.id} value={paciente.nome}>
+                    {paciente.nome}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAtribuirModal(false)}>
+            Cancelar
+          </Button>
+          <Button variant="success" onClick={handleAtribuirServico}>
+            <FaRegSave /> Atribuir Serviço
           </Button>
         </Modal.Footer>
       </Modal>
