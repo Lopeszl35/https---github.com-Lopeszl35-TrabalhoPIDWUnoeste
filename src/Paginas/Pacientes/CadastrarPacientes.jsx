@@ -244,12 +244,14 @@ function Pacientes() {
 
         <h2>Dados de consentimento</h2>
 
-            <input type="checkbox" id="autorizacaoImagem" name="autorizacaoImagem" checked={pacienteInfo.autorizacaoImagem} onChange={handleCheckboxChange} />
-            <label htmlFor="autorizacaoImagem">Autoriza o uso da imagem do paciente</label>
-        
-        <button type="submit">Cadastrar</button>
+          <div className="checkbox">
+          <input type="checkbox" id="autorizacaoImagem" name="autorizacaoImagem" checked={pacienteInfo.autorizacaoImagem} onChange={handleCheckboxChange} />
+          <label htmlFor="autorizacaoImagem">Autoriza o uso da imagem do paciente</label>
+          </div>
 
-        
+          <div className="botao">
+          <button type="submit">Cadastrar</button>
+          </div>
         </form>
         </Container>
       </div>
