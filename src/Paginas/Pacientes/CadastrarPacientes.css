@@ -85,8 +85,7 @@ button[type="submit"]:hover {
 }
 
 .form-group {
-  margin-bottom: 20px;
-  display: flex;
+  margin-bottom: 5px;
   flex-direction: row;
   align-items: center;
 }
@@ -103,4 +102,10 @@ button[type="submit"]:hover {
   width: 100%;
 }
 
+/* Mensagens de erro */
 
+.erros {
+  color: #ff0000;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
