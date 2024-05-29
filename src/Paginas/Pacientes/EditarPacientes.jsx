@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import React, {useState } from 'react';
 import "./CadastrarPacientes.css";
 
-function CadastrarPacientes() {
+function EditarPacientes() {
     const { show } = useOutletContext();
 
     const [pacienteInfo, setPacienteInfo] = useState({
@@ -257,4 +257,4 @@ function CadastrarPacientes() {
       </div>
   );
 }
-export default CadastrarPacientes;
+export default EditarPacientes;

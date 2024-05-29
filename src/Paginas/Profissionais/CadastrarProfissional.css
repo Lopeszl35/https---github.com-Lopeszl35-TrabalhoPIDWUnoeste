@@ -1,0 +1,126 @@
+.container-pacientes {
+    margin: 4em 0 0 10em;
+    width: 100vh;
+  }
+  
+  .container-pacientes-active {
+    margin: 4em 0 0 16em;
+    transition: 0.5s;
+  }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+h1, h2 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  align-items: center;
+  margin-top: 7px;
+}
+
+button[type="submit"] {
+  background-color: #2EED36;
+  color: #fff;
+  padding: 7px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+/* Formulario */
+
+.form-container {
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-section h2 {
+  margin-top: 0;
+}
+
+.form-group {
+  margin-bottom: 5px;
+  flex-direction: row;
+  align-items: center;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+}
+
+/* Mensagens de erro */
+
+.erros {
+  color: #ff0000;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.checkbox{
+  display: flex;
+  flex-direction:row;
+  align-items: center;
+}
+
+.botao{
+  display: flex;
+  flex-direction: column;
+  margin-left: 85%;
+}
