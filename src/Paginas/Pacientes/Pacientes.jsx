@@ -110,7 +110,7 @@ function Pacientes() {
                       <tr key={paciente.id}>
                         <td>{paciente.prontuario}</td>
                         <td>{paciente.nome}</td>
-                        <td><Button as={Link} to={`/pacientes/EditarPaciente${paciente.id}`}><RiUserSearchLine /> Editar Paciente</Button></td>
+                        <td><Button as={Link} to={`/pacientes/EditarPacientes/${paciente.id}`}><RiUserSearchLine /> Editar Paciente</Button></td>
                       </tr>
                     ))
                   )}
