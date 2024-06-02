@@ -1,10 +1,11 @@
-import { Card, Col, Container, Form, Row } from "react-bootstrap";
-import { useOutletContext } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import { useOutletContext, useParams } from "react-router-dom";
 import React, {useState } from 'react';
 import "./CadastrarPacientes.css";
 
 function EditarPacientes() {
     const { show } = useOutletContext();
+    const {id} = useParams();
 
     const [pacienteInfo, setPacienteInfo] = useState({
       nomeCompleto: '', 
@@ -113,7 +114,7 @@ function EditarPacientes() {
     return (
       <div>
         <Container className={`container-pacientes ${show ? "container-pacientes-active" : ""}`}>
-        <h1>Cadastrar Pacientes</h1>
+        <h1>Editar Paciente </h1> 
         <form className="form-container" onSubmit={handleSubmit}>
         
         <h2>Paciente</h2>

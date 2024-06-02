@@ -1,9 +1,9 @@
-import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import React, {useState } from 'react';
 import "./CadastrarProfissional.css";
 
-function Profissional() {
+function CadastrarProfissional() {
     const { show } = useOutletContext();
 
     const [profissionalInfo, setProfissionalInfo] = useState({
@@ -169,4 +169,4 @@ function Profissional() {
       </div>
   );
 }
-export default Profissional;
+export default CadastrarProfissional;

@@ -1,9 +1,9 @@
-.container-pacientes {
+.container-profissional {
     margin: 4em 0 0 10em;
     width: 100vh;
   }
   
-  .container-pacientes-active {
+  .container-profissional-active {
     margin: 4em 0 0 16em;
     transition: 0.5s;
   }
