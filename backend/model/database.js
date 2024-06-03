@@ -7,16 +7,15 @@ class DataBase {
             user: 'root',
             password: '123456',
             database: 'careconnectdb'
-        })
+        });
     }
 
     async executaComando(sql, params = []) {
         const connection = await this.pool.getConnection();
-
-        try{
+        try {
             const [rows] = await connection.query(sql, params);
             return rows;
-        } catch {
+        } catch (error) {
             console.error(`Erro ao executar comando SQL: ${sql}`, error);
             throw new Error('Erro ao executar comando SQL');
         } finally {
@@ -26,19 +25,16 @@ class DataBase {
 
     async executaComandoNonQuery(sql, params = []) {
         const connection = await this.pool.getConnection();
-
         try {
             const [results] = await connection.query(sql, params);
             return results.affectedRows; 
-        } catch {
+        } catch (error) {
             console.error(`Erro ao executar comando non-query SQL: ${sql}`, error);
             throw new Error('Erro ao executar comando non-query SQL');
         } finally {
             connection.release();
         }
     }
-
-
 }
 
-module.exports = DataBase
+module.exports = DataBase;
