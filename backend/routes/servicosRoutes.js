@@ -7,6 +7,7 @@ router.get('/servicos', servicoController.obterTodos);
 router.get('/servicos/:id', servicoController.obterPorId);
 router.put('/servicos/:id', servicoController.atualizar);
 router.post('/servicos', servicoController.adicionar);
+router.delete('/servicos/:id', servicoController.deletar);
 
 
 module.exports = router;

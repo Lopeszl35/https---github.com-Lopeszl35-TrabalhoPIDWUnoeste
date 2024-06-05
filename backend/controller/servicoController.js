@@ -10,8 +10,13 @@ class ServicoController {
 
     async obterPorId(req, res) {
         const { id } = req.params;
-        const servico = await servicoModel.obterPorId(id);
-        return res.status(200).json(servico);
+        try {
+            const servico = await servicoModel.obterPorId(id);
+            return res.status(200).json(servico);
+        } catch (error) {
+            console.log('Erro ao obter o serviço:', error);
+            return res.status(500).json({message: error.message});
+        }
     }
 
     async adicionar(req, res) {
@@ -36,6 +41,17 @@ class ServicoController {
             return res.status(200).json({ message: "Serviço atualizado com sucesso!" });
         } catch (error) {
             console.log(error);
+            return res.status(500).json({message: error.message});
+        }
+    }
+
+    async deletar(req, res) {
+        const { id } = req.params;
+        try {
+            await servicoModel.deletar(id);
+            return res.status(200).json({ message: "Serviço excluído com sucesso!" });
+        } catch (error) {
+            console.log('Erro ao excluir o serviço:', error);
             return res.status(500).json({message: error.message});
         }
     }

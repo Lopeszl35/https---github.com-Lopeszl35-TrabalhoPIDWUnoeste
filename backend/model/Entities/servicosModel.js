@@ -28,6 +28,10 @@ class ServicosModel {
         await dataBase.executaComandoNonQuery('update servicos set ? where ID_Servico = ?', [dadosServico, id]);
     }
 
+    async deletar(id) {
+        await dataBase.executaComandoNonQuery('delete from servicos where ID_Servico = ?', [id]);
+    }
+
 
 }
 module.exports = ServicosModel;
