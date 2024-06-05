@@ -1,6 +1,6 @@
-const ServicoModel = require('../model/Entities/servicosModel');
-
-const servicoModel = new ServicoModel();
+const { validationResult } = require('express-validator');
+const ServicosModel = require('../model/Entities/servicosModel');
+const servicoModel = new ServicosModel();
 
 class ServicoController {
     async obterTodos(req, res) {
@@ -12,6 +12,11 @@ class ServicoController {
     async obterPorId(req, res) {
         console.log('Obtendo o Serviço por ID...');
         const { id } = req.params;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         try {
             const servico = await servicoModel.obterPorId(id);
             return res.status(200).json(servico);
@@ -23,10 +28,19 @@ class ServicoController {
 
     async adicionar(req, res) {
         console.log('Adicionando o Serviço...');
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
-        const servico = new ServicoModel(Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel);
 
         try {
+            const profissionalId = await servicoModel.obterIdProfissionalPorNome(Profissional_Responsavel);
+            if (!profissionalId) {
+                return res.status(400).json({ message: "Profissional não encontrado ou nome incompleto." });
+            }
+            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status, profissionalId);
             await servicoModel.adicionar(servico);
             return res.status(201).json({ message: "Serviço adicionado com sucesso!" });
         } catch (error) {
@@ -38,9 +52,19 @@ class ServicoController {
     async atualizar(req, res) {
         console.log('Atualizando o Serviço...');
         const { id } = req.params;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
-        const servico = new ServicoModel(Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel);
+
         try {
+            const profissionalId = await servicoModel.obterIdProfissionalPorNome(Profissional_Responsavel);
+            if (!profissionalId) {
+                return res.status(400).json({ message: "Profissional não encontrado ou nome incompleto." });
+            }
+            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status, profissionalId);
             await servicoModel.atualizar(id, servico);
             return res.status(200).json({ message: "Serviço atualizado com sucesso!" });
         } catch (error) {
@@ -52,6 +76,11 @@ class ServicoController {
     async deletar(req, res) {
         console.log('Deletando o Serviço...');
         const { id } = req.params;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         try {
             await servicoModel.deletar(id);
             return res.status(200).json({ message: "Serviço excluído com sucesso!" });
@@ -64,6 +93,10 @@ class ServicoController {
     async filtrar(req, res) {
         console.log("Filtrando os Serviços...");
         const { filtro, valor } = req.query;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
         try {
             let result;
