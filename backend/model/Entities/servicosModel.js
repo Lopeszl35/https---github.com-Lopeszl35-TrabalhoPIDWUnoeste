@@ -60,7 +60,12 @@ class ServicosModel {
     }
 
     async filtrarPorProfissional(profissional) {
-        const result = await dataBase.executaComando("SELECT * FROM servicos WHERE LOWER(Profissional_Responsavel) LIKE LOWER(?)", [`%${profissional}%`]);
+        const result = await dataBase.executaComando(`
+            SELECT s.* 
+            FROM servicos s
+            JOIN profissionais p ON s.Profissional_Responsavel = p.ID_Profissional
+            WHERE LOWER(p.Nome_Completo) LIKE LOWER(?)`, [`%${profissional}%`]);
+    
         return result;
     }
 

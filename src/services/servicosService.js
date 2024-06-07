@@ -100,13 +100,28 @@ class ServicosService {
                 'Content-Type': 'application/json'
             }
         });
-    
+
         if (!response.ok) {
             throw new Error('Erro ao deletar serviço');
         } else {
             const dados = await response.json();
             return dados;
         }
+    }
+
+    async filtrar(filtro, valor) {
+        const response = await fetch(`${API_BASE_URL}/servicos/filtrar?filtro=${filtro}&valor=${valor}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    
+        if (!response.ok) {
+            throw new Error('Erro ao filtrar os Serviços!');
+        }
+    
+        const dados = await response.json();
+        return dados;
     }
 }
 

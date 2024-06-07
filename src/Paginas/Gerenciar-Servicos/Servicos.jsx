@@ -85,24 +85,39 @@ function Servicos() {
     setServicoToDelete(null);
   };
 
-  const handleBuscar = () => {
-    let resultados = listaServicos;
-    if (busca !== "") {
-      resultados = resultados.filter((servico) => {
-        if (filtro === "2") {
-          return servico.Nome_Servico.toLowerCase().includes(busca.toLowerCase());
-        } else if (filtro === "3") {
-          return servico.Nome_Profissional.toLowerCase().includes(busca.toLowerCase());
-        } else if (filtro === "4") {
-          return servico.Status.toLowerCase() === "ativo";
-        } else if (filtro === "5") {
-          return servico.Status.toLowerCase() === "inativo";
+  const handleBuscar = async () => {
+    try {
+        let resultados;
+        if (busca !== "") {
+            if (filtro === '2') {
+                resultados = await servicosService.filtrar('nome', busca);
+            } else if (filtro === '3') {
+                resultados = await servicosService.filtrar('profissional', busca);
+            } else if (filtro === '4') {
+                resultados = await servicosService.filtrar('status', 'ativo');
+            } else if (filtro === '5') {
+                resultados = await servicosService.filtrar('status', 'inativo');
+            } else {
+                resultados = await servicosService.obterTodos();
+            }
+
+            const servicosComNomes = await Promise.all(resultados.map(async servico => {
+                try {
+                    const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
+                    return { ...servico, Nome_Profissional: nomeProfissional };
+                } catch (error) {
+                    console.error(`Erro ao obter o nome do profissional para o serviço ${servico.ID_Servico}:`, error);
+                    return { ...servico, Nome_Profissional: 'Erro ao obter nome' };
+                }
+            }));
+
+            setServicosFiltrados(servicosComNomes);
         } else {
-          return true;
+            listarServicos();
         }
-      });
+    } catch (error) {
+        console.error("Erro ao filtrar os serviços:", error);
     }
-    setServicosFiltrados(resultados);
   };
 
   const handleSalvarEdicao = async () => {

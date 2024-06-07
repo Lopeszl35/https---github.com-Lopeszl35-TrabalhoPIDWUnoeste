@@ -113,10 +113,10 @@ class ServicoController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+    
         try {
             let result;
-
+    
             if (filtro === 'nome') {
                 result = await servicoModel.filtrarPorNome(valor);
             } else if (filtro === 'profissional') {
@@ -126,7 +126,7 @@ class ServicoController {
             } else {
                 return res.status(400).json({ message: "Filtro inválido." });
             }
-
+    
             return res.status(200).json(result);
         } catch (error) {
             console.log('Erro ao filtrar os serviços:', error);
