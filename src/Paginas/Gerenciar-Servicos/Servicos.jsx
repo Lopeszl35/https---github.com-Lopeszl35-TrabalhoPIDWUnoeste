@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import "./Servicos.css";
-import { Container, Table, Button, Row, Col, Form, Modal, Card } from "react-bootstrap";
-import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt, FaRegSave, FaUserPlus } from "react-icons/fa";
+import { Container, Table, Button, Row, Col, Form, Card } from "react-bootstrap";
+import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt, FaUserPlus } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
+import ModalConfirmDelete from "./ModalConfirmDelete";
+import ModalEditarServico from "./ModalEditarServico";
+import ModalAtribuirServico from "./ModalAtribuirServico";
 
 const servicosService = new ServicosService();
 
@@ -56,7 +59,7 @@ function Servicos() {
       setServicoEditando({ ...servico, Profissional_Responsavel: nomeProfissional });
       setShowEditarModal(true);
     } catch (error) {
-      console.error('Erro ao obter serviço para edição:', error);
+      console.error('Erro ao obter servico para edição:', error);
     }
   };
 
@@ -67,14 +70,9 @@ function Servicos() {
   };
 
   const handleExcluir = async (id) => {
-    try {
-      await servicosService.excluir(id);
-      listarServicos();
-      alert("Serviço excluído com sucesso!");
-      setShowConfirmDeleteModal(false);
-    } catch (error) {
-      console.error("Erro ao excluir serviço:", error);
-    }
+    await servicosService.excluir(id);
+    listarServicos();
+    setShowConfirmDeleteModal(false);
   };
 
   const abrirModalConfirmacao = (id) => {
@@ -285,120 +283,33 @@ function Servicos() {
         </Table>
       </Container>
 
-      <Modal show={showConfirmDeleteModal} onHide={fecharModalConfirmacao}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmação de Exclusão</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Tem certeza que deseja excluir este serviço?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={fecharModalConfirmacao}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={() => handleExcluir(servicoToDelete)}>
-            Excluir
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ModalConfirmDelete
+        show={showConfirmDeleteModal}
+        fecharModalConfirmacao={fecharModalConfirmacao}
+        handleExcluir={handleExcluir}
+        servicoToDelete={servicoToDelete}
+      />
 
-      <Modal show={showEditarModal} onHide={() => setShowEditarModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Editar Serviço</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formNome">
-              <Form.Label>Nome</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Nome do serviço"
-                value={servicoEditando?.Nome_Servico || ""}
-                disabled
-              />
-            </Form.Group>
+      <ModalEditarServico
+        show={showEditarModal}
+        setShowEditarModal={setShowEditarModal}
+        handleSalvarEdicao={handleSalvarEdicao}
+        servicoEditando={servicoEditando}
+        setServicoEditando={setServicoEditando} // Adicionado aqui
+        handleDescricaoChange={handleDescricaoChange}
+        handleProfissionalChange={handleProfissionalChange}
+        errors={errors}
+      />
 
-            <Form.Group className="mb-3" controlId="formDescricao">
-              <Form.Label>Descrição</Form.Label>
-              <Form.Control
-                required
-                as="textarea"
-                rows={3}
-                placeholder="Descrição do serviço"
-                value={servicoEditando?.Descricao || ""}
-                isInvalid={errors.descricao}
-                onChange={handleDescricaoChange}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.descricao}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formStatus">
-              <Form.Label>Status</Form.Label>
-              <Form.Select
-                value={servicoEditando?.Status || ""}
-                onChange={(e) => setServicoEditando({ ...servicoEditando, Status: e.target.value })}
-              >
-                <option value="Ativo">Ativo</option>
-                <option value="Inativo">Inativo</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formProfissional">
-              <Form.Label>Profissional Responsável</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Nome do profissional"
-                value={servicoEditando?.Profissional_Responsavel || ""}
-                isInvalid={errors.profissional}
-                onChange={handleProfissionalChange}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.profissional}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowEditarModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="success" onClick={handleSalvarEdicao}>
-            <FaRegSave /> Salvar Alterações
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showAtribuirModal} onHide={() => setShowAtribuirModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Atribuir Serviço a Paciente</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formPaciente">
-              <Form.Label>Selecione o Paciente</Form.Label>
-              <Form.Select
-                value={pacienteSelecionado}
-                onChange={(e) => setPacienteSelecionado(e.target.value)}
-              >
-                <option value="">Selecione um paciente</option>
-                {pacientes.map((paciente) => (
-                  <option key={paciente.id} value={paciente.nome}>
-                    {paciente.nome}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAtribuirModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="success" onClick={handleAtribuirServico}>
-            <FaRegSave /> Atribuir Serviço
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ModalAtribuirServico
+        show={showAtribuirModal}
+        setShowAtribuirModal={setShowAtribuirModal}
+        handleAtribuirServico={handleAtribuirServico}
+        servicoEditando={servicoEditando}
+        pacientes={pacientes}
+        pacienteSelecionado={pacienteSelecionado}
+        setPacienteSelecionado={setPacienteSelecionado}
+      />
     </div>
   );
 }
