@@ -31,6 +31,15 @@ class ServicosModel {
         return null;
     }
 
+    async obterNomeProfissionalPorId(idProfissional) {
+        const result = await dataBase.executaComando("SELECT Nome_Completo FROM profissionais WHERE ID_Profissional = ?", [idProfissional]);
+        console.log('Resultado da query obterNomeProfissionalPorId:', result); // Log adicional
+        if (result.length === 1) {
+            return result[0].Nome_Completo;
+        }
+        return null;
+    }
+
     async adicionar(dadosServico) {
         dadosServico.Data_De_Cadastro = moment(dadosServico.Data_De_Cadastro).format('YYYY-MM-DD');
         await dataBase.executaComandoNonQuery('INSERT INTO servicos SET ?', dadosServico);

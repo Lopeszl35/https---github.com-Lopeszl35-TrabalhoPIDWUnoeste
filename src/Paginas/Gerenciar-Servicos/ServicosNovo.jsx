@@ -7,6 +7,9 @@ import { Container, Card, Alert } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { useState } from "react";
 import "./Servicos.css";
+import ServicosService from "../../services/servicosService";
+
+const servicosService = new ServicosService();
 
 function ServicosNovo() {
   const { show } = useOutletContext();
@@ -104,7 +107,7 @@ function ServicosNovo() {
     setStatus(e.target.value);
   };
 
-  function validarForm(event) {
+  const validarForm = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     let newErrors = {};
@@ -140,22 +143,26 @@ function ServicosNovo() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      const servico = {
-        id: 0,
-        nome: nomeServico,
-        descricao: descricao,
-        dataCadastro: dataCadastro,
-        status: status,
-        profissional: profissional,
+      const novoServico = {
+        Nome_Servico: nomeServico,
+        Descricao: descricao,
+        Data_De_Cadastro: dataCadastro,
+        Status: status,
+        Profissional_Responsavel: profissional,
       };
 
-      const listaSalva = localStorage.getItem("servicos");
-      const servicos = listaSalva == null ? [] : JSON.parse(listaSalva);
-      servico.id = servicos.length + 1;
-      servicos.push(servico);
-      localStorage.setItem("servicos", JSON.stringify(servicos));
-
-      setShowMensagem(true);
+      try {
+        await servicosService.adicionar(novoServico);
+        setShowMensagem(true);
+      } catch (error) {
+        if (error.message === 'Profissional não encontrado') {
+          newErrors.profissional = 'Profissional não encontrado';
+          setErrors(newErrors);
+        } else {
+          console.error('Erro ao adicionar o Serviço:', error);
+          setErrors({ erro: 'Erro ao adicionar o Serviço. Por favor, tente novamente mais tarde.' });
+        }
+      }
     }
 
     setValidated(true);
@@ -238,21 +245,21 @@ function ServicosNovo() {
               </Form.Group>
 
               <Row>
-              <Form.Group as={Col} controlId="dataCadastro">
-                <Form.Label className="fw-bold">Data Cadastro</Form.Label>
-                <Form.Control
-                  type="date"
-                  placeholder="Data Cadastro"
-                  id="dataCadastro"
-                  required
-                  value={dataCadastro}
-                  onChange={handleDataCadastroChange}
-                  isInvalid={!!errors.dataCadastro}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.dataCadastro}
-                </Form.Control.Feedback>
-              </Form.Group>
+                <Form.Group as={Col} controlId="dataCadastro">
+                  <Form.Label className="fw-bold">Data Cadastro</Form.Label>
+                  <Form.Control
+                    type="date"
+                    placeholder="Data Cadastro"
+                    id="dataCadastro"
+                    required
+                    value={dataCadastro}
+                    onChange={handleDataCadastroChange}
+                    isInvalid={!!errors.dataCadastro}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.dataCadastro}
+                  </Form.Control.Feedback>
+                </Form.Group>
               </Row>
 
               <div className="d-flex justify-content-end mt-3">

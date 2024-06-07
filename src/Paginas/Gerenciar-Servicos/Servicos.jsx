@@ -1,25 +1,11 @@
 import { useEffect, useState } from "react";
 import "./Servicos.css";
-import {
-  Container,
-  Card,
-  Button,
-  Row,
-  Col,
-  Form,
-  Table,
-  Modal,
-} from "react-bootstrap";
-import {
-  FaListAlt,
-  FaPlus,
-  FaSearch,
-  FaEdit,
-  FaTrashAlt,
-  FaRegSave,
-  FaUserPlus
-} from "react-icons/fa";
+import { Container, Table, Button, Row, Col, Form, Modal, Card } from "react-bootstrap";
+import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt, FaRegSave, FaUserPlus } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
+import ServicosService from "../../services/servicosService";
+
+const servicosService = new ServicosService();
 
 function Servicos() {
   const { show } = useOutletContext();
@@ -34,34 +20,54 @@ function Servicos() {
   const [showAtribuirModal, setShowAtribuirModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [pacienteSelecionado, setPacienteSelecionado] = useState("");
-  const [pacientes, setPacientes] = useState([
+  const [pacientes] = useState([
     { id: 1, nome: "Paciente 1" },
     { id: 2, nome: "Paciente 2" },
     { id: 3, nome: "Paciente 3" },
   ]);
 
-  useEffect(() => {
-    const listaSalva = localStorage.getItem("servicos");
-    if (listaSalva !== null) {
-      setListaServicos(JSON.parse(listaSalva));
-      setServicosFiltrados(JSON.parse(listaSalva));
+  const listarServicos = async () => {
+    try {
+      const dados = await servicosService.obterTodos();
+      const servicosComNomes = await Promise.all(dados.map(async servico => {
+        try {
+          const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
+          return { ...servico, Nome_Profissional: nomeProfissional };
+        } catch (error) {
+          console.error(`Erro ao obter o nome do profissional para o serviço ${servico.ID_Servico}:`, error);
+          return { ...servico, Nome_Profissional: 'Erro ao obter nome' };
+        }
+      }));
+      setListaServicos(servicosComNomes);
+      setServicosFiltrados(servicosComNomes);
+    } catch (error) {
+      console.error("Erro ao obter serviços:", error);
     }
+  };
+
+  useEffect(() => {
+    listarServicos();
   }, []);
 
-  const abrirModalEdicao = (id) => {
-    const servico = listaServicos.find((s) => s.id === id);
-    setServicoEditando({ ...servico });
-    setShowEditarModal(true);
+  const abrirModalEdicao = async (id) => {
+    try{
+      const servico = await servicosService.obterPorId(id);
+      const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
+      setServicoEditando({ ...servico, Profissional_Responsavel: nomeProfissional });
+      setShowEditarModal(true);
+    } catch(error) {
+      console.error('Erro ao obter servico para edição:', error);
+    }
   };
 
   const abrirModalAtribuir = (id) => {
-    const servico = listaServicos.find((s) => s.id === id);
+    const servico = listaServicos.find((s) => s.ID_Servico === id);
     setServicoEditando({ ...servico });
     setShowAtribuirModal(true);
   };
 
   const handleExcluir = (id) => {
-    const novaLista = listaServicos.filter((item) => item.id !== id);
+    const novaLista = listaServicos.filter((item) => item.ID_Servico !== id);
     setListaServicos(novaLista);
     setServicosFiltrados(novaLista);
     localStorage.setItem("servicos", JSON.stringify(novaLista));
@@ -84,13 +90,13 @@ function Servicos() {
     if (busca !== "") {
       resultados = resultados.filter((servico) => {
         if (filtro === "2") {
-          return servico.nome.toLowerCase().includes(busca.toLowerCase());
+          return servico.Nome_Servico.toLowerCase().includes(busca.toLowerCase());
         } else if (filtro === "3") {
-          return servico.profissional.toLowerCase().includes(busca.toLowerCase());
+          return servico.Nome_Profissional.toLowerCase().includes(busca.toLowerCase());
         } else if (filtro === "4") {
-          return servico.status.toLowerCase() === "ativo";
+          return servico.Status.toLowerCase() === "ativo";
         } else if (filtro === "5") {
-          return servico.status.toLowerCase() === "inativo";
+          return servico.Status.toLowerCase() === "inativo";
         } else {
           return true;
         }
@@ -99,24 +105,27 @@ function Servicos() {
     setServicosFiltrados(resultados);
   };
 
-  const handleSalvarEdicao = () => {
+  const handleSalvarEdicao = async () => {
     if (validarEdicao()) {
-      const novaLista = listaServicos.map((servico) =>
-        servico.id === servicoEditando.id ? { ...servicoEditando } : servico
-      );
-
-      setListaServicos(novaLista);
-      localStorage.setItem("servicos", JSON.stringify(novaLista));
-
-      setShowEditarModal(false);
-      setServicoEditando(null);
-      setErrors({});
+      try {
+        await servicosService.atualizar(servicoEditando.ID_Servico, servicoEditando);
+        listarServicos();
+        setShowEditarModal(false);
+        setServicoEditando(null);
+        setErrors({});
+      } catch(error) {
+        if (error.message === 'Profissional não encontrado') {
+          setErrors((prev) => ({ ...prev, profissional: 'Profissional não encontrado' }));
+        } else {
+          console.error('Erro ao atualizar o serviço:', error);
+        }
+      }
     }
   };
 
   const handleAtribuirServico = () => {
     if (pacienteSelecionado) {
-      alert(`Serviço ${servicoEditando.nome} atribuído ao paciente ${pacienteSelecionado}.`);
+      alert(`Serviço ${servicoEditando.Nome_Servico} atribuído ao paciente ${pacienteSelecionado}.`);
       setShowAtribuirModal(false);
       setPacienteSelecionado("");
     } else {
@@ -126,7 +135,7 @@ function Servicos() {
 
   const handleDescricaoChange = (e) => {
     const value = e.target.value;
-    setServicoEditando({ ...servicoEditando, descricao: value });
+    setServicoEditando({ ...servicoEditando, Descricao: value });
     if (value && value.length <= 100) {
       setErrors((prev) => ({ ...prev, descricao: null }));
     } else {
@@ -146,7 +155,7 @@ function Servicos() {
 
   const handleProfissionalChange = (e) => {
     const value = e.target.value;
-    setServicoEditando({ ...servicoEditando, profissional: value });
+    setServicoEditando({ ...servicoEditando, Profissional_Responsavel: value });
     if (value) {
       setErrors((prev) => ({ ...prev, profissional: null }));
     } else {
@@ -159,15 +168,15 @@ function Servicos() {
 
   const validarEdicao = () => {
     let isValid = true;
-    const { descricao, profissional } = servicoEditando;
+    const { Descricao, Profissional_Responsavel } = servicoEditando;
     let newErrors = {};
 
-    if (!descricao || descricao.length > 100) {
+    if (!Descricao || Descricao.length > 100) {
       newErrors.descricao = "A descrição deve ter no máximo 100 caracteres";
       isValid = false;
     }
 
-    if (!profissional) {
+    if (!Profissional_Responsavel) {
       newErrors.profissional = "O campo profissional responsável é obrigatório";
       isValid = false;
     }
@@ -215,7 +224,7 @@ function Servicos() {
               </Form>
             </Col>
             <Col lg="2">
-              <Button variant="secondary" onClick={handleBuscar} >
+              <Button variant="secondary" onClick={handleBuscar}>
                 <FaSearch /> Pesquisar
               </Button>
             </Col>
@@ -242,27 +251,27 @@ function Servicos() {
               </tr>
             ) : (
               servicosFiltrados.map((servico) => (
-                <tr key={servico.id}>
-                  <td>{servico.id}</td>
-                  <td>{servico.nome}</td>
-                  <td>{servico.descricao}</td>
-                  <td>{servico.status}</td>
-                  <td>{servico.profissional}</td>
+                <tr key={servico.ID_Servico}>
+                  <td>{servico.ID_Servico}</td>
+                  <td>{servico.Nome_Servico}</td>
+                  <td>{servico.Descricao}</td>
+                  <td>{servico.Status}</td>
+                  <td>{servico.Nome_Profissional}</td>
                   <td className="d-flex flex-row">
-                    <Button onClick={() => abrirModalEdicao(servico.id)}
+                    <Button onClick={() => abrirModalEdicao(servico.ID_Servico)}
                       className="btn btn-primary m-1 w-100 custom-button"
                     >
                       <FaEdit /> Editar
                     </Button>
                     <Button
                       className="btn btn-danger m-1 w-100 custom-button"
-                      onClick={() => abrirModalConfirmacao(servico.id)}
+                      onClick={() => abrirModalConfirmacao(servico.ID_Servico)}
                     >
                       <FaTrashAlt /> Excluir
                     </Button>
                     <Button
                       className="btn btn-info m-1 w-100 custom-button"
-                      onClick={() => abrirModalAtribuir(servico.id)}
+                      onClick={() => abrirModalAtribuir(servico.ID_Servico)}
                     >
                       <FaUserPlus /> Atribuir paciente
                     </Button>
@@ -300,7 +309,7 @@ function Servicos() {
               <Form.Control
                 type="text"
                 placeholder="Nome do serviço"
-                value={servicoEditando?.nome || ""}
+                value={servicoEditando?.Nome_Servico || ""}
                 disabled
               />
             </Form.Group>
@@ -312,7 +321,7 @@ function Servicos() {
                 as="textarea"
                 rows={3}
                 placeholder="Descrição do serviço"
-                value={servicoEditando?.descricao || ""}
+                value={servicoEditando?.Descricao || ""}
                 isInvalid={errors.descricao}
                 onChange={handleDescricaoChange}
               />
@@ -324,11 +333,11 @@ function Servicos() {
             <Form.Group className="mb-3" controlId="formStatus">
               <Form.Label>Status</Form.Label>
               <Form.Select
-                value={servicoEditando?.status || ""}
-                onChange={(e) => setServicoEditando({ ...servicoEditando, status: e.target.value })}
+                value={servicoEditando?.Status || ""}
+                onChange={(e) => setServicoEditando({ ...servicoEditando, Status: e.target.value })}
               >
-                <option value="ativo">Ativo</option>
-                <option value="inativo">Inativo</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
               </Form.Select>
             </Form.Group>
 
@@ -337,7 +346,7 @@ function Servicos() {
               <Form.Control
                 type="text"
                 placeholder="Nome do profissional"
-                value={servicoEditando?.profissional || ""}
+                value={servicoEditando?.Profissional_Responsavel || ""}
                 isInvalid={errors.profissional}
                 onChange={handleProfissionalChange}
               />
