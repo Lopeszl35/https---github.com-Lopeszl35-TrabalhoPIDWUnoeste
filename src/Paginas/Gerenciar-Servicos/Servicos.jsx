@@ -50,13 +50,13 @@ function Servicos() {
   }, []);
 
   const abrirModalEdicao = async (id) => {
-    try{
+    try {
       const servico = await servicosService.obterPorId(id);
       const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
       setServicoEditando({ ...servico, Profissional_Responsavel: nomeProfissional });
       setShowEditarModal(true);
-    } catch(error) {
-      console.error('Erro ao obter servico para edição:', error);
+    } catch (error) {
+      console.error('Erro ao obter serviço para edição:', error);
     }
   };
 
@@ -66,13 +66,15 @@ function Servicos() {
     setShowAtribuirModal(true);
   };
 
-  const handleExcluir = (id) => {
-    const novaLista = listaServicos.filter((item) => item.ID_Servico !== id);
-    setListaServicos(novaLista);
-    setServicosFiltrados(novaLista);
-    localStorage.setItem("servicos", JSON.stringify(novaLista));
-    alert("Serviço excluído com sucesso!");
-    setShowConfirmDeleteModal(false);
+  const handleExcluir = async (id) => {
+    try {
+      await servicosService.excluir(id);
+      listarServicos();
+      alert("Serviço excluído com sucesso!");
+      setShowConfirmDeleteModal(false);
+    } catch (error) {
+      console.error("Erro ao excluir serviço:", error);
+    }
   };
 
   const abrirModalConfirmacao = (id) => {
@@ -113,7 +115,7 @@ function Servicos() {
         setShowEditarModal(false);
         setServicoEditando(null);
         setErrors({});
-      } catch(error) {
+      } catch (error) {
         if (error.message === 'Profissional não encontrado') {
           setErrors((prev) => ({ ...prev, profissional: 'Profissional não encontrado' }));
         } else {

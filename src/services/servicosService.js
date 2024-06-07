@@ -92,6 +92,22 @@ class ServicosService {
             return dados;
         }
     }
+
+    async excluir(id) {
+        const response = await fetch(`${API_BASE_URL}/servicos/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    
+        if (!response.ok) {
+            throw new Error('Erro ao deletar serviço');
+        } else {
+            const dados = await response.json();
+            return dados;
+        }
+    }
 }
 
 export default ServicosService;
