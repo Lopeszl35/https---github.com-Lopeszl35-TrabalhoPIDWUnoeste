@@ -201,102 +201,106 @@ function Servicos() {
   };
 
   return (
-    <div className={`container-servicos ${show ? "container-servicos-side-active" : ""}`}>
-      <h1>
-        <FaListAlt /> Serviços
-      </h1>
-      <Container>
-        <Card.Body className="mt-2 card-servicos">
-          <Row>
-            <Col lg="2">
-              <Button as={Link} to="/servicos/cadastro" variant="primary">
-                <FaPlus /> Adicionar
-              </Button>
-            </Col>
-            <Col lg="6">
-              <Form>
-                <Form.Group className="mb-3 d-flex">
-                  <Form.Select
-                    className="me-2"
-                    aria-label="Filtro"
-                    value={filtro}
-                    onChange={(e) => setFiltro(e.target.value)}
-                  >
-                    <option value="1">Filtro</option>
-                    <option value="2">Nome</option>
-                    <option value="3">Profissional Responsável</option>
-                    <option value="4">Ativo</option>
-                    <option value="5">Inativo</option>
-                  </Form.Select>
-                  <Form.Control
-                    type="text"
-                    id="busca"
-                    placeholder="Buscar"
-                    value={busca}
-                    onChange={(e) => setBusca(e.target.value)}
-                  />
-                </Form.Group>
-              </Form>
-            </Col>
-            <Col lg="2">
-              <Button variant="secondary" onClick={handleBuscar}>
-                <FaSearch /> Pesquisar
-              </Button>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Container>
-      <Container>
-        <h2>Serviços Cadastrados</h2>
-        <Table striped bordered hover className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Descrição</th>
-              <th>Status</th>
-              <th>Profissional Responsável</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {servicosFiltrados.length <= 0 ? (
+    <main className={`container-servicos ${show ? "container-servicos-side-active" : ""}`}>
+      <header>
+        <h1>
+          <FaListAlt /> Serviços
+        </h1>
+      </header>
+      <section>
+        <Container>
+          <Card.Body className="mt-2 card-servicos">
+            <Row>
+              <Col lg="2">
+                <Button as={Link} to="/servicos/cadastro" variant="primary">
+                  <FaPlus /> Adicionar
+                </Button>
+              </Col>
+              <Col lg="6">
+                <Form>
+                  <Form.Group className="mb-3 d-flex">
+                    <Form.Select
+                      className="me-2"
+                      aria-label="Filtro"
+                      value={filtro}
+                      onChange={(e) => setFiltro(e.target.value)}
+                    >
+                      <option value="1">Filtro</option>
+                      <option value="2">Nome</option>
+                      <option value="3">Profissional Responsável</option>
+                      <option value="4">Ativo</option>
+                      <option value="5">Inativo</option>
+                    </Form.Select>
+                    <Form.Control
+                      type="text"
+                      id="busca"
+                      placeholder="Buscar"
+                      value={busca}
+                      onChange={(e) => setBusca(e.target.value)}
+                    />
+                  </Form.Group>
+                </Form>
+              </Col>
+              <Col lg="2">
+                <Button variant="secondary" onClick={handleBuscar}>
+                  <FaSearch /> Pesquisar
+                </Button>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Container>
+        <Container>
+          <h2>Serviços Cadastrados</h2>
+          <Table striped bordered hover className="table">
+            <thead>
               <tr>
-                <td colSpan={6}>Nenhum serviço encontrado</td>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th>Profissional Responsável</th>
+                <th>Ações</th>
               </tr>
-            ) : (
-              servicosFiltrados.map((servico) => (
-                <tr key={servico.ID_Servico}>
-                  <td>{servico.ID_Servico}</td>
-                  <td>{servico.Nome_Servico}</td>
-                  <td>{servico.Descricao}</td>
-                  <td>{servico.Status}</td>
-                  <td>{servico.Nome_Profissional}</td>
-                  <td className="d-flex flex-row">
-                    <Button onClick={() => abrirModalEdicao(servico.ID_Servico)}
-                      className="btn btn-primary m-1 w-100 custom-button"
-                    >
-                      <FaEdit /> Editar
-                    </Button>
-                    <Button
-                      className="btn btn-danger m-1 w-100 custom-button"
-                      onClick={() => abrirModalConfirmacao(servico.ID_Servico)}
-                    >
-                      <FaTrashAlt /> Excluir
-                    </Button>
-                    <Button
-                      className="btn btn-info m-1 w-100 custom-button"
-                      onClick={() => abrirModalAtribuir(servico.ID_Servico)}
-                    >
-                      <FaUserPlus /> Atribuir paciente
-                    </Button>
-                  </td>
+            </thead>
+            <tbody>
+              {servicosFiltrados.length <= 0 ? (
+                <tr>
+                  <td colSpan={6}>Nenhum serviço encontrado</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      </Container>
+              ) : (
+                servicosFiltrados.map((servico) => (
+                  <tr key={servico.ID_Servico}>
+                    <td>{servico.ID_Servico}</td>
+                    <td>{servico.Nome_Servico}</td>
+                    <td>{servico.Descricao}</td>
+                    <td>{servico.Status}</td>
+                    <td>{servico.Nome_Profissional}</td>
+                    <td className="d-flex flex-row">
+                      <Button onClick={() => abrirModalEdicao(servico.ID_Servico)}
+                        className="btn btn-primary m-1 w-100 "
+                      >
+                        <FaEdit /> 
+                      </Button>
+                      <Button
+                        className="btn btn-danger m-1 w-100 "
+                        onClick={() => abrirModalConfirmacao(servico.ID_Servico)}
+                      >
+                        <FaTrashAlt /> 
+                      </Button>
+                      <Button
+                        className="btn btn-info m-1 w-100 "
+                        onClick={() => abrirModalAtribuir(servico.ID_Servico)}
+                      >
+                        <FaUserPlus />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </Table>
+        </Container>
+      </section>
 
       <ModalConfirmDelete
         show={showConfirmDeleteModal}
@@ -310,7 +314,7 @@ function Servicos() {
         setShowEditarModal={setShowEditarModal}
         handleSalvarEdicao={handleSalvarEdicao}
         servicoEditando={servicoEditando}
-        setServicoEditando={setServicoEditando} // Adicionado aqui
+        setServicoEditando={setServicoEditando}
         handleDescricaoChange={handleDescricaoChange}
         handleProfissionalChange={handleProfissionalChange}
         errors={errors}
@@ -325,7 +329,7 @@ function Servicos() {
         pacienteSelecionado={pacienteSelecionado}
         setPacienteSelecionado={setPacienteSelecionado}
       />
-    </div>
+    </main>
   );
 }
 
