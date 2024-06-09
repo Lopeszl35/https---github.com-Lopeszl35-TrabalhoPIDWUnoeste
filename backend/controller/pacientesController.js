@@ -13,6 +13,19 @@ class PacientesController {
             return res.status(500).json({ message: error.message });
         }
     }
+
+    async obterPorId(req, res) {
+        console.log('Obtendo o Paciente por ID...');
+        const { id } = req.params;
+        try {
+            const paciente = await pacienteModel.obterPorId(id);
+            return res.status(200).json(paciente);
+        } catch (error) {
+            console.log('Erro ao obter o Paciente:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
 }
 
 module.exports = PacientesController;

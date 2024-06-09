@@ -19,6 +19,11 @@ class PacientesModel {
         const listaPacientes = await dataBase.executaComando("SELECT * FROM pacientes");
         return listaPacientes;
     }
+
+    async obterPorId(id) {
+        const result = await dataBase.executaComando("SELECT * FROM pacientes WHERE Prontuario = ?", [id]);
+        return result[0];
+    }
 } 
 
 module.exports = PacientesModel;
