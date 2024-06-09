@@ -277,7 +277,6 @@ function Servicos() {
                     <td>{servico.Nome_Profissional}</td>
                     <td className="d-flex flex-row">
                       <Button onClick={() => abrirModalEdicao(servico.ID_Servico)}
-<<<<<<< HEAD
                         className="btn btn-primary m-1 w-100 "
                       >
                         <FaEdit /> 
@@ -293,23 +292,6 @@ function Servicos() {
                         onClick={() => abrirModalAtribuir(servico.ID_Servico)}
                       >
                         <FaUserPlus />
-=======
-                        className="btn btn-primary m-1 w-100 custom-button"
-                      >
-                        <FaEdit /> Editar
-                      </Button>
-                      <Button
-                        className="btn btn-danger m-1 w-100 custom-button"
-                        onClick={() => abrirModalConfirmacao(servico.ID_Servico)}
-                      >
-                        <FaTrashAlt /> Excluir
-                      </Button>
-                      <Button
-                        className="btn btn-info m-1 w-100 custom-button"
-                        onClick={() => abrirModalAtribuir(servico.ID_Servico)}
-                      >
-                        <FaUserPlus /> Atribuir paciente
->>>>>>> deb491dca9b5fbacf574382992c8acd131e66889
                       </Button>
                     </td>
                   </tr>

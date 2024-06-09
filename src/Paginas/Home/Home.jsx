@@ -34,11 +34,11 @@ function Home() {
                         <Card className='text-center'>
                             <Card.Body>
                                 <LiaUserLockSolid size={50} />
-                                <Card.Title>Funcionários</Card.Title>
+                                <Card.Title>Usuários</Card.Title>
                                 <Card.Text>
-                                    Visualize e gerencie os funcionários do sistema.
+                                    Visualize e gerencie os usuários do sistema.
                                 </Card.Text>
-                                <Button as={Link} to='/profissionais' variant="primary">Acessar</Button>
+                                <Button as={Link} to='/usuarios' variant="primary">Acessar</Button>
                             </Card.Body>
                         </Card>
                     </Col>

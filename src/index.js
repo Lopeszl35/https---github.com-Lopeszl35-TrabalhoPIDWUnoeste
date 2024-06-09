@@ -14,12 +14,13 @@ import Home from "./Paginas/Home/Home";
 import Login from "./Componentes/Login/Login";
 import GerarRelatorios from "./Paginas/Relatorios/GerarRelatorios";
 import Pacientes from "./Paginas/Pacientes/Pacientes";
-import Profissionais from "./Paginas/Profissionais/Profissionais";
+import Usuarios from "./Paginas/Usuarios/Usuarios";
+import CadastrarUsuarios from "./Paginas/Usuarios/CadastrarUsuarios";
 import Servicos from "./Paginas/Gerenciar-Servicos/Servicos";
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 import EditarPacientes from "./Paginas/Pacientes/EditarPacientes";
-import CadastrarProfissional from "./Paginas/Profissionais/CadastrarProfissional";
+
 
 function AppRouter() {
   const [loggedIn, setLoggedIn] = React.useState(
@@ -46,8 +47,8 @@ function AppRouter() {
             <Route path="pacientes" element={<Pacientes />} />
             <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
             <Route path="pacientes/EditarPacientes/:id" element={<EditarPacientes />} />
-            <Route path="profissionais" element={<Profissionais />} />
-            <Route path="/profissionais/CadastrarProfissionais" element={<CadastrarProfissional />} />
+            <Route path="usuarios" element={<Usuarios />} />
+            <Route path="/usuarios/CadastrarUsuarios" element={<CadastrarUsuarios />} />
             <Route path="servicos" element={<Servicos />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="relatorios" element={<GerarRelatorios />} />
