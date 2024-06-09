@@ -19,7 +19,6 @@ class PacientesModel {
         const listaPacientes = await dataBase.executaComando("SELECT * FROM pacientes");
         return listaPacientes;
     }
+} 
 
-}
-
-module.exports = PacientesModel
+module.exports = PacientesModel;

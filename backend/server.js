@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const servicosRoutes = require('./routes/servicosRoutes');
+const pacientesRoutes = require('./routes/pacientesRoutes');
 
 // Configurações do servidor
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 
 // Rotas
 app.use(servicosRoutes);
+app.use(pacientesRoutes);
 
 // Inicia o servidor
 app.listen(port, () => console.log(`Servidor ouvindo na porta ${port}`));
