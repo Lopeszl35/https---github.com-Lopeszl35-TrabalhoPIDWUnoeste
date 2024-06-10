@@ -26,12 +26,12 @@ class PacientesModel {
     }
 
     async adicionar(dadosPaciente) {
-        dadosPaciente.Data_De_Cadastro = moment(dadosPaciente.Data_De_Cadastro).format('YYYY-MM-DD');
+        dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
         await dataBase.executaComandoNonQuery('INSERT INTO pacientes SET ?', dadosPaciente);
     }
 
     async atualizar(id, dadosPaciente) {
-        dadosPaciente.Data_De_Cadastro = moment(dadosPaciente.Data_De_Cadastro).format('YYYY-MM-DD');
+        dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
         await dataBase.executaComandoNonQuery('UPDATE pacientes SET ? WHERE Prontuario = ?', [dadosPaciente, id]);
     }
 
