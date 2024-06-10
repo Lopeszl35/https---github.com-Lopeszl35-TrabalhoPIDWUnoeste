@@ -1,4 +1,5 @@
 const PacientesModel = require('../model/Entities/pacientesModel');
+const { validationResult } = require('express-validator');
 const pacienteModel = new PacientesModel();
 
 class PacientesController {

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const PacientesController = require('../controller/pacientesController');
+const { body, param, query } = require('express-validator');
 
 const router = express.Router();
 const pacientesController = new PacientesController();
