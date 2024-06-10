@@ -1,12 +1,12 @@
 .container-usuario {
-    margin: 4em 0 0 14em;
-    width: 100vh;
-  }
-  
-  .container-usuario-active {
-    margin: 4em 0 0 20em;
-    transition: 0.5s;
-  }
+  margin: 4em 0 0 14em;
+  width: 100vh;
+}
+
+.container-usuario-active {
+  margin: 4em 0 0 20em;
+  transition: 0.5s;
+}
 
 * {
   box-sizing: border-box;
@@ -36,23 +36,26 @@ h2 {
 }
 
 label {
-  display: block;
+  display: inline-block;
+  width: 200px;
   margin-bottom: 10px;
+  vertical-align: middle;
 }
 
 input, select, textarea {
-  width: 100%;
+  width: calc(100% - 220px);
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 input[type="checkbox"] {
   width: auto;
   margin-right: 10px;
-  align-items: center;
-  margin-top: 7px;
+  vertical-align: middle;
 }
 
 button[type="submit"] {
@@ -67,8 +70,6 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: #3e8e41;
 }
-
-/* Formulario */
 
 .form-container {
   margin: 40px auto;
@@ -89,12 +90,12 @@ button[type="submit"]:hover {
 
 .form-group {
   margin-bottom: 5px;
-  flex-direction: row;
+  display: flex;
   align-items: center;
 }
 
 .form-group label {
-  display: block;
+  display: inline-block;
   margin-bottom: 5px;
 }
 
@@ -102,10 +103,59 @@ button[type="submit"]:hover {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
+  width: calc(100% - 220px);
+  display: inline-block;
 }
 
-/* Mensagens de erro */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 15px;
+}
+
+.label-radio {
+  display: flex;
+  align-items: center;
+}
+
+.label-radio input {
+  margin-right: 10px;
+}
+
+.erros {
+  color: red;
+  font-size: 12px;
+}
+
+.botao {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.form-group div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
 .erros {
   color: #ff0000;
@@ -113,13 +163,13 @@ button[type="submit"]:hover {
   margin-top: 0.25rem;
 }
 
-.checkbox{
+.checkbox {
   display: flex;
-  flex-direction:row;
+  flex-direction: row;
   align-items: center;
 }
 
-.botao{
+.botao {
   display: flex;
   flex-direction: column;
   margin-left: 85%;
