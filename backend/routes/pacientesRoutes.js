@@ -1,16 +1,22 @@
 const express = require('express');
 const cors = require('cors');
 const PacientesController = require('../controller/pacientesController');
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
 
 const router = express.Router();
 const pacientesController = new PacientesController();
+
+//Rora para filtrar paciente por nome
+router.get('/pacientes/filtrar', [
+    query('nome').notEmpty().withMessage('Nome do paciente é obrigatório')
+], pacientesController.filtrarPorNome.bind(pacientesController));
+
 
 // Rota para obter todos os pacientes
 router.get('/pacientes', pacientesController.obterTodos.bind(pacientesController));
 
 // Rota para obter o paciente por ID
-router.get('/pacientes/:id', pacientesController.obterPorId.bind(pacientesController));
+router.get('/pacientes/:id', pacientesController.filtrarPorProntuario.bind(pacientesController));
 
 // Rota para adicionar um paciente
 router.post('/pacientes', [
@@ -42,5 +48,6 @@ router.put('/pacientes/:id', [
 router.delete('/pacientes/:id', [
     param('id').isInt().withMessage('ID do paciente inválido')
 ], pacientesController.deletar.bind(pacientesController));
+
 
 module.exports = router;

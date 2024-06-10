@@ -21,9 +21,14 @@ class PacientesModel {
         return listaPacientes;
     }
 
-    async obterPorId(id) {
+    async filtrarPorProntuario(id) {
         const result = await dataBase.executaComando("SELECT * FROM pacientes WHERE Prontuario = ?", [id]);
         return result[0];
+    }
+
+    async filtrarPorNome(nome) {
+        const result = await dataBase.executaComando("SELECT * FROM pacientes WHERE LOWER(Nome_Completo) LIKE LOWER(?)", [`%${nome}%`]);
+        return result;
     }
 
     async adicionar(dadosPaciente) {
@@ -39,6 +44,7 @@ class PacientesModel {
     async deletar(id) {
         await dataBase.executaComandoNonQuery('DELETE FROM pacientes WHERE Prontuario = ?', [id]);
     }
+
 }
 
 module.exports = PacientesModel;
