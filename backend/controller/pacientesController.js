@@ -1,6 +1,11 @@
-const PacientesModel = require('../model/Entities/pacientesModel');
+const PacientesModel = require('../model/Entities/pacientesModel/pacientesModel');
+const ResponsaveisModel = require('../model/Entities/pacientesModel/responsaveisModel');
+const EnderecosModel = require('../model/Entities/pacientesModel/enderecosModel');
 const { validationResult } = require('express-validator');
+
 const pacienteModel = new PacientesModel();
+const responsavelModel = new ResponsaveisModel();
+const enderecoModel = new EnderecosModel();
 
 class PacientesController {
 
@@ -16,11 +21,18 @@ class PacientesController {
     }
 
     async filtrarPorProntuario(req, res) {
-        console.log('Obtendo o Paciente por ID...');
-        const { id } = req.params;
+        console.log('Obtendo o Paciente por prontuário...');
+        const { prontuario } = req.params;
         try {
-            const paciente = await pacienteModel.filtrarPorProntuario(id);
-            return res.status(200).json(paciente);
+            const paciente = await pacienteModel.filtrarPorProntuario(prontuario);
+            const enderecos = await enderecoModel.obterPorProntuario(prontuario);
+            const responsavel = await responsavelModel.obterPorProntuario(prontuario);
+            console.log(`Pacientente obtido: ${paciente}, enderecos: ${enderecos}, responsavel: ${responsavel}`);
+            res.status(200).json({
+                ...paciente,
+                enderecos, 
+                responsavel: responsavel 
+            });
         } catch (error) {
             console.log('Erro ao obter o Paciente:', error);
             return res.status(500).json({ message: error.message });
@@ -62,7 +74,7 @@ class PacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { id } = req.params;  
+        const { id } = req.params;
         const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
         try {
             const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
@@ -77,8 +89,8 @@ class PacientesController {
     async deletar(req, res) {
         console.log('Deletando o Paciente...');
         const { id } = req.params;
-        try {   
-            await pacienteModel.deletar(id);    
+        try {
+            await pacienteModel.deletar(id);
             return res.status(200).json({ message: 'Paciente deletado com sucesso!' });
         } catch (error) {
             console.error('Erro ao deletar paciente:', error.message);

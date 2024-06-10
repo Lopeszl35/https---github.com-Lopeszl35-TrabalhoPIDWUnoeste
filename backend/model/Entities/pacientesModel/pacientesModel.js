@@ -1,4 +1,4 @@
-const DataBase = require("../database");
+const DataBase = require("../../database");
 const moment = require('moment');
 
 const dataBase = new DataBase();

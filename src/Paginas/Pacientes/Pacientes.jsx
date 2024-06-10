@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Col, Container, Form, Row, Button, Table, Pagination } from "react-bootstrap";
-import { useOutletContext, Link } from "react-router-dom";
+import { Card, Col, Container, Form, Row, Button, Table, Pagination, Modal, ModalBody } from "react-bootstrap";
+import { useOutletContext, Link, useNavigate } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
-import { RiUserSearchLine } from "react-icons/ri";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import "./Pacientes.css";
 import PacientesService from "../../services/pacientesService";
 
@@ -15,6 +15,9 @@ function Pacientes() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("");
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [pacienteToDelete, setPacienteToDelete] = useState(null);
+  const navigate = useNavigate();
   const pacientesPerPage = 10;
 
   const obterTodos = async () => {
@@ -26,6 +29,15 @@ function Pacientes() {
       console.error("Erro ao obter pacientes:", error);
     }
   };
+
+  const showDelete = (prontuario) => {
+    setShowModalDelete(true);
+    setPacienteToDelete(prontuario);
+  }
+
+  const handleEdit = (prontuario) => {
+    navigate(`/pacientes/EditarPacientes/${prontuario}`);
+  }
 
   useEffect(() => {
     obterTodos();
@@ -106,7 +118,10 @@ function Pacientes() {
                       <tr key={paciente.Prontuario}>
                         <td>{paciente.Prontuario}</td>
                         <td>{paciente.Nome_Completo}</td>
-                        <td><Button as={Link} to={`/pacientes/EditarPacientes/${paciente.id}`}><RiUserSearchLine /> Editar Paciente</Button></td>
+                        <td className='d-flex flex-row gap-2'>
+                          <Button onClick={() => handleEdit(paciente.Prontuario)}><FaEdit /> </Button>
+                          <Button className='btn-danger' onClick={() => showDelete(paciente.Prontuario)}><FaTrashAlt /></Button>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -125,6 +140,24 @@ function Pacientes() {
           </Card.Body>
         </Card>
       </Container>
+
+      {/* MODAL EXCLUIR PACIENTE */}
+      <Modal show={showModalDelete} onHide={() => setShowModalDelete(false)}>
+        <ModalBody>
+          <Modal.Header closeButton>
+            <Modal.Title>Excluir Paciente</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Tem certeza que deseja excluir este paciente?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModalDelete(false)}>
+              Cancelar
+            </Button>
+            <Button variant="danger">
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </ModalBody>
+      </Modal>
     </div>
   );
 }

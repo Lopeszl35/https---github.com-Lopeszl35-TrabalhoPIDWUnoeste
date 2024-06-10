@@ -1,4 +1,4 @@
-import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Container} from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import React, {useState } from 'react';
 import "./CadastrarPacientes.css";

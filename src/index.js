@@ -46,7 +46,7 @@ function AppRouter() {
             <Route path="home" element={<Home />} />
             <Route path="pacientes" element={<Pacientes />} />
             <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
-            <Route path="pacientes/EditarPacientes/:id" element={<EditarPacientes />} />
+            <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
             <Route path="usuarios" element={<Usuarios />} />
             <Route path="/usuarios/CadastrarUsuarios" element={<CadastrarUsuarios />} />
             <Route path="servicos" element={<Servicos />} />

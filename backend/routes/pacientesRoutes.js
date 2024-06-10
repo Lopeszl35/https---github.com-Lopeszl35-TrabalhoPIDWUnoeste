@@ -15,8 +15,8 @@ router.get('/pacientes/filtrar', [
 // Rota para obter todos os pacientes
 router.get('/pacientes', pacientesController.obterTodos.bind(pacientesController));
 
-// Rota para obter o paciente por ID
-router.get('/pacientes/:id', pacientesController.filtrarPorProntuario.bind(pacientesController));
+// Rota para obter o paciente por Prontuario
+router.get('/pacientes/:prontuario', pacientesController.filtrarPorProntuario.bind(pacientesController));
 
 // Rota para adicionar um paciente
 router.post('/pacientes', [
