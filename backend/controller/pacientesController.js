@@ -33,9 +33,9 @@ class PacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSus, Escola, Ano_Escolar, Periodo } = req.body;
+        const { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
         try {
-            const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSus, Escola, Ano_Escolar, Periodo);
+            const paciente = new PacientesModel(Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
             await pacienteModel.adicionar(paciente);
             return res.status(201).json({ message: 'Paciente adicionado com sucesso!' });
         } catch (error) {

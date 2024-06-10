@@ -14,12 +14,11 @@ router.get('/pacientes/:id', pacientesController.obterPorId.bind(pacientesContro
 
 
 router.post('/pacientes', [
-    body('Prontuario').notEmpty().withMessage('Prontuario é obrigatório'),
-    body('Nome_Completo').notEmpty().withMessage('Nome do usuário é obrigatório'),
+    body('Nome_Completo').notEmpty().withMessage('Nome do paciente é obrigatório'),
     body('Data_De_Nascimento').isISO8601().withMessage('Data de nascimento inválida'),
     body('CPF').notEmpty().withMessage('CPF é obrigatório'),
     body('RG').notEmpty().withMessage('RG é obrigatório'),
-    body('CartaoSus').notEmpty().withMessage('Cartão SUS é obrigatório'),
+    body('CartaoSUS').notEmpty().withMessage('Cartão SUS é obrigatório'),
     body('Escola').notEmpty().withMessage('Escola é obrigatório'),
     body('Ano_Escolar').notEmpty().withMessage('Ano escolar é obrigatório'),
     body('Periodo').notEmpty().withMessage('Periodo é obrigatório')
