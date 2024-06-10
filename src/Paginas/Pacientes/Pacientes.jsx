@@ -35,9 +35,9 @@ function Pacientes() {
   useEffect(() => {
     const filteredPacientes = pacientes.filter((paciente) => {
       if (searchType === "1") {
-        return paciente.prontuario.toLowerCase().includes(searchQuery.toLowerCase());
+        return paciente.Prontuario.toLowerCase().includes(searchQuery.toLowerCase());
       } else if (searchType === "2") {
-        return paciente.nome.toLowerCase().includes(searchQuery.toLowerCase());
+        return paciente.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
     });
