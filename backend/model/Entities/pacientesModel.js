@@ -24,6 +24,21 @@ class PacientesModel {
         const result = await dataBase.executaComando("SELECT * FROM pacientes WHERE Prontuario = ?", [id]);
         return result[0];
     }
+
+    async adicionar(dadosPaciente) {
+        dadosPaciente.Data_De_Cadastro = moment(dadosPaciente.Data_De_Cadastro).format('YYYY-MM-DD');
+        await dataBase.executaComandoNonQuery('INSERT INTO pacientes SET ?', dadosPaciente);
+    }
+
+    async atualizar(id, dadosPaciente) {
+        dadosPaciente.Data_De_Cadastro = moment(dadosPaciente.Data_De_Cadastro).format('YYYY-MM-DD');
+        await dataBase.executaComandoNonQuery('UPDATE pacientes SET ? WHERE Prontuario = ?', [dadosPaciente, id]);
+    }
+
+    async deletar(id) {
+        await dataBase.executaComandoNonQuery('DELETE FROM pacientes WHERE Prontuario = ?', [id]);
+    }
+    
 } 
 
 module.exports = PacientesModel;
