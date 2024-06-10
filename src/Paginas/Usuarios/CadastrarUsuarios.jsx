@@ -159,15 +159,15 @@ function CadastrarUsuarios() {
 
           <h2>Tipo de Usuário</h2>
           <div className="form-group">
-            <label>
+            <label className="form-input">
               <input
                 type="radio"
                 name="tipoUsuario"
                 value="profissionalSaude"
                 checked={usuarioInfo.tipoUsuario === 'profissionalSaude'}
                 onChange={handleInputChange}
-              />
-              Profissional de Saúde
+              />Profissional de Saúde
+              
             </label>
             <label>
               <input
