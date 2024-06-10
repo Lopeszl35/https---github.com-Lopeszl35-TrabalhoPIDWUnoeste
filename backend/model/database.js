@@ -5,7 +5,7 @@ class DataBase {
         this.pool = mysql.createPool({
             host: 'localhost',
             user: 'root',
-            database: 'careconnectdb'
+            database: 'careconnectdb',
         });
     }
 

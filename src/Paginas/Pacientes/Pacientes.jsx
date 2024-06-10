@@ -4,6 +4,9 @@ import { useOutletContext, Link } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { RiUserSearchLine } from "react-icons/ri";
 import "./Pacientes.css";
+import PacientesService from "../../services/pacientesService";
+
+const pacientesService = new PacientesService();
 
 function Pacientes() {
   const { show } = useOutletContext();
@@ -14,27 +17,20 @@ function Pacientes() {
   const [searchType, setSearchType] = useState("");
   const pacientesPerPage = 10;
 
+  const obterTodos = async () => {
+    try {
+      const dados = await pacientesService.obterTodos();
+      setPacientes(dados);
+      setPacientesFiltrados(dados);
+    } catch (error) {
+      console.error("Erro ao obter pacientes:", error);
+    }
+  };
+
   useEffect(() => {
-    const pacientes = [
-      { id: 1, prontuario: '001', nome: 'Alice Silva' },
-      { id: 2, prontuario: '002', nome: 'Bruno Sousa' },
-      { id: 3, prontuario: '003', nome: 'Carla Mendes' },
-      { id: 4, prontuario: '004', nome: 'Diego Lima' },
-      { id: 5, prontuario: '005', nome: 'Elaine Costa' },
-      { id: 6, prontuario: '006', nome: 'Fábio Alves' },
-      { id: 7, prontuario: '007', nome: 'Gabriela Martins' },
-      { id: 8, prontuario: '008', nome: 'Henrique Oliveira' },
-      { id: 9, prontuario: '009', nome: 'Isabela Ferreira' },
-      { id: 10, prontuario: '010', nome: 'Jorge Nunes' },
-      { id: 11, prontuario: '011', nome: 'Karina Rocha' },
-      { id: 12, prontuario: '012', nome: 'Lucas Araújo' },
-      { id: 13, prontuario: '013', nome: 'Mariana Santos' },
-      { id: 14, prontuario: '014', nome: 'Nicolas Souza' },
-      { id: 15, prontuario: '015', nome: 'Olivia Ramos' },
-    ];
-    setPacientes(pacientes);
-    setPacientesFiltrados(pacientes);
+    obterTodos();
   }, []);
+ 
 
   useEffect(() => {
     const filteredPacientes = pacientes.filter((paciente) => {
@@ -107,9 +103,9 @@ function Pacientes() {
                     </tr>
                   ) : (
                     currentPacientes.map((paciente) => (
-                      <tr key={paciente.id}>
-                        <td>{paciente.prontuario}</td>
-                        <td>{paciente.nome}</td>
+                      <tr key={paciente.Prontuario}>
+                        <td>{paciente.Prontuario}</td>
+                        <td>{paciente.Nome_Completo}</td>
                         <td><Button as={Link} to={`/pacientes/EditarPacientes/${paciente.id}`}><RiUserSearchLine /> Editar Paciente</Button></td>
                       </tr>
                     ))
