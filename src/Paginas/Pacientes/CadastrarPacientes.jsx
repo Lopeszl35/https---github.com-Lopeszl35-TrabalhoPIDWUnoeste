@@ -2,6 +2,9 @@ import { Card, Col, Container, Form, Row } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import React, {useState } from 'react';
 import "./CadastrarPacientes.css";
+import PacientesService from "../../services/pacientesService";
+
+const pacientesService = new PacientesService();
 
 function CadastrarPacientes() {
     const { show } = useOutletContext();
