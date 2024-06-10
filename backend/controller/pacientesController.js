@@ -33,13 +33,13 @@ class PacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
+        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
         try {
-            const paciente = new PacientesModel(Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
+            const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
             await pacienteModel.adicionar(paciente);
             return res.status(201).json({ message: 'Paciente adicionado com sucesso!' });
         } catch (error) {
-            console.log(error);
+            console.error('Erro ao adicionar paciente:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -51,13 +51,13 @@ class PacientesController {
             return res.status(400).json({ errors: errors.array() });
         }
         const { id } = req.params;  
-        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSus, Escola, Ano_Escolar, Periodo } = req.body;
+        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
         try {
-            const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSus, Escola, Ano_Escolar, Periodo);
+            const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
             await pacienteModel.atualizar(id, paciente);
             return res.status(200).json({ message: 'Paciente atualizado com sucesso!' });
         } catch (error) {
-            console.log(error);
+            console.error('Erro ao atualizar paciente:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -69,14 +69,10 @@ class PacientesController {
             await pacienteModel.deletar(id);    
             return res.status(200).json({ message: 'Paciente deletado com sucesso!' });
         } catch (error) {
-            console.log(error);
+            console.error('Erro ao deletar paciente:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
-    
-
-
-
 }
 
 module.exports = PacientesController;

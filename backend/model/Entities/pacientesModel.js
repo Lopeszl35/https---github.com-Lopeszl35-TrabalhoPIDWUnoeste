@@ -1,5 +1,6 @@
 const DataBase = require("../database");
 const moment = require('moment');
+
 const dataBase = new DataBase();
 
 class PacientesModel {
@@ -27,7 +28,7 @@ class PacientesModel {
 
     async adicionar(dadosPaciente) {
         dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
-        await dataBase.executaComandoNonQuery('INSERT INTO pacientes SET ?', dadosPaciente);
+        await dataBase.executaComandoNonQuery('INSERT INTO pacientes SET ?', [dadosPaciente]);
     }
 
     async atualizar(id, dadosPaciente) {
@@ -38,7 +39,6 @@ class PacientesModel {
     async deletar(id) {
         await dataBase.executaComandoNonQuery('DELETE FROM pacientes WHERE Prontuario = ?', [id]);
     }
-    
-} 
+}
 
 module.exports = PacientesModel;
