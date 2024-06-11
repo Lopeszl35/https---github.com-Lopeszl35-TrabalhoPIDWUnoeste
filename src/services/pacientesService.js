@@ -70,6 +70,15 @@ class PacientesService {
         const data = await response.json();
         return data;
       }
+
+    async excluirPaciente(prontuario) {
+        const response = await fetch(`${API_BASE_URL}/pacientes/${prontuario}`, {
+            method: 'DELETE',
+            }); 
+            if (!response.ok) {
+                throw new Error('Erro ao excluir o paciente');
+            }
+        }
 }  
 
 export default PacientesService;

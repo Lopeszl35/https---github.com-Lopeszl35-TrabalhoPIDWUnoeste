@@ -39,6 +39,32 @@ function Pacientes() {
     navigate(`/pacientes/EditarPacientes/${prontuario}`);
   }
 
+    /*Atualizar pacientes*/ 
+    const atualizarPacientes = async () => {
+      try {
+        const dados = await pacientesService.obterTodos();
+        setPacientes(dados);
+        setPacientesFiltrados(dados);
+      } catch (error) {
+        console.error("Erro ao obter pacientes:", error); 
+      }
+    };
+
+  /*Funcao para Excluir o Paciente */
+  const excluirPaciente = async (prontuario) => {
+    try{
+      await pacientesService.excluirPaciente(prontuario);
+      const filtrarPacientes = pacientes.filter((paciente) => paciente.Prontuario !== prontuario);
+      setPacientes(filtrarPacientes);
+      setPacientesFiltrados(filtrarPacientes);
+      setShowModalDelete(false);
+      atualizarPacientes();
+      } catch (error) {
+        console.error("Erro ao excluir paciente:", error);
+        }
+    };
+
+
   useEffect(() => {
     obterTodos();
   }, []);
@@ -46,9 +72,7 @@ function Pacientes() {
 
   useEffect(() => {
     const filteredPacientes = pacientes.filter((paciente) => {
-      if (searchType === "1") {
-        return paciente.Prontuario.toLowerCase().includes(searchQuery.toLowerCase());
-      } else if (searchType === "2") {
+        if (searchType === "2") {
         return paciente.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
@@ -83,7 +107,6 @@ function Pacientes() {
                     onChange={(e) => setSearchType(e.target.value)}
                   >
                     <option value="">Selecione</option>
-                    <option value="1">Prontuario</option>
                     <option value="2">Nome</option>
                   </Form.Select>
                   <Form.Control 
@@ -152,7 +175,7 @@ function Pacientes() {
             <Button variant="secondary" onClick={() => setShowModalDelete(false)}>
               Cancelar
             </Button>
-            <Button variant="danger">
+            <Button variant="danger" onClick={() => excluirPaciente(pacienteToDelete)}>
               Excluir
             </Button>
           </Modal.Footer>
