@@ -31,20 +31,19 @@ class PacientesModel {
         return result;
     }
 
-    async adicionar(dadosPaciente) {
+    async adicionar(dadosPaciente, connection) {
         dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
-        await dataBase.executaComandoNonQuery('INSERT INTO pacientes SET ?', [dadosPaciente]);
+        await connection.query('INSERT INTO pacientes SET ?', [dadosPaciente]);
     }
 
-    async atualizar(id, dadosPaciente) {
+    async atualizar(id, dadosPaciente, connection) {
         dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
-        await dataBase.executaComandoNonQuery('UPDATE pacientes SET ? WHERE Prontuario = ?', [dadosPaciente, id]);
+        await connection.query('UPDATE pacientes SET ? WHERE Prontuario = ?', [dadosPaciente, id]);
     }
 
     async deletar(id) {
         await dataBase.executaComandoNonQuery('DELETE FROM pacientes WHERE Prontuario = ?', [id]);
     }
-
 }
 
 module.exports = PacientesModel;

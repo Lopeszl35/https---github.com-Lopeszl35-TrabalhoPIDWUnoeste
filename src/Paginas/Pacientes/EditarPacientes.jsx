@@ -1,5 +1,5 @@
 import { Container } from "react-bootstrap";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useOutletContext, useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import "./CadastrarPacientes.css";
 import PacientesService from "../../services/pacientesService";
@@ -9,6 +9,7 @@ const pacientesService = new PacientesService();
 function EditarPacientes() {
   const { show } = useOutletContext();
   const { prontuario } = useParams();
+  const navigate = useNavigate();
 
   const [pacienteInfo, setPacienteInfo] = useState({
     nomeCompleto: '', 
@@ -70,7 +71,15 @@ function EditarPacientes() {
             nome: paciente.responsavel ? paciente.responsavel.Nome_Pai : '',
             telefone: paciente.responsavel ? paciente.responsavel.Telefone_Pai : '',
           },
-          enderecos: paciente.enderecos.length > 0 ? paciente.enderecos : [{ Logradouro: '', Numero: '', Complemento: '', Bairro: '', Cidade: '', Estado: '', CEP: '' }],
+          enderecos: paciente.enderecos.length > 0 ? paciente.enderecos.map(endereco => ({
+            logradouro: endereco.Logradouro,
+            numero: endereco.Numero,
+            complemento: endereco.Complemento,
+            bairro: endereco.Bairro,
+            cidade: endereco.Cidade,
+            estado: endereco.Estado,
+            cep: endereco.CEP
+          })) : [{ logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '' }],
           escola: paciente.Escola || '',
           anoEscolar: paciente.Ano_Escolar || '',
           periodo: paciente.Periodo || '',
@@ -124,7 +133,7 @@ function EditarPacientes() {
     }
 
     const cepRegex = /^\d{8}$/;
-    if (!pacienteInfo.cep || !cepRegex.test(pacienteInfo.cep)) {
+    if (pacienteInfo.enderecos.some(endereco => !cepRegex.test(endereco.cep))) {
       newErros.cep = 'CEP inválido. Deve conter 8 dígitos numéricos';
     }
 
@@ -132,10 +141,16 @@ function EditarPacientes() {
     return Object.keys(newErros).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Dados do paciente:', pacienteInfo);
+      try {
+        await pacientesService.atualizar(prontuario, pacienteInfo);
+        console.log('Paciente atualizado com sucesso');
+        navigate('/pacientes');
+      } catch (error) {
+        console.error('Erro ao atualizar paciente:', error);
+      }
     }
   };
 
@@ -179,13 +194,13 @@ function EditarPacientes() {
           <div className="row">
             <div className="form-group col-md-6">
               <label htmlFor="nomeMae">Nome da mãe:</label>
-              <input type="text" id="nomeMae" name="nome" value={pacienteInfo.mae.nome} onChange={(e) => handleAddressInputChange(e, 'mae')} />
+              <input type="text" id="nomeMae" name="nome" value={pacienteInfo.mae.nome} onChange={(e) => handleInputChange(e, 'mae')} />
               {erros.maeNome && <p className="erros">{erros.maeNome}</p>}
             </div>
 
             <div className="form-group col-md-6">
               <label htmlFor="telefoneMae">Telefone da mãe:</label>
-              <input type="tel" id="telefoneMae" name="telefone" value={pacienteInfo.mae.telefone} onChange={(e) => handleAddressInputChange(e, 'mae')} />
+              <input type="tel" id="telefoneMae" name="telefone" value={pacienteInfo.mae.telefone} onChange={(e) => handleInputChange(e, 'mae')} />
               {erros.telefoneMae && <p className="erros">{erros.telefoneMae}</p>}
             </div>
           </div>
@@ -193,13 +208,13 @@ function EditarPacientes() {
           <div className="row">
             <div className="form-group col-md-6">
               <label htmlFor="nomePai">Nome do pai:</label>
-              <input type="text" id="nomePai" name="nome" value={pacienteInfo.pai.nome} onChange={(e) => handleAddressInputChange(e, 'pai')} />
+              <input type="text" id="nomePai" name="nome" value={pacienteInfo.pai.nome} onChange={(e) => handleInputChange(e, 'pai')} />
               {erros.paiNome && <p className="erros">{erros.paiNome}</p>}
             </div>
 
             <div className="form-group col-md-6">
               <label htmlFor="telefonePai">Telefone do pai:</label>
-              <input type="tel" id="telefonePai" name="telefone" value={pacienteInfo.pai.telefone} onChange={(e) => handleAddressInputChange(e, 'pai')} />
+              <input type="tel" id="telefonePai" name="telefone" value={pacienteInfo.pai.telefone} onChange={(e) => handleInputChange(e, 'pai')} />
               {erros.telefonePai && <p className="erros">{erros.telefonePai}</p>}
             </div>
           </div>
@@ -210,43 +225,43 @@ function EditarPacientes() {
               <div className="row">
                 <div className="form-group col-md-6">
                   <label htmlFor="logradouro">Rua:</label>
-                  <input type="text" id="logradouro" name="logradouro" value={endereco.Logradouro} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="logradouro" name="logradouro" value={endereco.logradouro} onChange={(e) => handleAddressInputChange(e, index)} />
                 </div>
 
                 <div className="form-group col-md-6">
                   <label htmlFor="numero">Numero:</label>
-                  <input type="text" id="numero" name="numero" value={endereco.Numero} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="numero" name="numero" value={endereco.numero} onChange={(e) => handleAddressInputChange(e, index)} />
                 </div>
               </div>
 
               <div className="row">
                 <div className="form-group col-md-6">
                   <label htmlFor="complemento">Complemento:</label>
-                  <input type="text" id="complemento" name="complemento" value={endereco.Complemento} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="complemento" name="complemento" value={endereco.complemento} onChange={(e) => handleAddressInputChange(e, index)} />
                 </div>
 
                 <div className="form-group col-md-6">
                   <label htmlFor="bairro">Bairro:</label>
-                  <input type="text" id="bairro" name="bairro" value={endereco.Bairro} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="bairro" name="bairro" value={endereco.bairro} onChange={(e) => handleAddressInputChange(e, index)} />
                 </div>
               </div>
 
               <div className="row">
                 <div className="form-group col-md-6">
                   <label htmlFor="cidade">Cidade:</label>
-                  <input type="text" id="cidade" name="cidade" value={endereco.Cidade} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="cidade" name="cidade" value={endereco.cidade} onChange={(e) => handleAddressInputChange(e, index)} />
                 </div>
 
                 <div className="form-group col-md-6">
                   <label htmlFor="estado">Estado:</label>
-                  <input type="text" id="estado" name="estado" value={endereco.Estado} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="estado" name="estado" value={endereco.estado} onChange={(e) => handleAddressInputChange(e, index)} />
                 </div>
               </div>
 
               <div className="row">
                 <div className="form-group col-md-6">
                   <label htmlFor="cep">CEP:</label>
-                  <input type="text" id="cep" name="cep" value={endereco.CEP} onChange={(e) => handleAddressInputChange(e, index)} />
+                  <input type="text" id="cep" name="cep" value={endereco.cep} onChange={(e) => handleAddressInputChange(e, index)} />
                   {erros.cep && <p className="erros">{erros.cep}</p>}
                 </div>
               </div>

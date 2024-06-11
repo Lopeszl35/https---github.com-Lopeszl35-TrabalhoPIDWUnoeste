@@ -14,26 +14,21 @@ class EnderecosModel {
         this.CEP = CEP;
     }
 
-    async obterTodos() {
-        const result = await dataBase.executaComando("SELECT * FROM Enderecos");
-        return result;
-    }
-
     async obterPorProntuario(prontuario) {
-        const result = await dataBase.executaComando("SELECT * FROM Enderecos WHERE Prontuario = ?", [prontuario]);
+        const result = await dataBase.executaComando("SELECT * FROM enderecos WHERE Prontuario = ?", [prontuario]);
         return result;
     }
 
-    async adicionar(dadosEndereco) {
-        await dataBase.executaComandoNonQuery('INSERT INTO Enderecos SET ?', dadosEndereco);
+    async adicionar(dadosEndereco, connection) {
+        await connection.query('INSERT INTO enderecos SET ?', dadosEndereco);
     }
 
-    async atualizar(prontuario, dadosEndereco) {
-        await dataBase.executaComandoNonQuery('UPDATE Enderecos SET ? WHERE Prontuario = ?', [dadosEndereco, prontuario]);
+    async atualizar(prontuario, dadosEndereco, connection) {
+        await connection.query('UPDATE enderecos SET ? WHERE Prontuario = ?', [dadosEndereco, prontuario]);
     }
 
     async deletar(prontuario) {
-        await dataBase.executaComandoNonQuery('DELETE FROM Enderecos WHERE Prontuario = ?', [prontuario]);
+        await dataBase.executaComandoNonQuery('DELETE FROM enderecos WHERE Prontuario = ?', [prontuario]);
     }
 }
 

@@ -34,6 +34,36 @@ class DataBase {
             connection.release();
         }
     }
+
+    async beginTransaction() {
+        const connection = await this.pool.getConnection();
+        await connection.beginTransaction();
+        return connection;
+    }
+
+    async commitTransaction(connection) {
+        try {
+            await connection.commit();
+        } catch (error) {
+            console.error('Erro ao cometer transação:', error);
+            throw new Error('Erro ao cometer transação');
+        } finally {
+            connection.release();
+        }
+    }
+
+    async rollbackTransaction(connection) {
+        if (connection) {
+            try {
+                await connection.rollback();
+            } catch (error) {
+                console.error('Erro ao reverter transação:', error);
+                throw new Error('Erro ao reverter transação');
+            } finally {
+                connection.release();
+            }
+        }
+    }
 }
 
 module.exports = DataBase;

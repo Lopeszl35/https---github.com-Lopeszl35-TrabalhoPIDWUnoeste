@@ -2,10 +2,12 @@ const PacientesModel = require('../model/Entities/pacientesModel/pacientesModel'
 const ResponsaveisModel = require('../model/Entities/pacientesModel/responsaveisModel');
 const EnderecosModel = require('../model/Entities/pacientesModel/enderecosModel');
 const { validationResult } = require('express-validator');
+const DataBase = require('../model/database');
 
 const pacienteModel = new PacientesModel();
 const responsavelModel = new ResponsaveisModel();
 const enderecoModel = new EnderecosModel();
+const dataBase = new DataBase();
 
 class PacientesController {
 
@@ -25,13 +27,13 @@ class PacientesController {
         const { prontuario } = req.params;
         try {
             const paciente = await pacienteModel.filtrarPorProntuario(prontuario);
-            const enderecos = await enderecoModel.obterPorProntuario(prontuario);
+            const endereco = await enderecoModel.obterPorProntuario(prontuario);
             const responsavel = await responsavelModel.obterPorProntuario(prontuario);
-            console.log(`Pacientente obtido: ${paciente}, enderecos: ${enderecos}, responsavel: ${responsavel}`);
+            console.log(`Paciente obtido: ${paciente}, endereco: ${endereco}, responsavel: ${responsavel}`);
             res.status(200).json({
                 ...paciente,
-                enderecos, 
-                responsavel: responsavel 
+                endereco,
+                responsavel: responsavel
             });
         } catch (error) {
             console.log('Erro ao obter o Paciente:', error);
@@ -57,12 +59,31 @@ class PacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
+        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP } = req.body;
+        let connection;
         try {
+            connection = await dataBase.beginTransaction();
             const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
-            await pacienteModel.adicionar(paciente);
+            await pacienteModel.adicionar(paciente, connection);
+
+            if (Nome_Mae || Telefone_Mae || Nome_Pai || Telefone_Pai) {
+                const responsavel = new ResponsaveisModel(Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai);
+                responsavel.Prontuario = Prontuario;
+                await responsavelModel.adicionar(responsavel, connection);
+            }
+
+            if (Logradouro || Numero || Complemento || Bairro || Cidade || Estado || CEP) {
+                endereco.Prontuario = Prontuario;
+                const endereco = new EnderecosModel(Prontuario, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP);
+                await enderecoModel.adicionar(enderecoModelInstance, connection);
+            }
+
+            await dataBase.commitTransaction(connection);
             return res.status(201).json({ message: 'Paciente adicionado com sucesso!' });
         } catch (error) {
+            if (connection) {
+                await dataBase.rollbackTransaction(connection);
+            }
             console.error('Erro ao adicionar paciente:', error.message);
             return res.status(500).json({ message: error.message });
         }
@@ -75,12 +96,31 @@ class PacientesController {
             return res.status(400).json({ errors: errors.array() });
         }
         const { id } = req.params;
-        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo } = req.body;
+        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP } = req.body;
+        let connection;
         try {
+            connection = await dataBase.beginTransaction();
             const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
-            await pacienteModel.atualizar(id, paciente);
+            await pacienteModel.atualizar(id, paciente, connection);
+
+            if (Nome_Mae || Telefone_Mae || Nome_Pai || Telefone_Pai) {
+                const responsavel = new ResponsaveisModel(Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai);
+                responsavel.Prontuario = Prontuario;
+                await responsavelModel.atualizar(Prontuario, responsavel, connection);
+            }
+
+            if (Logradouro || Numero || Complemento || Bairro || Cidade || Estado || CEP) {
+                endereco.Prontuario = Prontuario;
+                const enderecoModelInstance = new EnderecosModel(Prontuario, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP);
+                await enderecoModel.atualizar(Prontuario, enderecoModelInstance, connection);
+            }
+
+            await dataBase.commitTransaction(connection);
             return res.status(200).json({ message: 'Paciente atualizado com sucesso!' });
         } catch (error) {
+            if (connection) {
+                await dataBase.rollbackTransaction(connection);
+            }
             console.error('Erro ao atualizar paciente:', error.message);
             return res.status(500).json({ message: error.message });
         }
