@@ -79,6 +79,8 @@ class PacientesService {
                 throw new Error('Erro ao excluir o paciente');
             }
         }
+    
+    
 }  
 
 export default PacientesService;

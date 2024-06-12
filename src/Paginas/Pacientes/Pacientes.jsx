@@ -6,6 +6,7 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import "./Pacientes.css";
 import PacientesService from "../../services/pacientesService";
 
+
 const pacientesService = new PacientesService();
 
 function Pacientes() {
@@ -17,8 +18,12 @@ function Pacientes() {
   const [searchType, setSearchType] = useState("");
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [pacienteToDelete, setPacienteToDelete] = useState(null);
+  const [erroExclusao, setErroExclusao] = useState(null);
+  const [confirmacaoExclusao, setConfirmacaoExclusao] = useState(true);
+  const [sucessoExclusao, setSucessoExclusao] = useState(null);
   const navigate = useNavigate();
   const pacientesPerPage = 10;
+  
 
   const obterTodos = async () => {
     try {
@@ -39,16 +44,16 @@ function Pacientes() {
     navigate(`/pacientes/EditarPacientes/${prontuario}`);
   }
 
-    /*Atualizar pacientes*/ 
-    const atualizarPacientes = async () => {
-      try {
-        const dados = await pacientesService.obterTodos();
-        setPacientes(dados);
-        setPacientesFiltrados(dados);
-      } catch (error) {
-        console.error("Erro ao obter pacientes:", error); 
-      }
-    };
+  /*Atualizar pacientes*/ 
+  const atualizarPacientes = async () => {
+    try {
+      const dados = await pacientesService.obterTodos();
+      setPacientes(dados);
+      setPacientesFiltrados(dados);
+    } catch (error) {
+      console.error("Erro ao obter pacientes:", error); 
+    }
+  };
 
   /*Funcao para Excluir o Paciente */
   const excluirPaciente = async (prontuario) => {
@@ -58,12 +63,13 @@ function Pacientes() {
       setPacientes(filtrarPacientes);
       setPacientesFiltrados(filtrarPacientes);
       setShowModalDelete(false);
+      setSucessoExclusao(true);
       atualizarPacientes();
       } catch (error) {
         console.error("Erro ao excluir paciente:", error);
+        setErroExclusao(true)
         }
     };
-
 
   useEffect(() => {
     obterTodos();
@@ -164,21 +170,40 @@ function Pacientes() {
         </Card>
       </Container>
 
-      {/* MODAL EXCLUIR PACIENTE */}
+      {/* MODAL EXCLUIR PACIENTE */}  
       <Modal show={showModalDelete} onHide={() => setShowModalDelete(false)}>
         <ModalBody>
-          <Modal.Header closeButton>
+          {confirmacaoExclusao && !erroExclusao && (
+          <>
+            <Modal.Header closeButton>
             <Modal.Title>Excluir Paciente</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Tem certeza que deseja excluir este paciente?</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModalDelete(false)}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={() => excluirPaciente(pacienteToDelete)}>
-              Excluir
-            </Button>
-          </Modal.Footer>
+            </Modal.Header>
+            <Modal.Body>Tem certeza que deseja excluir este paciente?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModalDelete(false)}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={() => excluirPaciente(pacienteToDelete)}>
+                Excluir
+              </Button>
+            </Modal.Footer>
+          </>
+        )} 
+            {erroExclusao && (
+            <div className="alert alert-danger" role="alert">
+              {erroExclusao}
+              <Modal.Body>Não foi possivel realizar a exclusão</Modal.Body>
+              <button className="btn-ok" onClick={() => setErroExclusao(null)}>OK</button>
+            </div>
+          )}
+          {sucessoExclusao && (
+            <div className="alert alert-success" role="alert">
+                {sucessoExclusao}
+                <Modal.Body>Paciente excluido com sucesso !!!</Modal.Body>
+                <button className="btn-ok" onClick={() => setSucessoExclusao(null)}>OK</button>
+            </div>
+          )}
         </ModalBody>
       </Modal>
     </div>
