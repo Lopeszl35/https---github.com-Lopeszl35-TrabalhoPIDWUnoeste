@@ -18,37 +18,49 @@ function EditarPacientes() {
     rg: '',
     mae: { nome: '', telefone: '' },
     pai: { nome: '', telefone: '' },
-    enderecos: [{ logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '' }],
+    endereco: { logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '' },
     escola: '',
     anoEscolar: '',
     periodo: '',
     autorizacaoImagem: false,
     cns: '',
-    cidade: '',
-    cep: '',
   });
 
   const handleInputChange = (e) => {
-    setPacienteInfo({
-      ...pacienteInfo,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setPacienteInfo((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleAddressInputChange = (e, index) => {
-    const updatedEnderecos = [...pacienteInfo.enderecos];
-    updatedEnderecos[index][e.target.name] = e.target.value;
-    setPacienteInfo({
-      ...pacienteInfo,
-      enderecos: updatedEnderecos,
-    });
+  const handleAddressInputChange = (e) => {
+    const { name, value } = e.target;
+    setPacienteInfo((prevState) => ({
+      ...prevState,
+      endereco: {
+        ...prevState.endereco,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleResponsavelInputChange = (e, tipoResponsavel) => {
+    const { name, value } = e.target;
+    setPacienteInfo((prevState) => ({
+      ...prevState,
+      [tipoResponsavel]: {
+        ...prevState[tipoResponsavel],
+        [name]: value,
+      },
+    }));
   };
 
   const handleCheckboxChange = (e) => {
-    setPacienteInfo({
-      ...pacienteInfo,
+    setPacienteInfo((prevState) => ({
+      ...prevState,
       autorizacaoImagem: e.target.checked,
-    });
+    }));
   };
 
   const [erros, setErros] = useState({});
@@ -57,36 +69,37 @@ function EditarPacientes() {
     const fetchPaciente = async () => {
       try {
         const paciente = await pacientesService.obterPorProntuario(prontuario);
-        setPacienteInfo({
-          nomeCompleto: paciente.Nome_Completo || '',
-          dataNasc: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
-          cpf: paciente.CPF || '',
-          rg: paciente.RG || '',
-          cns: paciente.CartaoSUS || '',
-          mae: {
-            nome: paciente.responsavel ? paciente.responsavel.Nome_Mae : '',
-            telefone: paciente.responsavel ? paciente.responsavel.Telefone_Mae : '',
-          },
-          pai: {
-            nome: paciente.responsavel ? paciente.responsavel.Nome_Pai : '',
-            telefone: paciente.responsavel ? paciente.responsavel.Telefone_Pai : '',
-          },
-          enderecos: paciente.enderecos.length > 0 ? paciente.enderecos.map(endereco => ({
-            logradouro: endereco.Logradouro,
-            numero: endereco.Numero,
-            complemento: endereco.Complemento,
-            bairro: endereco.Bairro,
-            cidade: endereco.Cidade,
-            estado: endereco.Estado,
-            cep: endereco.CEP
-          })) : [{ logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '' }],
-          escola: paciente.Escola || '',
-          anoEscolar: paciente.Ano_Escolar || '',
-          periodo: paciente.Periodo || '',
-          autorizacaoImagem: paciente.Autorizacao_Imagem || false,
-          cidade: paciente.Cidade || '',
-          cep: paciente.CEP || '',
-        });
+        console.log(`Paciente: `, paciente);
+        if (paciente) {
+          setPacienteInfo({
+            nomeCompleto: paciente.Nome_Completo || '',
+            dataNasc: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
+            cpf: paciente.CPF || '',
+            rg: paciente.RG || '',
+            cns: paciente.CartaoSUS || '',
+            mae: {
+              nome: paciente.responsavel?.Nome_Mae || '',
+              telefone: paciente.responsavel?.Telefone_Mae || '',
+            },
+            pai: {
+              nome: paciente.responsavel?.Nome_Pai || '',
+              telefone: paciente.responsavel?.Telefone_Pai || '',
+            },
+            endereco: {
+              logradouro: paciente.endereco[0]?.Logradouro || '',
+              numero: paciente.endereco[0]?.Numero || '',
+              complemento: paciente.endereco[0]?.Complemento || '',
+              bairro: paciente.endereco[0]?.Bairro || '',
+              cidade: paciente.endereco[0]?.Cidade || '',
+              estado: paciente.endereco[0]?.Estado || '',
+              cep: paciente.endereco[0]?.CEP || '',
+            },
+            escola: paciente.Escola || '',
+            anoEscolar: paciente.Ano_Escolar || '',
+            periodo: paciente.Periodo || '',
+            autorizacaoImagem: paciente.Autorizacao_Imagem || false,
+          });
+        }
       } catch (error) {
         console.error('Erro ao obter paciente:', error);
       }
@@ -133,7 +146,7 @@ function EditarPacientes() {
     }
 
     const cepRegex = /^\d{8}$/;
-    if (pacienteInfo.enderecos.some(endereco => !cepRegex.test(endereco.cep))) {
+    if (!cepRegex.test(pacienteInfo.endereco.cep)) {
       newErros.cep = 'CEP inválido. Deve conter 8 dígitos numéricos';
     }
 
@@ -194,13 +207,13 @@ function EditarPacientes() {
           <div className="row">
             <div className="form-group col-md-6">
               <label htmlFor="nomeMae">Nome da mãe:</label>
-              <input type="text" id="nomeMae" name="nome" value={pacienteInfo.mae.nome} onChange={(e) => handleInputChange(e, 'mae')} />
+              <input type="text" id="nomeMae" name="nome" value={pacienteInfo.mae.nome} onChange={(e) => handleResponsavelInputChange(e, 'mae')} />
               {erros.maeNome && <p className="erros">{erros.maeNome}</p>}
             </div>
 
             <div className="form-group col-md-6">
               <label htmlFor="telefoneMae">Telefone da mãe:</label>
-              <input type="tel" id="telefoneMae" name="telefone" value={pacienteInfo.mae.telefone} onChange={(e) => handleInputChange(e, 'mae')} />
+              <input type="tel" id="telefoneMae" name="telefone" value={pacienteInfo.mae.telefone} onChange={(e) => handleResponsavelInputChange(e, 'mae')} />
               {erros.telefoneMae && <p className="erros">{erros.telefoneMae}</p>}
             </div>
           </div>
@@ -208,65 +221,63 @@ function EditarPacientes() {
           <div className="row">
             <div className="form-group col-md-6">
               <label htmlFor="nomePai">Nome do pai:</label>
-              <input type="text" id="nomePai" name="nome" value={pacienteInfo.pai.nome} onChange={(e) => handleInputChange(e, 'pai')} />
+              <input type="text" id="nomePai" name="nome" value={pacienteInfo.pai.nome} onChange={(e) => handleResponsavelInputChange(e, 'pai')} />
               {erros.paiNome && <p className="erros">{erros.paiNome}</p>}
             </div>
 
             <div className="form-group col-md-6">
               <label htmlFor="telefonePai">Telefone do pai:</label>
-              <input type="tel" id="telefonePai" name="telefone" value={pacienteInfo.pai.telefone} onChange={(e) => handleInputChange(e, 'pai')} />
+              <input type="tel" id="telefonePai" name="telefone" value={pacienteInfo.pai.telefone} onChange={(e) => handleResponsavelInputChange(e, 'pai')} />
               {erros.telefonePai && <p className="erros">{erros.telefonePai}</p>}
             </div>
           </div>
 
           <h2>Endereço</h2>
-          {pacienteInfo.enderecos.map((endereco, index) => (
-            <div key={index} className="endereco-section">
-              <div className="row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="logradouro">Rua:</label>
-                  <input type="text" id="logradouro" name="logradouro" value={endereco.logradouro} onChange={(e) => handleAddressInputChange(e, index)} />
-                </div>
-
-                <div className="form-group col-md-6">
-                  <label htmlFor="numero">Numero:</label>
-                  <input type="text" id="numero" name="numero" value={endereco.numero} onChange={(e) => handleAddressInputChange(e, index)} />
-                </div>
+          <div className="endereco-section">
+            <div className="row">
+              <div className="form-group col-md-6">
+                <label htmlFor="logradouro">Rua:</label>
+                <input type="text" id="logradouro" name="logradouro" value={pacienteInfo.endereco.logradouro} onChange={handleAddressInputChange} />
               </div>
 
-              <div className="row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="complemento">Complemento:</label>
-                  <input type="text" id="complemento" name="complemento" value={endereco.complemento} onChange={(e) => handleAddressInputChange(e, index)} />
-                </div>
-
-                <div className="form-group col-md-6">
-                  <label htmlFor="bairro">Bairro:</label>
-                  <input type="text" id="bairro" name="bairro" value={endereco.bairro} onChange={(e) => handleAddressInputChange(e, index)} />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="cidade">Cidade:</label>
-                  <input type="text" id="cidade" name="cidade" value={endereco.cidade} onChange={(e) => handleAddressInputChange(e, index)} />
-                </div>
-
-                <div className="form-group col-md-6">
-                  <label htmlFor="estado">Estado:</label>
-                  <input type="text" id="estado" name="estado" value={endereco.estado} onChange={(e) => handleAddressInputChange(e, index)} />
-                </div>
-              </div>
-
-              <div className="row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="cep">CEP:</label>
-                  <input type="text" id="cep" name="cep" value={endereco.cep} onChange={(e) => handleAddressInputChange(e, index)} />
-                  {erros.cep && <p className="erros">{erros.cep}</p>}
-                </div>
+              <div className="form-group col-md-6">
+                <label htmlFor="numero">Numero:</label>
+                <input type="text" id="numero" name="numero" value={pacienteInfo.endereco.numero} onChange={handleAddressInputChange} />
               </div>
             </div>
-          ))}
+
+            <div className="row">
+              <div className="form-group col-md-6">
+                <label htmlFor="complemento">Complemento:</label>
+                <input type="text" id="complemento" name="complemento" value={pacienteInfo.endereco.complemento} onChange={handleAddressInputChange} />
+              </div>
+
+              <div className="form-group col-md-6">
+                <label htmlFor="bairro">Bairro:</label>
+                <input type="text" id="bairro" name="bairro" value={pacienteInfo.endereco.bairro} onChange={handleAddressInputChange} />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="form-group col-md-6">
+                <label htmlFor="cidade">Cidade:</label>
+                <input type="text" id="cidade" name="cidade" value={pacienteInfo.endereco.cidade} onChange={handleAddressInputChange} />
+              </div>
+
+              <div className="form-group col-md-6">
+                <label htmlFor="estado">Estado:</label>
+                <input type="text" id="estado" name="estado" value={pacienteInfo.endereco.estado} onChange={handleAddressInputChange} />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="form-group col-md-6">
+                <label htmlFor="cep">CEP:</label>
+                <input type="text" id="cep" name="cep" value={pacienteInfo.endereco.cep} onChange={handleAddressInputChange} />
+                {erros.cep && <p className="erros">{erros.cep}</p>}
+              </div>
+            </div>
+          </div>
 
           <h2>Escolaridade</h2>
 

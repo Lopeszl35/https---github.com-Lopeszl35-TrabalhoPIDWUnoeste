@@ -33,7 +33,7 @@ class PacientesController {
             res.status(200).json({
                 ...paciente,
                 endereco,
-                responsavel: responsavel
+                responsavel: responsavel.length > 0 ? responsavel[0] : null // Acessando o primeiro objeto do array de responsáveis
             });
         } catch (error) {
             console.log('Erro ao obter o Paciente:', error);
@@ -65,19 +65,17 @@ class PacientesController {
             connection = await dataBase.beginTransaction();
             const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
             await pacienteModel.adicionar(paciente, connection);
-
+    
             if (Nome_Mae || Telefone_Mae || Nome_Pai || Telefone_Pai) {
-                const responsavel = new ResponsaveisModel(Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai);
-                responsavel.Prontuario = Prontuario;
+                const responsavel = new ResponsaveisModel(Prontuario, Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai);
                 await responsavelModel.adicionar(responsavel, connection);
             }
-
+    
             if (Logradouro || Numero || Complemento || Bairro || Cidade || Estado || CEP) {
-                endereco.Prontuario = Prontuario;
                 const endereco = new EnderecosModel(Prontuario, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP);
-                await enderecoModel.adicionar(enderecoModelInstance, connection);
+                await enderecoModel.adicionar(endereco, connection);
             }
-
+    
             await dataBase.commitTransaction(connection);
             return res.status(201).json({ message: 'Paciente adicionado com sucesso!' });
         } catch (error) {
@@ -88,7 +86,6 @@ class PacientesController {
             return res.status(500).json({ message: error.message });
         }
     }
-
     async atualizar(req, res) {
         console.log('Atualizando o Paciente...');
         const errors = validationResult(req);
@@ -110,7 +107,6 @@ class PacientesController {
             }
 
             if (Logradouro || Numero || Complemento || Bairro || Cidade || Estado || CEP) {
-                endereco.Prontuario = Prontuario;
                 const enderecoModelInstance = new EnderecosModel(Prontuario, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP);
                 await enderecoModel.atualizar(Prontuario, enderecoModelInstance, connection);
             }

@@ -20,15 +20,11 @@ class EnderecosModel {
     }
 
     async adicionar(dadosEndereco, connection) {
-        await connection.query('INSERT INTO enderecos SET ?', dadosEndereco);
+        await connection.query('INSERT INTO enderecos SET ?', [dadosEndereco]);
     }
 
     async atualizar(prontuario, dadosEndereco, connection) {
         await connection.query('UPDATE enderecos SET ? WHERE Prontuario = ?', [dadosEndereco, prontuario]);
-    }
-
-    async deletar(prontuario) {
-        await dataBase.executaComandoNonQuery('DELETE FROM enderecos WHERE Prontuario = ?', [prontuario]);
     }
 }
 
