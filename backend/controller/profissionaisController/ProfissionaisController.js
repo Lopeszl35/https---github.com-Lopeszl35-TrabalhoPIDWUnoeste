@@ -12,7 +12,7 @@ class ProfissionaisController {
     async obterTodos(req, res) {
         console.log('Obtendo todos os Profissionais...');
         try {
-            const profissionais = await profissionaisModel.obterTodos();
+            const profissionais = await profissionalModel.obterTodos();
             if (!profissionais) {
                 return res.status(404).json({ message: 'Profissionais não encontrados' });
             }
@@ -26,7 +26,7 @@ class ProfissionaisController {
     async filtrarPorEspecialidade(req, res) {
         const { especialidade } = req.params;
         try {
-            const profissionais = await profissionaisModel.filtrarPorEspecialidade(especialidade);
+            const profissionais = await profissionalModel.filtrarPorEspecialidade(especialidade);
             if (!profissionais) {
                 return res.status(404).json({ message: `Profissionais da especialidade ${especialidade} não encontrados` });
             }

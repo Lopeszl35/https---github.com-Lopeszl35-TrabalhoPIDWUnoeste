@@ -5,106 +5,53 @@ import Row from "react-bootstrap/Row";
 import { Link, useOutletContext } from "react-router-dom";
 import { Container, Card, Alert } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft, FaCheckCircle } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Servicos.css";
 import ServicosService from "../../services/servicosService";
+import ProfissionaisService from "../../services/profissionaisService";
 
+const profissionaisService = new ProfissionaisService();
 const servicosService = new ServicosService();
 
 function ServicosNovo() {
   const { show } = useOutletContext();
 
+  const initialFormState = {
+    descricao: "",
+    dataCadastro: "",
+    nomeServico: "",
+    status: "Ativo",
+    profissional: "",
+  };
+
   const [showMensagem, setShowMensagem] = useState(false);
   const [validated, setValidated] = useState(false);
-  const [descricao, setDescricao] = useState("");
-  const [dataCadastro, setDataCadastro] = useState("");
-  const [nomeServico, setNomeServico] = useState("");
-  const [status, setStatus] = useState("Ativo");
-  const [profissional, setProfissional] = useState("");
+  const [formState, setFormState] = useState(initialFormState);
+  const [profissionais, setProfissionais] = useState([]);
   const [errors, setErrors] = useState({});
 
-  const handleDescricaoChange = (e) => {
-    const value = e.target.value;
-    setDescricao(value);
-    if (value && value.length <= 100) {
-      setErrors((prev) => ({ ...prev, descricao: null }));
-    } else {
-      if (value === "") {
-        setErrors((prev) => ({
-          ...prev,
-          descricao: "O campo descrição é obrigatório",
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          descricao: "A descrição deve ter no máximo 100 caracteres",
-        }));
-      }
-    }
-  };
-
-  const handleDataCadastroChange = (e) => {
-    const value = e.target.value;
-    setDataCadastro(value);
-    if (value && new Date(value) <= new Date()) {
-      setErrors((prev) => ({ ...prev, dataCadastro: null }));
-    } else {
-      if (value === "") {
-        setErrors((prev) => ({
-          ...prev,
-          dataCadastro: "A data de cadastro é obrigatória",
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          dataCadastro: "Não é permitido uma data de cadastro futura",
-        }));
-      }
-    }
-  };
-
-  const handleNomeServicoChange = (e) => {
-    const value = e.target.value;
-    setNomeServico(value);
-    if (value && value.length <= 100) {
-      setErrors((prev) => ({ ...prev, nomeServico: null }));
-    } else {
-      if (value === "") {
-        setErrors((prev) => ({
-          ...prev,
-          nomeServico: "O campo nome do serviço é obrigatório",
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          nomeServico: "O nome do serviço deve ter no máximo 100 caracteres",
-        }));
-      }
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
   };
 
   const handleProfissionalChange = (e) => {
     const value = e.target.value;
-    setProfissional(value);
-    if (value && value.length <= 100) {
+    setFormState((prevState) => ({
+      ...prevState,
+      profissional: value,
+    }));
+    if (value) {
       setErrors((prev) => ({ ...prev, profissional: null }));
     } else {
-      if (value === "") {
-        setErrors((prev) => ({
-          ...prev,
-          profissional: "O campo profissional responsável é obrigatório",
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          profissional: "O nome do profissional deve ter no máximo 100 caracteres",
-        }));
-      }
+      setErrors((prev) => ({
+        ...prev,
+        profissional: "O campo profissional responsável é obrigatório",
+      }));
     }
-  };
-
-  const handleStatusChange = (e) => {
-    setStatus(e.target.value);
   };
 
   const validarForm = async (event) => {
@@ -116,44 +63,43 @@ function ServicosNovo() {
       event.stopPropagation();
     }
 
-    if (!descricao) {
+    if (!formState.descricao) {
       newErrors.descricao = "O campo descrição é obrigatório";
-    } else if (descricao.length > 100) {
+    } else if (formState.descricao.length > 100) {
       newErrors.descricao = "A descrição deve ter no máximo 100 caracteres";
     }
 
-    if (!dataCadastro) {
+    if (!formState.dataCadastro) {
       newErrors.dataCadastro = "A data de cadastro é obrigatória";
-    } else if (new Date(dataCadastro) > new Date()) {
+    } else if (new Date(formState.dataCadastro) > new Date()) {
       newErrors.dataCadastro = "Não é permitido uma data de cadastro futura";
     }
 
-    if (!nomeServico) {
+    if (!formState.nomeServico) {
       newErrors.nomeServico = "O campo nome do serviço é obrigatório";
-    } else if (nomeServico.length > 100) {
+    } else if (formState.nomeServico.length > 100) {
       newErrors.nomeServico = "O nome do serviço deve ter no máximo 100 caracteres";
     }
 
-    if (!profissional) {
+    if (!formState.profissional) {
       newErrors.profissional = "O campo profissional responsável é obrigatório";
-    } else if (profissional.length > 100) {
-      newErrors.profissional = "O nome do profissional deve ter no máximo 100 caracteres";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
       const novoServico = {
-        Nome_Servico: nomeServico,
-        Descricao: descricao,
-        Data_De_Cadastro: dataCadastro,
-        Status: status,
-        Profissional_Responsavel: profissional,
+        Nome_Servico: formState.nomeServico,
+        Descricao: formState.descricao,
+        Data_De_Cadastro: formState.dataCadastro,
+        Status: formState.status,
+        Profissional_Responsavel: formState.profissional,
       };
 
       try {
         await servicosService.adicionar(novoServico);
         setShowMensagem(true);
+        setFormState(initialFormState); // Reset form fields
       } catch (error) {
         if (error.message === 'Profissional não encontrado') {
           newErrors.profissional = 'Profissional não encontrado';
@@ -166,7 +112,20 @@ function ServicosNovo() {
     }
 
     setValidated(true);
-  }
+  };
+
+  const obterProfissionais = async () => {
+    try {
+      const profissionais = await profissionaisService.obterTodos();
+      setProfissionais(profissionais);
+    } catch (error) {
+      console.error('Erro ao obter profissionais:', error);
+    }
+  };
+
+  useEffect(() => {
+    obterProfissionais();
+  }, []);
 
   return (
     <>
@@ -183,10 +142,10 @@ function ServicosNovo() {
                   <Form.Control
                     type="text"
                     placeholder="Serviço"
-                    id="nomeServico"
+                    name="nomeServico"
                     required
-                    value={nomeServico}
-                    onChange={handleNomeServicoChange}
+                    value={formState.nomeServico}
+                    onChange={handleInputChange}
                     isInvalid={!!errors.nomeServico}
                   />
                   <Form.Control.Feedback type="invalid">
@@ -197,10 +156,10 @@ function ServicosNovo() {
                 <Form.Group as={Col} controlId="status">
                   <Form.Label className="fw-bold">Status</Form.Label>
                   <Form.Select
-                    id="status"
+                    name="status"
                     required
-                    value={status}
-                    onChange={handleStatusChange}
+                    value={formState.status}
+                    onChange={handleInputChange}
                     isInvalid={!!errors.status}
                   >
                     <option value="Ativo">Ativo</option>
@@ -217,10 +176,10 @@ function ServicosNovo() {
                 <Form.Control
                   type="text"
                   placeholder="Descrição"
-                  id="descricao"
+                  name="descricao"
                   required
-                  value={descricao}
-                  onChange={handleDescricaoChange}
+                  value={formState.descricao}
+                  onChange={handleInputChange}
                   isInvalid={!!errors.descricao}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -230,15 +189,20 @@ function ServicosNovo() {
 
               <Form.Group className="mb-3" controlId="profissional">
                 <Form.Label className="fw-bold">Profissional Responsável</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Profissional"
-                  id="profissional"
+                <Form.Select
+                  name="profissional"
                   required
-                  value={profissional}
+                  value={formState.profissional}
                   onChange={handleProfissionalChange}
                   isInvalid={!!errors.profissional}
-                />
+                >
+                  <option value="">Selecione</option> {/* Opção padrão */}
+                  {profissionais.map((profissional) => (
+                    <option key={profissional.id} value={profissional.id}>
+                      {profissional.Nome_Completo}
+                    </option>
+                  ))}
+                </Form.Select>
                 <Form.Control.Feedback type="invalid">
                   {errors.profissional}
                 </Form.Control.Feedback>
@@ -250,10 +214,10 @@ function ServicosNovo() {
                   <Form.Control
                     type="date"
                     placeholder="Data Cadastro"
-                    id="dataCadastro"
+                    name="dataCadastro"
                     required
-                    value={dataCadastro}
-                    onChange={handleDataCadastroChange}
+                    value={formState.dataCadastro}
+                    onChange={handleInputChange}
                     isInvalid={!!errors.dataCadastro}
                   />
                   <Form.Control.Feedback type="invalid">
