@@ -1,9 +1,9 @@
 import { Container } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import React, { useState } from 'react';
-import "./CadastrarUsuarios.css";
+import "./CadastrarProfissional.css";
 
-function CadastrarUsuarios() {
+function CadastrarProfissionais() {
     const { show } = useOutletContext();
 
     const [usuarioInfo, setUsuarioInfo] = useState({
@@ -21,7 +21,6 @@ function CadastrarUsuarios() {
         tipoUsuario: 'profissionalSaude',
         areaAtuacao: '',
         registroProfissional: '',
-        tipoUsuarioComum: 'usuarioPadrao',
     });
 
     const handleInputChange = (e) => {
@@ -68,6 +67,12 @@ function CadastrarUsuarios() {
         if (usuarioInfo.tipoUsuario === 'profissionalSaude' && !usuarioInfo.registroProfissional) {
             newErros.registroProfissional = 'Registro profissional é obrigatório';
         }
+        if (!usuarioInfo.email) {
+            newErros.email = 'Email é obrigatório';
+        }
+        if (!usuarioInfo.senha) {
+            newErros.senha = 'Senha é obrigatória';
+        }
         setErros(newErros);
         return Object.keys(newErros).length === 0;
     };
@@ -82,7 +87,7 @@ function CadastrarUsuarios() {
     return (
         <div>
             <Container className={`container-usuario ${show ? "container-usuario-active" : ""}`}>
-                <h1>Cadastrar Usuário</h1>
+                <h1>Cadastrar Profissional</h1>
                 <form className="form-container" onSubmit={handleSubmit}>
                     <h2>Informações Pessoais</h2>
                     <label htmlFor="nomeCompleto">Nome completo:</label>
@@ -90,12 +95,14 @@ function CadastrarUsuarios() {
                     {erros.nomeCompleto && <p className="erros">{erros.nomeCompleto}</p>}
 
                     <div className="row">
-                        <div className="form-group col-md-6">
+                        <div className="form-group col-md-6 input-group">
                             <label htmlFor="dataNasc">Data de nascimento:</label>
+                            <div className="input-group">
                             <input type="date" id="dataNasc" name="dataNasc" value={usuarioInfo.dataNasc} onChange={handleInputChange} />
                             {erros.dataNasc && <p className="erros">{erros.dataNasc}</p>}
+                            </div>
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="form-group col-md-6 input-group">
                             <label htmlFor="cpf">CPF:</label>
                             <input type="text" id="cpf" name="cpf" value={usuarioInfo.cpf} onChange={handleInputChange} />
                             {erros.cpf && <p className="erros">{erros.cpf}</p>}
@@ -103,7 +110,7 @@ function CadastrarUsuarios() {
                     </div>
 
                     <div className="row">
-                        <div className="form-group col-md-6">
+                        <div className="form-group col-md-6 input-group">
                             <label htmlFor="rg">RG:</label>
                             <input type="text" id="rg" name="rg" value={usuarioInfo.rg} onChange={handleInputChange} />
                             {erros.rg && <p className="erros">{erros.rg}</p>}
@@ -138,101 +145,40 @@ function CadastrarUsuarios() {
                             <label htmlFor="estado">Estado:</label>
                             <input type="text" id="estado" name="estado" value={usuarioInfo.endereco.estado} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
                         </div>
-                        <div className="form-group col-md-6">
+                        <div className="form-group col-md-6 input-group">
                             <label htmlFor="cep">CEP:</label>
                             <input type="text" id="cep" name="cep" value={usuarioInfo.endereco.cep} onChange={handleInputChange} />
                             {erros.cep && <p className="erros">{erros.cep}</p>}
                         </div>
                     </div>
+                    
+                    <h2>Informações de Contato</h2>
+                    <label htmlFor="email">Email:</label>
+                    <input type="email" id="email" name="email" value={usuarioInfo.email} onChange={handleInputChange} />
+                    {erros.email && <p className="erros">{erros.email}</p>}
 
-                    <h2>Tipo de Usuário</h2>
-                    <div className="form-group">
-                        <div className="label-radio">
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="tipoUsuario"
-                                    value="profissionalSaude"
-                                    checked={usuarioInfo.tipoUsuario === 'profissionalSaude'}
-                                    onChange={handleInputChange}
-                                />
-                                Profissional de Saúde
-                            </label>
-                        </div>
-                        <div className="label-radio">
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="tipoUsuario"
-                                    value="usuarioComum"
-                                    checked={usuarioInfo.tipoUsuario === 'usuarioComum'}
-                                    onChange={handleInputChange}
-                                />
-                                Usuário Comum
-                            </label>
-                        </div>
-                    </div>
+                    <label htmlFor="telefone">Telefone:</label>
+                    <input type="text" id="telefone" name="telefone" value={usuarioInfo.telefone} onChange={handleInputChange} />
 
-                    {usuarioInfo.tipoUsuario === 'profissionalSaude' && (
-                        <>
-                            <div className="form-group">
-                                <label htmlFor="areaAtuacao">Área de Atuação:</label>
-                                <select
-                                    id="areaAtuacao"
-                                    name="areaAtuacao"
-                                    value={usuarioInfo.areaAtuacao}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="">Selecione</option>
-                                    <option value="medico">Médico</option>
-                                    <option value="psicologo">Psicólogo</option>
-                                    <option value="nutricionista">Nutricionista</option>
-                                    <option value="enfermeiro">Enfermeiro</option>
-                                    {/* Adicione outras áreas conforme necessário */}
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="registroProfissional">Registro Profissional:</label>
-                                <input
-                                    type="text"
-                                    id="registroProfissional"
-                                    name="registroProfissional"
-                                    value={usuarioInfo.registroProfissional}
-                                    onChange={handleInputChange}
-                                />
-                                {erros.registroProfissional && <p className="erros">{erros.registroProfissional}</p>}
-                            </div>
-                        </>
-                    )}
+                    <h2>Informações Profissionais</h2>
+                    <label htmlFor="areaAtuacao">Área de Atuação:</label>
+                    <select id="areaAtuacao" name="areaAtuacao" value={usuarioInfo.areaAtuacao} onChange={handleInputChange}>
+                        <option value="">Selecione</option>
+                        <option value="medico">Médico</option>
+                        <option value="psicologo">Psicólogo</option>
+                        <option value="nutricionista">Nutricionista</option>
+                        <option value="enfermeiro">Enfermeiro</option>
+                        {/* Adicione outras áreas conforme necessário */}
+                    </select>
 
-                    {usuarioInfo.tipoUsuario === 'usuarioComum' && (
-                        <div className="form-group">
-                            <div className="label-radio">
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="tipoUsuarioComum"
-                                        value="administrador"
-                                        checked={usuarioInfo.tipoUsuarioComum === 'administrador'}
-                                        onChange={handleInputChange}
-                                    />
-                                    Administrador
-                                </label>
-                            </div>
-                            <div className="label-radio">
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="tipoUsuarioComum"
-                                        value="usuarioPadrao"
-                                        checked={usuarioInfo.tipoUsuarioComum === 'usuarioPadrao'}
-                                        onChange={handleInputChange}
-                                    />
-                                    Usuário Padrão
-                                </label>
-                            </div>
-                        </div>
-                    )}
+                    <label htmlFor="registroProfissional">Registro Profissional:</label>
+                    <input type="text" id="registroProfissional" name="registroProfissional" value={usuarioInfo.registroProfissional} onChange={handleInputChange} />
+                    {erros.registroProfissional && <p className="erros">{erros.registroProfissional}</p>}
+
+                    <h2>Acesso ao Sistema</h2>
+                    <label htmlFor="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" value={usuarioInfo.senha} onChange={handleInputChange} />
+                    {erros.senha && <p className="erros">{erros.senha}</p>}
 
                     <div className="botao">
                         <button type="submit">Cadastrar</button>
@@ -242,4 +188,4 @@ function CadastrarUsuarios() {
         </div>
     );
 }
-export default CadastrarUsuarios;
+export default CadastrarProfissionais;

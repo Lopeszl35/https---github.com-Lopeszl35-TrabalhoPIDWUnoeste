@@ -157,6 +157,11 @@ button:hover {
   margin-bottom: 10px;
 }
 
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
 .erros {
   color: #ff0000;
   font-size: 0.9rem;

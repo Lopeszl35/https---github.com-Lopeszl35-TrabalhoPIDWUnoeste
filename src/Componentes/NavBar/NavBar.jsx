@@ -54,9 +54,9 @@ function NavBar({ onLogout }) {
           </Link>
         </li>
         <li className="nav-link">
-          <Link to="/usuarios">
+          <Link to="/Profissionais">
             <LiaUserLockSolid Key />
-            <span className="mx-2">Usuários</span>
+            <span className="mx-2">Profissionais</span>
           </Link>
         </li>
         <li className="nav-link">
