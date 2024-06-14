@@ -6,7 +6,6 @@ import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
 import ModalConfirmDelete from "./ModalConfirmDelete";
 import ModalEditarServico from "./ModalEditarServico";
-import ModalAtribuirServico from "./ModalAtribuirServico";
 
 const servicosService = new ServicosService();
 
@@ -20,14 +19,8 @@ function Servicos() {
   const [servicosFiltrados, setServicosFiltrados] = useState([]);
   const [servicoEditando, setServicoEditando] = useState(null);
   const [showEditarModal, setShowEditarModal] = useState(false);
-  const [showAtribuirModal, setShowAtribuirModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [pacienteSelecionado, setPacienteSelecionado] = useState("");
-  const [pacientes] = useState([
-    { id: 1, nome: "Paciente 1" },
-    { id: 2, nome: "Paciente 2" },
-    { id: 3, nome: "Paciente 3" },
-  ]);
 
   const listarServicos = async () => {
     try {
@@ -61,12 +54,6 @@ function Servicos() {
     } catch (error) {
       console.error('Erro ao obter servico para edição:', error);
     }
-  };
-
-  const abrirModalAtribuir = (id) => {
-    const servico = listaServicos.find((s) => s.ID_Servico === id);
-    setServicoEditando({ ...servico });
-    setShowAtribuirModal(true);
   };
 
   const handleExcluir = async (id) => {
@@ -135,16 +122,6 @@ function Servicos() {
           console.error('Erro ao atualizar o serviço:', error);
         }
       }
-    }
-  };
-
-  const handleAtribuirServico = () => {
-    if (pacienteSelecionado) {
-      alert(`Serviço ${servicoEditando.Nome_Servico} atribuído ao paciente ${pacienteSelecionado}.`);
-      setShowAtribuirModal(false);
-      setPacienteSelecionado("");
-    } else {
-      alert("Selecione um paciente.");
     }
   };
 
@@ -287,12 +264,6 @@ function Servicos() {
                       >
                         <FaTrashAlt /> 
                       </Button>
-                      <Button
-                        className="btn btn-info m-1 w-100 "
-                        onClick={() => abrirModalAtribuir(servico.ID_Servico)}
-                      >
-                        <FaUserPlus />
-                      </Button>
                     </td>
                   </tr>
                 ))
@@ -318,16 +289,6 @@ function Servicos() {
         handleDescricaoChange={handleDescricaoChange}
         handleProfissionalChange={handleProfissionalChange}
         errors={errors}
-      />
-
-      <ModalAtribuirServico
-        show={showAtribuirModal}
-        setShowAtribuirModal={setShowAtribuirModal}
-        handleAtribuirServico={handleAtribuirServico}
-        servicoEditando={servicoEditando}
-        pacientes={pacientes}
-        pacienteSelecionado={pacienteSelecionado}
-        setPacienteSelecionado={setPacienteSelecionado}
       />
     </main>
   );
