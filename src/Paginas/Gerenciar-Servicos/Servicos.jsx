@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Servicos.css";
 import { Container, Table, Button, Row, Col, Form, Card } from "react-bootstrap";
-import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt, FaUserPlus } from "react-icons/fa";
+import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
 import ModalConfirmDelete from "./ModalConfirmDelete";
@@ -20,7 +20,6 @@ function Servicos() {
   const [servicoEditando, setServicoEditando] = useState(null);
   const [showEditarModal, setShowEditarModal] = useState(false);
   const [errors, setErrors] = useState({});
-  const [pacienteSelecionado, setPacienteSelecionado] = useState("");
 
   const listarServicos = async () => {
     try {
