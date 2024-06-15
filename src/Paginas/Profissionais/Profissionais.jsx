@@ -5,9 +5,11 @@ import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import ProfissionaisService from "../../services/profissionaisService";
 import ModalExcluir from './ModalExcluir';
+import ModalEditar from './ModalEditar';
 import './Profissionais.css';
 
 const profissionaisService = new ProfissionaisService();
+
 function Profissionais() {
   const { show } = useOutletContext();
   const [profissionais, setProfissionais] = useState([]);
@@ -16,9 +18,11 @@ function Profissionais() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("");
   const [modalDelete, setModalDelete] = useState(false);
+  const [modalEditarShow, setModalEditarShow] = useState(false);
+  const [profissionalEditando, setProfissionalEditando] = useState(null);
+  const [profissionalADeletar, setProfissionalADeletar] = useState(null);
   const profissionaisPerPage = 10;
 
-  //Métodos do banco de dados
   const obterProfissionais = async () => {
     try {
       const profissionais = await profissionaisService.obterTodos();
@@ -27,7 +31,7 @@ function Profissionais() {
     } catch (error) {
       console.error('Erro ao obter profissionais:', error);
     }
-  }
+  };
 
   useEffect(() => {
     obterProfissionais();
@@ -36,9 +40,9 @@ function Profissionais() {
   useEffect(() => {
     const filteredProfissionais = profissionais.filter((profissional) => {
       if (searchType === "1") {
-        return profissional.registro.toLowerCase().includes(searchQuery.toLowerCase());
+        return profissional.registroProfissional.toLowerCase().includes(searchQuery.toLowerCase());
       } else if (searchType === "2") {
-        return profissional.nome.toLowerCase().includes(searchQuery.toLowerCase());
+        return profissional.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
     });
@@ -53,6 +57,38 @@ function Profissionais() {
 
   const fecharModalDelete = () => {
     setModalDelete(false);
+    setProfissionalADeletar(null);
+  };
+
+  const fecharModalEditar = () => {
+    setModalEditarShow(false);
+    setProfissionalEditando(null);
+  };
+
+  const abrirModalExcluir = (id) => {
+    setProfissionalADeletar(id);
+    setModalDelete(true);
+  };
+
+  const editarProfissional = async (id) => {
+    try {
+      const profissionalEditado = await profissionaisService.obterPorId(id);
+      setProfissionalEditando(profissionalEditado);
+      setModalEditarShow(true);
+    } catch (error) {
+      console.error('Erro ao editar profissional:', error);
+    }
+  };
+
+  const salvarEdicaoProfissional = async (profissionalEditado) => {
+    try {
+      await profissionaisService.editarProfissional(profissionalEditado.ID_Profissional, profissionalEditado);
+      obterProfissionais();
+      fecharModalEditar();
+      alert('Profissional editado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao salvar edição do profissional:', error);
+    }
   };
 
   return (
@@ -95,7 +131,7 @@ function Profissionais() {
               <Table striped bordered hover className="mt-4">
                 <thead>
                   <tr>
-                    <th>Registro</th>
+                    <th>ID</th>
                     <th>Nome</th>
                     <th>Email</th>
                     <th>Telefone</th>
@@ -106,7 +142,7 @@ function Profissionais() {
                 <tbody>
                   {currentProfissionais.length <= 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center">Nenhum profissional encontrado</td>
+                      <td colSpan="6" className="text-center">Nenhum profissional encontrado</td>
                     </tr>
                   ) : (
                     currentProfissionais.map((profissional) => (
@@ -117,12 +153,9 @@ function Profissionais() {
                         <td>{profissional.Telefone}</td>
                         <td>{profissional.registroProfissional}</td>
                         <td className="d-flex flex-row gap-2">
-                          <Button as={Link} to={`/profissionais/${profissional.id}`}><FaEdit /></Button>
-                          <Button className='btn-danger' onClick={() => setModalDelete(true)}
-                          ><FaTrashAlt></FaTrashAlt>
-                          </Button>
+                          <Button className='btn-primary' onClick={() => editarProfissional(profissional.ID_Profissional)}><FaEdit /></Button>
+                          <Button className='btn-danger' onClick={() => abrirModalExcluir(profissional.ID_Profissional)}><FaTrashAlt /></Button>
                         </td>
-                        
                       </tr>
                     ))
                   )}
@@ -143,9 +176,17 @@ function Profissionais() {
       </Container>
 
       <ModalExcluir 
-      modalDelete={modalDelete} 
-      setShow={setModalDelete}
-      fecharModalDelete={fecharModalDelete}
+        modalDelete={modalDelete} 
+        setShow={setModalDelete}
+        fecharModalDelete={fecharModalDelete}
+        profissionalADeletar={profissionalADeletar}
+      />
+
+      <ModalEditar 
+        modalEditarShow={modalEditarShow} 
+        fecharModalEditar={fecharModalEditar}
+        profissionalEditando={profissionalEditando}
+        salvarEdicaoProfissional={salvarEdicaoProfissional}
       />
     </section>
   );
