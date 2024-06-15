@@ -40,20 +40,21 @@ class ProfissionaisController {
     async adicionar(req, res) {
         console.log('Adicionando Profissional...');
         console.log(req.body);
+        console.log(JSON.stringify(req.body));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { nomeCompleto, cpf, rg, dataNasc, telefone, email, especialidade, registroProfissional, senha } = req.body;
+        const { Nome_Completo, CPF, RG, Data_Nascimento, Telefone, Email, Especialidade, registroProfissional, Senha } = req.body;
         let connection;
         try {
             connection = await dataBase.beginTransaction();
 
-            const profissional = new ProfissionaisModel(nomeCompleto, cpf, rg, dataNasc, telefone, email, especialidade, registroProfissional);
+            const profissional = new ProfissionaisModel(Nome_Completo, CPF, RG, Data_Nascimento, Telefone, Email, Especialidade, registroProfissional);
             const profissionalId = await profissionalModel.adicionar(profissional, connection);
 
-            const usuario = new UsuariosModel(profissionalId, email, senha, 'profissionalSaude');
+            const usuario = new UsuariosModel(profissionalId, Email, Senha, 'profissionalSaude');
             await usuarioModel.adicionar(usuario, connection);
 
             await dataBase.commitTransaction(connection);
@@ -73,21 +74,18 @@ class ProfissionaisController {
         let connection;
         try {
             connection = await dataBase.beginTransaction();
-            const profissional = await profissionalModel.obterPorId(id);//Obtendo dados do profissional
-            const usuario = await usuarioModel.obterPorIdProfissional(id);//Obtendo dados do usuario
+            const profissional = await profissionalModel.obterPorId(id);
+            const usuario = await usuarioModel.obterPorIdProfissional(id);
             if (!profissional || !usuario) {
                 return res.status(404).json({ message: `Profissional ou Usuario não encontrado
                     Profissional: ${profissional} | Usuario: ${usuario}` });
             } else {
-                // Criando novo profissional com os novos dados e editando os dados do profissional
                 const novoProfissional = { ...profissional, Email, Telefone };
                 await profissionalModel.editarProfissional(novoProfissional, id, connection);
 
-                // Criando novo usuario com os novos dados e editando os dados do usuario
-                const novoUsuario = { ...usuario, Email};
+                const novoUsuario = { ...usuario, Email };
                 await usuarioModel.editarUsuarioPeloProfissional(novoUsuario, connection);
 
-                // Commitando as transações
                 await dataBase.commitTransaction(connection);
                 return res.status(200).json({ message: 'Profissional editado com sucesso!' });
             }
@@ -129,9 +127,7 @@ class ProfissionaisController {
         try {
             const profissional = await profissionalModel.obterPorId(id);
             if (!profissional) {
-
-                return res.status(404).json({ message: `Profissional não encontrado
-                    Profissional: ${profissional}` });
+                return res.status(404).json({ message: `Profissional não encontrado` });
             }
             return res.status(200).json(profissional);
         } catch (error) {
@@ -139,9 +135,6 @@ class ProfissionaisController {
             return res.status(500).json({ message: error.message });
         }
     }
-
-    
-
 }
 
 module.exports = ProfissionaisController;
