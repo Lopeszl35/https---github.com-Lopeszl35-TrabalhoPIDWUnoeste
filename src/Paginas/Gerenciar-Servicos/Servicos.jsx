@@ -33,6 +33,8 @@ function Servicos() {
           return { ...servico, Nome_Profissional: 'Erro ao obter nome' };
         }
       }));
+
+      servicosComNomes.sort((a, b) => a.Nome_Servico.localeCompare(b.Nome_Servico));
       setListaServicos(servicosComNomes);
       setServicosFiltrados(servicosComNomes);
     } catch (error) {
@@ -97,6 +99,7 @@ function Servicos() {
                 }
             }));
 
+            servicosComNomes.sort((a, b) => a.Nome_Servico.localeCompare(b.Nome_Servico));
             setServicosFiltrados(servicosComNomes);
         } else {
             listarServicos();

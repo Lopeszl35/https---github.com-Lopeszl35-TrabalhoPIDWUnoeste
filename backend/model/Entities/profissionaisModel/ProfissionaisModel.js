@@ -26,6 +26,21 @@ class ProfissionaisModel {
         return listaProfissionais;
     }
 
+    async obterPorId(id) {
+        const result = await dataBase.executaComando("SELECT * FROM profissionais WHERE ID_Profissional = ?", [id]);
+        return result[0];
+    }
+
+    async editarProfissional(profissional, id, connection) {
+        profissional.Data_Nascimento = moment(profissional.Data_Nascimento).format('YYYY-MM-DD');
+        const result = await dataBase.executaComando("UPDATE Profissionais SET ? WHERE ID_Profissional = ?", [profissional, id]);
+        return result;
+    }
+
+    async excluirProfissional(id, connection) {
+        await connection.query('DELETE FROM Profissionais WHERE ID_Profissional = ?', [id]);
+    }
+
     async filtrarPorEspecialidade(especialidade) {
         try {
             const result = await dataBase.executaComando("SELECT * FROM Profissionais WHERE LOWER(Especialidade) LIKE LOWER(?)", [`%${especialidade}%`]);

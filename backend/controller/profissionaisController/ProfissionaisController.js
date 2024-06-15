@@ -39,6 +39,7 @@ class ProfissionaisController {
 
     async adicionar(req, res) {
         console.log('Adicionando Profissional...');
+        console.log(req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
@@ -65,6 +66,82 @@ class ProfissionaisController {
             return res.status(500).json({ message: error.message });
         }
     }
+
+    async editarProfissional(req, res) {
+        const { id } = req.params;
+        const { Email, Telefone } = req.body;
+        let connection;
+        try {
+            connection = await dataBase.beginTransaction();
+            const profissional = await profissionalModel.obterPorId(id);//Obtendo dados do profissional
+            const usuario = await usuarioModel.obterPorIdProfissional(id);//Obtendo dados do usuario
+            if (!profissional || !usuario) {
+                return res.status(404).json({ message: `Profissional ou Usuario não encontrado
+                    Profissional: ${profissional} | Usuario: ${usuario}` });
+            } else {
+                // Criando novo profissional com os novos dados e editando os dados do profissional
+                const novoProfissional = { ...profissional, Email, Telefone };
+                await profissionalModel.editarProfissional(novoProfissional, id, connection);
+
+                // Criando novo usuario com os novos dados e editando os dados do usuario
+                const novoUsuario = { ...usuario, Email};
+                await usuarioModel.editarUsuarioPeloProfissional(novoUsuario, connection);
+
+                // Commitando as transações
+                await dataBase.commitTransaction(connection);
+                return res.status(200).json({ message: 'Profissional editado com sucesso!' });
+            }
+        } catch (error) {
+            if (connection) {
+                await dataBase.rollbackTransaction(connection);
+            }
+            console.error('Erro ao editar o profissional:', error.message);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async excluirUsuario(req, res) {
+        const { id } = req.params;
+        let connection;
+        try {
+            connection = await dataBase.beginTransaction();
+            const profissional = await profissionalModel.obterPorId(id);
+            const usuario = await usuarioModel.obterPorIdProfissional(id);
+            if (!profissional || !usuario) {
+                return res.status(404).json({ message: `Profissional ou Usuario não encontrado
+                    Profissional: ${profissional} | Usuario: ${usuario}` });
+            }
+            await usuarioModel.excluirUsuarioPeloProfissional(id, connection);
+            await profissionalModel.excluirProfissional(id, connection);
+            await dataBase.commitTransaction(connection);
+            return res.status(200).json({ message: 'Profissional excluído com sucesso!' });
+        } catch (error) {
+            if (connection) {
+                await dataBase.rollbackTransaction(connection);
+            }
+            console.error('Erro ao excluir o profissional:', error.message);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async obterPorId(req, res) {
+        const { id } = req.params;
+        try {
+            const profissional = await profissionalModel.obterPorId(id);
+            if (!profissional) {
+
+                return res.status(404).json({ message: `Profissional não encontrado
+                    Profissional: ${profissional}` });
+            }
+            return res.status(200).json(profissional);
+        } catch (error) {
+            console.error('Erro ao obter o profissional:', error.message);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    
+
 }
 
 module.exports = ProfissionaisController;

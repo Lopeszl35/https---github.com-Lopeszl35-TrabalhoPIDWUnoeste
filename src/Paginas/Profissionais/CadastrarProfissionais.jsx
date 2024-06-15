@@ -1,28 +1,51 @@
-import { Container } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
+import { FaCheckCircle } from "react-icons/fa";
 import React, { useState } from 'react';
 import "./CadastrarProfissional.css";
+import ProfissionaisService from "../../services/profissionaisService";
+
+const profissionaisService = new ProfissionaisService();
 
 function CadastrarProfissionais() {
     const { show } = useOutletContext();
 
+    const [showMensagem, setShowMensagem] = useState(false);
+    const [erros, setErros] = useState({});
     const [usuarioInfo, setUsuarioInfo] = useState({
         nomeCompleto: '', 
         dataNasc: '', 
         cpf: '', 
         rg: '',
-        endereco: {numero: '', rua: '', bairro: '', estado: '', cidade: '', cep: ''},
         email: '',
         telefone: '',
-        cargo: '',
-        dataInicio: '',
-        acesso: '',
-        senha: '',
-        tipoUsuario: 'profissionalSaude',
-        areaAtuacao: '',
+        especialidade: '',
         registroProfissional: '',
+        senha: '',
     });
 
+    //Métodos do banco de dados
+    const cadastrarProfissional = async () => {
+        try {
+            await profissionaisService.cadastrarProfissional(usuarioInfo);
+            setUsuarioInfo({
+                nomeCompleto: '',
+                dataNasc: '',
+                cpf: '',
+                rg: '',
+                email: '',
+                telefone: '',
+                especialidade: '',
+                registroProfissional: '',
+                senha: '',
+            });
+            setShowMensagem(true); // Mostrar mensagem de sucesso após limpar o formulário
+        } catch (error) {
+            console.error("Erro ao cadastrar profissional:", error);
+        } 
+    }
+
+    //Métodos do formulário
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setUsuarioInfo({
@@ -31,21 +54,9 @@ function CadastrarProfissionais() {
         });
     };
 
-    const handleAddressInputChange = (e, addressType) => {
-        const { name, value } = e.target;
-        setUsuarioInfo((prevState) => ({
-            ...prevState,
-            [addressType]: {
-                ...prevState[addressType],
-                [name]: value,
-            },
-        }));
-    };
-
-    const [erros, setErros] = useState({});
-
     const validate = () => {
         const newErros = {};
+
         if (!usuarioInfo.nomeCompleto) {
             newErros.nomeCompleto = 'Nome completo é obrigatório';
         }
@@ -60,19 +71,30 @@ function CadastrarProfissionais() {
         if (!usuarioInfo.rg || !rgRegex.test(usuarioInfo.rg)) {
             newErros.rg = 'RG inválido. Deve conter apenas dígitos numéricos';
         }
-        const cepRegex = /^\d{8}$/;
-        if (!usuarioInfo.endereco.cep || !cepRegex.test(usuarioInfo.endereco.cep)) {
-            newErros.cep = 'CEP inválido. Deve conter 8 dígitos numéricos';
+        if (!usuarioInfo.email) {
+            newErros.email = 'Email é obrigatório';
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(usuarioInfo.email)) {
+                newErros.email = 'Email inválido';
+            }
+        }
+        const telefoneRegex = /^\d{10,11}$/;
+        if (usuarioInfo.telefone && !telefoneRegex.test(usuarioInfo.telefone)) {
+            newErros.telefone = 'Telefone inválido. Deve conter 10 ou 11 dígitos numéricos';
+        }
+        if (!usuarioInfo.especialidade) {
+            newErros.especialidade = 'Especialidade é obrigatória';
         }
         if (usuarioInfo.tipoUsuario === 'profissionalSaude' && !usuarioInfo.registroProfissional) {
             newErros.registroProfissional = 'Registro profissional é obrigatório';
         }
-        if (!usuarioInfo.email) {
-            newErros.email = 'Email é obrigatório';
-        }
         if (!usuarioInfo.senha) {
             newErros.senha = 'Senha é obrigatória';
+        } else if (usuarioInfo.senha.length < 6) {
+            newErros.senha = 'A senha deve ter pelo menos 6 caracteres';
         }
+
         setErros(newErros);
         return Object.keys(newErros).length === 0;
     };
@@ -80,7 +102,7 @@ function CadastrarProfissionais() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            console.log('Dados do usuário:', usuarioInfo);
+            cadastrarProfissional();
         }
     };
 
@@ -98,8 +120,8 @@ function CadastrarProfissionais() {
                         <div className="form-group col-md-6 input-group">
                             <label htmlFor="dataNasc">Data de nascimento:</label>
                             <div className="input-group">
-                            <input type="date" id="dataNasc" name="dataNasc" value={usuarioInfo.dataNasc} onChange={handleInputChange} />
-                            {erros.dataNasc && <p className="erros">{erros.dataNasc}</p>}
+                                <input type="date" id="dataNasc" name="dataNasc" value={usuarioInfo.dataNasc} onChange={handleInputChange} />
+                                {erros.dataNasc && <p className="erros">{erros.dataNasc}</p>}
                             </div>
                         </div>
                         <div className="form-group col-md-6 input-group">
@@ -116,41 +138,6 @@ function CadastrarProfissionais() {
                             {erros.rg && <p className="erros">{erros.rg}</p>}
                         </div>
                     </div>
-
-                    <h2>Endereço</h2>
-                    <div className="row">
-                        <div className="form-group col-md-6">
-                            <label htmlFor="rua">Rua:</label>
-                            <input type="text" id="rua" name="rua" value={usuarioInfo.endereco.rua} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-                        </div>
-                        <div className="form-group col-md-6">
-                            <label htmlFor="numero">Numero:</label>
-                            <input type="text" id="numero" name="numero" value={usuarioInfo.endereco.numero} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="form-group col-md-6">
-                            <label htmlFor="bairro">Bairro:</label>
-                            <input type="text" id="bairro" name="bairro" value={usuarioInfo.endereco.bairro} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-                        </div>
-                        <div className="form-group col-md-6">
-                            <label htmlFor="cidade">Cidade:</label>
-                            <input type="text" id="cidade" name="cidade" value={usuarioInfo.endereco.cidade} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="form-group col-md-6">
-                            <label htmlFor="estado">Estado:</label>
-                            <input type="text" id="estado" name="estado" value={usuarioInfo.endereco.estado} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-                        </div>
-                        <div className="form-group col-md-6 input-group">
-                            <label htmlFor="cep">CEP:</label>
-                            <input type="text" id="cep" name="cep" value={usuarioInfo.endereco.cep} onChange={handleInputChange} />
-                            {erros.cep && <p className="erros">{erros.cep}</p>}
-                        </div>
-                    </div>
                     
                     <h2>Informações de Contato</h2>
                     <label htmlFor="email">Email:</label>
@@ -159,17 +146,19 @@ function CadastrarProfissionais() {
 
                     <label htmlFor="telefone">Telefone:</label>
                     <input type="text" id="telefone" name="telefone" value={usuarioInfo.telefone} onChange={handleInputChange} />
+                    {erros.telefone && <p className="erros">{erros.telefone}</p>}
 
                     <h2>Informações Profissionais</h2>
-                    <label htmlFor="areaAtuacao">Área de Atuação:</label>
-                    <select id="areaAtuacao" name="areaAtuacao" value={usuarioInfo.areaAtuacao} onChange={handleInputChange}>
+                    <label htmlFor="especialidade">Especialidade:</label>
+                    <select id="especialidade" name="especialidade" value={usuarioInfo.especialidade} onChange={handleInputChange}>
                         <option value="">Selecione</option>
                         <option value="medico">Médico</option>
                         <option value="psicologo">Psicólogo</option>
                         <option value="nutricionista">Nutricionista</option>
                         <option value="enfermeiro">Enfermeiro</option>
-                        {/* Adicione outras áreas conforme necessário */}
+                        {/* Adicione outras especialidades conforme necessário */}
                     </select>
+                    {erros.especialidade && <p className="erros">{erros.especialidade}</p>}
 
                     <label htmlFor="registroProfissional">Registro Profissional:</label>
                     <input type="text" id="registroProfissional" name="registroProfissional" value={usuarioInfo.registroProfissional} onChange={handleInputChange} />
@@ -183,6 +172,19 @@ function CadastrarProfissionais() {
                     <div className="botao">
                         <button type="submit">Cadastrar</button>
                     </div>
+
+                    <Alert
+                        show={showMensagem}
+                        variant="success"
+                        className="mt-3"
+                        dismissible
+                        onClose={() => setShowMensagem(false)}
+                    >
+                        <Alert.Heading>
+                            <FaCheckCircle className="me-2" />
+                            Profissional Cadastrado!
+                        </Alert.Heading>
+                    </Alert>
                 </form>
             </Container>
         </div>

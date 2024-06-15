@@ -3,9 +3,11 @@ import { Card, Col, Container, Form, Row, Button, Table, Pagination } from "reac
 import { useOutletContext, Link } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import ProfissionaisService from "../../services/profissionaisService";
 import ModalExcluir from './ModalExcluir';
 import './Profissionais.css';
 
+const profissionaisService = new ProfissionaisService();
 function Profissionais() {
   const { show } = useOutletContext();
   const [profissionais, setProfissionais] = useState([]);
@@ -15,6 +17,21 @@ function Profissionais() {
   const [searchType, setSearchType] = useState("");
   const [modalDelete, setModalDelete] = useState(false);
   const profissionaisPerPage = 10;
+
+  //Métodos do banco de dados
+  const obterProfissionais = async () => {
+    try {
+      const profissionais = await profissionaisService.obterTodos();
+      setProfissionais(profissionais);
+      setProfissionaisFiltrados(profissionais);
+    } catch (error) {
+      console.error('Erro ao obter profissionais:', error);
+    }
+  }
+
+  useEffect(() => {
+    obterProfissionais();
+  }, []);
 
   useEffect(() => {
     const filteredProfissionais = profissionais.filter((profissional) => {
@@ -80,6 +97,8 @@ function Profissionais() {
                   <tr>
                     <th>Registro</th>
                     <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
                     <th>Registro Profissional</th>
                     <th>Ações</th>
                   </tr>
@@ -94,7 +113,9 @@ function Profissionais() {
                       <tr key={profissional.ID_Profissional}>
                         <td>{profissional.ID_Profissional}</td>
                         <td>{profissional.Nome_Completo}</td>
-                        <td>{profissional.RegistroProfissional}</td>
+                        <td>{profissional.Email}</td>
+                        <td>{profissional.Telefone}</td>
+                        <td>{profissional.registroProfissional}</td>
                         <td className="d-flex flex-row gap-2">
                           <Button as={Link} to={`/profissionais/${profissional.id}`}><FaEdit /></Button>
                           <Button className='btn-danger' onClick={() => setModalDelete(true)}
