@@ -26,6 +26,7 @@ function Profissionais() {
   const obterProfissionais = async () => {
     try {
       const profissionais = await profissionaisService.obterTodos();
+      profissionais.sort((a, b) => a.Nome_Completo.localeCompare(b.Nome_Completo));
       setProfissionais(profissionais);
       setProfissionaisFiltrados(profissionais);
     } catch (error) {
@@ -48,6 +49,7 @@ function Profissionais() {
       }
       return true;
     });
+    filteredProfissionais.sort((a, b) => a.Nome_Completo.localeCompare(b.Nome_Completo));
     setProfissionaisFiltrados(filteredProfissionais);
     setCurrentPage(1);
   }, [searchQuery, searchType, profissionais]);

@@ -50,6 +50,7 @@
   font-weight: bold;
   margin-top: 3.9em;
   position: fixed;
+  z-index: 1000;
 }
 
 .nav-link a {
@@ -63,7 +64,7 @@
 
 .logo-container {
   margin-top: auto;
-  margin-bottom: 2.8em;
+  margin-bottom: 4em;
   padding: 20px;
 }
 
