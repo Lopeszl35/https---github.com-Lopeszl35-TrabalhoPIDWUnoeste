@@ -1,10 +1,10 @@
 .container-pacientes {
-    margin: 4em 0 0 10em;
+    margin: 4em 0 0 20em;
     width: 100vh;
   }
   
   .container-pacientes-active {
-    margin: 4em 0 0 16em;
+    margin: 4em 0 0 20em;
     transition: 0.5s;
   }
 
@@ -105,12 +105,19 @@ button[type="submit"]:hover {
   width: 100%;
 }
 
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Mensagens de erro */
 
 .erros {
   color: #ff0000;
   font-size: 0.9rem;
   margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .checkbox{
