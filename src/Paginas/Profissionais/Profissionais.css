@@ -1,24 +1,30 @@
 .container-profissionais {
-    margin: 4em 0 0 10em;
+  margin: 4em 0 0 10em;
 }
 
 .container-profissionais-active {
-    margin: 4em 0 0 16em;
-    transition: 0.5s;
+  margin: 4em 0 0 16em;
+  transition: 0.5s;
 }
 
 .card-lista-profissionais {
-    width: 140vh;
-  }
+  width: 140vh;
+}
 
 .busca {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1em;
-  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}
 
 .button-cadastro-profissional {
-    background-color: #3734EB;
-    border-color: #3734EB;
-  }
+  background-color: #3734EB;
+  border-color: #3734EB;
+}
+
+.detalhes-profissional {
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+}

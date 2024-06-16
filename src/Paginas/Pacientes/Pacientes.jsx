@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Col, Container, Form, Row, Button, Table, Pagination, Modal, ModalBody } from "react-bootstrap";
+import { Accordion, Card, Col, Container, Form, Row, Button, Table, Pagination, Modal, ModalBody } from "react-bootstrap";
 import { useOutletContext, Link, useNavigate } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import "./Pacientes.css";
 import PacientesService from "../../services/pacientesService";
-
 
 const pacientesService = new PacientesService();
 
@@ -23,7 +22,6 @@ function Pacientes() {
   const [sucessoExclusao, setSucessoExclusao] = useState(null);
   const navigate = useNavigate();
   const pacientesPerPage = 10;
-  
 
   const obterTodos = async () => {
     try {
@@ -44,7 +42,6 @@ function Pacientes() {
     navigate(`/pacientes/EditarPacientes/${prontuario}`);
   }
 
-  /*Atualizar pacientes*/ 
   const atualizarPacientes = async () => {
     try {
       const dados = await pacientesService.obterTodos();
@@ -55,7 +52,6 @@ function Pacientes() {
     }
   };
 
-  /*Funcao para Excluir o Paciente */
   const excluirPaciente = async (prontuario) => {
     try{
       await pacientesService.excluirPaciente(prontuario);
@@ -65,20 +61,19 @@ function Pacientes() {
       setShowModalDelete(false);
       setSucessoExclusao(true);
       atualizarPacientes();
-      } catch (error) {
-        console.error("Erro ao excluir paciente:", error);
-        setErroExclusao(true)
-        }
-    };
+    } catch (error) {
+      console.error("Erro ao excluir paciente:", error);
+      setErroExclusao(true)
+    }
+  };
 
   useEffect(() => {
     obterTodos();
   }, []);
  
-
   useEffect(() => {
     const filteredPacientes = pacientes.filter((paciente) => {
-        if (searchType === "2") {
+      if (searchType === "2") {
         return paciente.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
@@ -129,33 +124,43 @@ function Pacientes() {
               </Col>
             </Row>
             <Row>
-              <Table striped bordered hover className="mt-4">
-                <thead>
-                  <tr>
-                    <th>Prontuário</th>
-                    <th>Nome</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentPacientes.length <= 0 ? (
-                    <tr>
-                      <td colSpan="3" className="text-center">Nenhum paciente encontrado</td>
-                    </tr>
-                  ) : (
-                    currentPacientes.map((paciente) => (
-                      <tr key={paciente.Prontuario}>
-                        <td>{paciente.Prontuario}</td>
-                        <td>{paciente.Nome_Completo}</td>
-                        <td className='d-flex flex-row gap-2'>
-                          <Button onClick={() => handleEdit(paciente.Prontuario)}><FaEdit /> </Button>
+              <Accordion>
+                {currentPacientes.length <= 0 ? (
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Nenhum paciente encontrado</Accordion.Header>
+                  </Accordion.Item>
+                ) : (
+                  currentPacientes.map((paciente) => (
+                    <Accordion.Item eventKey={paciente.Prontuario} key={paciente.Prontuario}>
+                      <Accordion.Header>
+                        {paciente.Nome_Completo} - {paciente.Prontuario}
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row>
+                          <Col md={4}>
+                            <p><strong>Prontuário:</strong> {paciente.Prontuario}</p>
+                            <p><strong>Nome:</strong> {paciente.Nome_Completo}</p>
+                            <p><strong>Data de Nascimento:</strong> {paciente.Data_Nascimento}</p>
+                          </Col>
+                          <Col md={4}>
+                            <p><strong>CPF:</strong> {paciente.CPF}</p>
+                            <p><strong>RG:</strong> {paciente.RG}</p>
+                            <p><strong>Email:</strong> {paciente.Email}</p>
+                          </Col>
+                          <Col md={4}>
+                            <p><strong>Telefone:</strong> {paciente.Telefone}</p>
+                            <p><strong>Endereço:</strong> {paciente.Endereco}</p>
+                          </Col>
+                        </Row>
+                        <div className="d-flex flex-row gap-2">
+                          <Button className='btn-primary' onClick={() => handleEdit(paciente.Prontuario)}><FaEdit /></Button>
                           <Button className='btn-danger' onClick={() => showDelete(paciente.Prontuario)}><FaTrashAlt /></Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
+                        </div>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  ))
+                )}
+              </Accordion>
             </Row>
             <Row>
               <Pagination className="justify-content-center mt-3">

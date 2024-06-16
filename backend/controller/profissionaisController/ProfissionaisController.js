@@ -46,15 +46,15 @@ class ProfissionaisController {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { Nome_Completo, CPF, RG, Data_Nascimento, Telefone, Email, Especialidade, registroProfissional, Senha } = req.body;
+        const { nomeCompleto, dataNasc, cpf, rg, email, telefone, especialidade, registroProfissional, senha } = req.body;
         let connection;
         try {
             connection = await dataBase.beginTransaction();
 
-            const profissional = new ProfissionaisModel(Nome_Completo, CPF, RG, Data_Nascimento, Telefone, Email, Especialidade, registroProfissional);
+            const profissional = new ProfissionaisModel(nomeCompleto, cpf, rg, dataNasc, telefone, email, especialidade, registroProfissional);
             const profissionalId = await profissionalModel.adicionar(profissional, connection);
 
-            const usuario = new UsuariosModel(profissionalId, Email, Senha, 'profissionalSaude');
+            const usuario = new UsuariosModel(profissionalId, email, senha, 'profissionalSaude');
             await usuarioModel.adicionar(usuario, connection);
 
             await dataBase.commitTransaction(connection);
@@ -70,7 +70,7 @@ class ProfissionaisController {
 
     async editarProfissional(req, res) {
         const { id } = req.params;
-        const { Email, Telefone } = req.body;
+        const { Nome_Completo, Email, Telefone, registroProfissional } = req.body;
         let connection;
         try {
             connection = await dataBase.beginTransaction();
@@ -80,7 +80,7 @@ class ProfissionaisController {
                 return res.status(404).json({ message: `Profissional ou Usuario não encontrado
                     Profissional: ${profissional} | Usuario: ${usuario}` });
             } else {
-                const novoProfissional = { ...profissional, Email, Telefone };
+                const novoProfissional = { ...profissional, Nome_Completo, Email, Telefone, registroProfissional };
                 await profissionalModel.editarProfissional(novoProfissional, id, connection);
 
                 const novoUsuario = { ...usuario, Email };

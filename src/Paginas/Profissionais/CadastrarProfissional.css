@@ -59,7 +59,7 @@ input[type="checkbox"] {
 }
 
 button[type="submit"] {
-  background-color: #2EED36;
+  background-color: #0e7914;
   color: #fff;
   padding: 7px 20px;
   border: none;
@@ -132,25 +132,6 @@ button[type="submit"]:hover {
   font-size: 12px;
 }
 
-.botao {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
 .form-group div {
   display: flex;
   align-items: center;
@@ -174,8 +155,3 @@ button:hover {
   align-items: center;
 }
 
-.botao {
-  display: flex;
-  flex-direction: column;
-  margin-left: 85%;
-}

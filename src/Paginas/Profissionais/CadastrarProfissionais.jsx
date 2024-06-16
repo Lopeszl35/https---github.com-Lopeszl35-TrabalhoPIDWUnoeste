@@ -170,7 +170,7 @@ function CadastrarProfissionais() {
                     {erros.senha && <p className="erros">{erros.senha}</p>}
 
                     <div className="botao">
-                        <button type="submit">Cadastrar</button>
+                        <button type="submit" className="d-flex justify-content-center">Cadastrar</button>
                     </div>
 
                     <Alert

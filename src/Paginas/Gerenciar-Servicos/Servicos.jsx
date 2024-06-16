@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import "./Servicos.css";
-import { Container, Table, Button, Row, Col, Form, Card } from "react-bootstrap";
+import { Accordion, Container, Table, Button, Row, Col, Form, Card } from "react-bootstrap";
 import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
 import ModalConfirmDelete from "./ModalConfirmDelete";
 import ModalEditarServico from "./ModalEditarServico";
+import moment from "moment";
 
 const servicosService = new ServicosService();
 
@@ -230,48 +230,41 @@ function Servicos() {
         </Container>
         <Container>
           <h2>Serviços Cadastrados</h2>
-          <Table striped bordered hover className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Status</th>
-                <th>Profissional Responsável</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {servicosFiltrados.length <= 0 ? (
-                <tr>
-                  <td colSpan={6}>Nenhum serviço encontrado</td>
-                </tr>
-              ) : (
-                servicosFiltrados.map((servico) => (
-                  <tr key={servico.ID_Servico}>
-                    <td>{servico.ID_Servico}</td>
-                    <td>{servico.Nome_Servico}</td>
-                    <td>{servico.Descricao}</td>
-                    <td>{servico.Status}</td>
-                    <td>{servico.Nome_Profissional}</td>
-                    <td className="d-flex flex-row">
-                      <Button onClick={() => abrirModalEdicao(servico.ID_Servico)}
-                        className="btn btn-primary m-1 w-100 "
-                      >
-                        <FaEdit /> 
-                      </Button>
-                      <Button
-                        className="btn btn-danger m-1 w-100 "
-                        onClick={() => abrirModalConfirmacao(servico.ID_Servico)}
-                      >
-                        <FaTrashAlt /> 
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
+          <Accordion>
+            {servicosFiltrados.length <= 0 ? (
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Nenhum serviço encontrado</Accordion.Header>
+              </Accordion.Item>
+            ) : (
+              servicosFiltrados.map((servico) => (
+                <Accordion.Item eventKey={servico.ID_Servico} key={servico.ID_Servico}>
+                  <Accordion.Header>
+                    {servico.Nome_Servico} - {servico.Nome_Profissional}
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <Row>
+                      <Col md={4}>
+                        <p><strong>ID:</strong> {servico.ID_Servico}</p>
+                        <p><strong>Nome:</strong> {servico.Nome_Servico}</p>
+                      </Col>
+                      <Col md={4}>
+                        <p><strong>Descrição:</strong> {servico.Descricao}</p>
+                        <p><strong>Status:</strong> {servico.Status}</p>
+                      </Col>
+                      <Col md={4}>
+                        <p><strong>Profissional Responsável:</strong> {servico.Nome_Profissional}</p>
+                        <p><strong>Data Cadastro:</strong> {moment(servico.Data_De_Cadastro).format('DD/MM/YYYY')}</p>
+                      </Col>
+                    </Row>
+                    <div className="d-flex flex-row gap-2">
+                      <Button className='btn-primary' onClick={() => abrirModalEdicao(servico.ID_Servico)}><FaEdit /></Button>
+                      <Button className='btn-danger' onClick={() => abrirModalConfirmacao(servico.ID_Servico)}><FaTrashAlt /></Button>
+                    </div>
+                  </Accordion.Body>
+                </Accordion.Item>
+              ))
+            )}
+          </Accordion>
         </Container>
       </section>
 

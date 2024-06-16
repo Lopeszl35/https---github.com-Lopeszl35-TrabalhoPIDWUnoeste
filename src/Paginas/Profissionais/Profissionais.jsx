@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Col, Container, Form, Row, Button, Table, Pagination } from "react-bootstrap";
+import { Accordion, Card, Col, Container, Form, Row, Button, Table, Pagination } from "react-bootstrap";
 import { useOutletContext, Link } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
@@ -128,39 +128,44 @@ function Profissionais() {
               </Col>
             </Row>
             <Row>
-              <Table striped bordered hover className="mt-4">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Telefone</th>
-                    <th>Registro Profissional</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentProfissionais.length <= 0 ? (
-                    <tr>
-                      <td colSpan="6" className="text-center">Nenhum profissional encontrado</td>
-                    </tr>
-                  ) : (
-                    currentProfissionais.map((profissional) => (
-                      <tr key={profissional.ID_Profissional}>
-                        <td>{profissional.ID_Profissional}</td>
-                        <td>{profissional.Nome_Completo}</td>
-                        <td>{profissional.Email}</td>
-                        <td>{profissional.Telefone}</td>
-                        <td>{profissional.registroProfissional}</td>
-                        <td className="d-flex flex-row gap-2">
+              <Accordion>
+                {currentProfissionais.length <= 0 ? (
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Nenhum profissional encontrado</Accordion.Header>
+                  </Accordion.Item>
+                ) : (
+                  currentProfissionais.map((profissional) => (
+                    <Accordion.Item eventKey={profissional.ID_Profissional} key={profissional.ID_Profissional}>
+                      <Accordion.Header>
+                        {profissional.Nome_Completo} - {profissional.Email}
+                      </Accordion.Header>
+                      <Accordion.Body>
+                        <Row>
+                          <Col md={4}>
+                            <p><strong>ID:</strong> {profissional.ID_Profissional}</p>
+                            <p><strong>Nome:</strong> {profissional.Nome_Completo}</p>
+                            <p><strong>Data de Nascimento:</strong> {profissional.Data_Nascimento}</p>
+                            <p><strong>CPF:</strong> {profissional.CPF}</p>
+                          </Col>
+                          <Col md={4}>
+                            <p><strong>RG:</strong> {profissional.RG}</p>
+                            <p><strong>Email:</strong> {profissional.Email}</p>
+                            <p><strong>Telefone:</strong> {profissional.Telefone}</p>
+                          </Col>
+                          <Col md={4}>
+                            <p><strong>Especialidade:</strong> {profissional.Especialidade}</p>
+                            <p><strong>Registro Profissional:</strong> {profissional.registroProfissional}</p>
+                          </Col>
+                        </Row>
+                        <div className="d-flex flex-row gap-2">
                           <Button className='btn-primary' onClick={() => editarProfissional(profissional.ID_Profissional)}><FaEdit /></Button>
                           <Button className='btn-danger' onClick={() => abrirModalExcluir(profissional.ID_Profissional)}><FaTrashAlt /></Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
+                        </div>
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  ))
+                )}
+              </Accordion>
             </Row>
             <Row>
               <Pagination className="justify-content-center mt-3">
