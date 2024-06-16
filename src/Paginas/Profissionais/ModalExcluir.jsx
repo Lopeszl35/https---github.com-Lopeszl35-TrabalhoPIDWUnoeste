@@ -1,14 +1,10 @@
 import { Modal, Button } from "react-bootstrap";
 
-function ModalExcluir({ modalDelete, fecharModalDelete, profissionalADeletar, setShow }) {
-  const handleExcluir = async () => {
-    try {
+function ModalExcluir({ modalDelete, fecharModalDelete, setProfissionalADeletar, setShow, excluirProfissional }) {
+  const handleExcluir = async (profissional) => {
+      setProfissionalADeletar(profissional)
+      excluirProfissional();
       setShow(false);
-      alert('Profissional excluído com sucesso!');
-      window.location.reload(); 
-    } catch (error) {
-      console.error('Erro ao excluir profissional:', error);
-    }
   };
 
   return (

@@ -64,6 +64,21 @@ class ProfissionaisService {
             return dados;
         }
     }
+
+    async deletarProfissional(id) {
+        const response = await fetch(`${API_BASE_URL}/profissionais/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if(!response.ok) {
+            throw new Error('Erro ao deletar o Profissional!');
+        } else {
+            const dados = await response.json();
+            return dados;
+        }
+    }
         
 }
 

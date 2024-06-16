@@ -91,6 +91,17 @@ function Profissionais() {
     }
   };
 
+  const excluirProfissional = async () => {
+    try {
+      await profissionaisService.deletarProfissional(profissionalADeletar);
+      obterProfissionais();
+      fecharModalDelete();
+      alert('Profissional excluído com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir profissional:', error);
+    }
+  };
+
   return (
     <section>
       <Container className={`container-profissionais ${show ? "container-profissionais-active" : ""}`}>
@@ -184,6 +195,8 @@ function Profissionais() {
         modalDelete={modalDelete} 
         setShow={setModalDelete}
         fecharModalDelete={fecharModalDelete}
+        excluirProfissional={excluirProfissional}
+        setProfissionalADeletar={setProfissionalADeletar}
         profissionalADeletar={profissionalADeletar}
       />
 
