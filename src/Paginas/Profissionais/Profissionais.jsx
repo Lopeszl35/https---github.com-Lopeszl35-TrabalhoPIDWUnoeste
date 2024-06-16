@@ -43,6 +43,8 @@ function Profissionais() {
         return profissional.registroProfissional.toLowerCase().includes(searchQuery.toLowerCase());
       } else if (searchType === "2") {
         return profissional.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
+      } else if(searchType === "3") {
+        return profissional.Especialidade.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
     });
@@ -124,6 +126,7 @@ function Profissionais() {
                     <option value="">Selecione</option>
                     <option value="1">Registro Profissional</option>
                     <option value="2">Nome</option>
+                    <option value="3">Especialidade</option>
                   </Form.Select>
                   <Form.Control 
                     type="text" 

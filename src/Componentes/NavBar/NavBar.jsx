@@ -1,11 +1,6 @@
 import "./NavBar.css";
 import { Link, Outlet } from "react-router-dom";
-import {
-  FaUser,
-  FaBars,
-  FaTimes,
-  FaSignOutAlt,
-} from "react-icons/fa";
+import { FaUser, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { BsFileText } from "react-icons/bs";
 import { MdOutlineMedicalServices } from "react-icons/md";
 import { TbUserHeart } from "react-icons/tb";
@@ -71,6 +66,9 @@ function NavBar({ onLogout }) {
             <span className="mx-2">Áreas de Atendimento</span>
           </Link>
         </li>
+        <div className="logo-container">
+          <img src="./img/Login/Logo-removebg-preview.png" alt="LogoCareConnect" className="logo" />
+        </div>
       </div>
 
       <div className={`p-1 my-container ${show ? "active-cont" : ""}`}>

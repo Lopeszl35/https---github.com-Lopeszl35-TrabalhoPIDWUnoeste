@@ -1,6 +1,6 @@
-import { Container, Alert } from "react-bootstrap";
-import { useOutletContext } from "react-router-dom";
-import { FaCheckCircle } from "react-icons/fa";
+import { Container, Alert, Button } from "react-bootstrap";
+import { useOutletContext, Link } from "react-router-dom";
+import { FaCheckCircle, FaArrowLeft, FaRegSave } from "react-icons/fa";
 import React, { useState } from 'react';
 import "./CadastrarProfissional.css";
 import ProfissionaisService from "../../services/profissionaisService";
@@ -39,7 +39,7 @@ function CadastrarProfissionais() {
                 registroProfissional: '',
                 senha: '',
             });
-            setShowMensagem(true); // Mostrar mensagem de sucesso após limpar o formulário
+            setShowMensagem(true); 
         } catch (error) {
             console.error("Erro ao cadastrar profissional:", error);
         } 
@@ -169,8 +169,14 @@ function CadastrarProfissionais() {
                     <input type="password" id="senha" name="senha" value={usuarioInfo.senha} onChange={handleInputChange} />
                     {erros.senha && <p className="erros">{erros.senha}</p>}
 
-                    <div className="botao">
-                        <button type="submit" className="d-flex justify-content-center">Cadastrar</button>
+                    <div className="d-flex justify-content-end mt-3">
+                        <Link to={"/Profissionais"}>
+                            <Button variant="secondary" className="me-2">
+                            <FaArrowLeft className="me-2" />
+                                Voltar
+                            </Button>
+                        </Link>
+                        <button type="submit" className="d-flex justify-content-center"><FaRegSave className="me-2 mt-1" /> Cadastrar</button>
                     </div>
 
                     <Alert
