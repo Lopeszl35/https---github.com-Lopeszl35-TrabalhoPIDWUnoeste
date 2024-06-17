@@ -31,6 +31,14 @@ class ProfissionaisModel {
         return result[0];
     }
 
+    async obterIdProfissionalPorNome(nomeProfissional) {
+        const result = await dataBase.executaComando("SELECT ID_Profissional FROM profissionais WHERE LOWER(Nome_Completo) = LOWER(?)", [nomeProfissional]);
+        if (result.length === 1) {
+            return result[0].ID_Profissional;
+        }
+        return null;
+    }
+
     async editarProfissional(profissional, id, connection) {
         profissional.Data_Nascimento = moment(profissional.Data_Nascimento).format('YYYY-MM-DD');
         const result = await dataBase.executaComando("UPDATE Profissionais SET ? WHERE ID_Profissional = ?", [profissional, id]);

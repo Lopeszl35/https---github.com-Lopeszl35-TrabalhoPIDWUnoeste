@@ -1,6 +1,13 @@
 const { validationResult } = require('express-validator');
 const ServicosModel = require('../model/Entities/servicosModel');
+const DataBase = require('../model/database');
+const ProfissionaisServicos = require('../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
+const ProfissionaisModel = require('../model/Entities/profissionaisModel/profissionaisModel');
+
+const profissionalModel = new ProfissionaisModel();
 const servicoModel = new ServicosModel();
+const profissionaisServicosModel = new ProfissionaisServicos();
+const dataBase = new DataBase();
 
 class ServicoController {
     async obterTodos(req, res) {
@@ -49,14 +56,18 @@ class ServicoController {
         }
 
         const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
-
+        let connection;
         try {
-            const profissionalId = await servicoModel.obterIdProfissionalPorNome(Profissional_Responsavel);
-            if (!profissionalId) {
-                return res.status(400).json({ message: "Profissional não encontrado ou nome incompleto." });
-            }
-            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status, profissionalId);
-            await servicoModel.adicionar(servico);
+            connection = await dataBase.beginTransaction();
+
+            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status);
+            const servicoId = await servicoModel.adicionar(servico, connection);
+
+            const profissionalId = await profissionalModel.obterIdProfissionalPorNome(Profissional_Responsavel);
+
+            await profissionaisServicosModel.inserir(servicoId, profissionalId, connection);
+
+            await dataBase.commitTransaction(connection);
             return res.status(201).json({ message: "Serviço adicionado com sucesso!" });
         } catch (error) {
             console.log(error);

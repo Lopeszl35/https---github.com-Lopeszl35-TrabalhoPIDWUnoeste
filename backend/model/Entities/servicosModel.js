@@ -5,12 +5,11 @@ const DataBase = require("../database");
 const dataBase = new DataBase();
 
 class ServicosModel {
-    constructor(nomeServico, descricao, dataDeCadastro, status, profissionalResponsavel) {
+    constructor(nomeServico, descricao, dataDeCadastro, status) {
         this.Nome_Servico = nomeServico;
         this.Descricao = descricao;
         this.Data_De_Cadastro = dataDeCadastro;
         this.Status = status;
-        this.Profissional_Responsavel = profissionalResponsavel;
     }
 
     async obterTodos() {
@@ -23,26 +22,18 @@ class ServicosModel {
         return result[0];
     }
 
-    async obterIdProfissionalPorNome(nomeProfissional) {
-        const result = await dataBase.executaComando("SELECT ID_Profissional FROM profissionais WHERE LOWER(Nome_Completo) = LOWER(?)", [nomeProfissional]);
-        if (result.length === 1) {
-            return result[0].ID_Profissional;
-        }
-        return null;
-    }
-
     async obterNomeProfissionalPorId(idProfissional) {
         const result = await dataBase.executaComando("SELECT Nome_Completo FROM profissionais WHERE ID_Profissional = ?", [idProfissional]);
-        console.log('Resultado da query obterNomeProfissionalPorId:', result); // Log adicional
         if (result.length === 1) {
             return result[0].Nome_Completo;
         }
         return null;
     }
 
-    async adicionar(dadosServico) {
+    async adicionar(dadosServico, connection) {
         dadosServico.Data_De_Cadastro = moment(dadosServico.Data_De_Cadastro).format('YYYY-MM-DD');
-        await dataBase.executaComandoNonQuery('INSERT INTO servicos SET ?', dadosServico);
+        const [result] = await connection.query('INSERT INTO servicos SET ?', dadosServico);
+        return result.insertId;
     }
 
     async atualizar(id, dadosServico) {
