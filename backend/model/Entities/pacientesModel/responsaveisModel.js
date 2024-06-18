@@ -23,7 +23,7 @@ class ResponsaveisModel {
         await connection.query('UPDATE responsaveis SET ? WHERE Prontuario = ?', [dadosResponsavel, prontuario]);
     }
 
-    async deletar(prontuario) {
+    async deletar(prontuario, connection) {
         await dataBase.executaComandoNonQuery('DELETE FROM responsaveis WHERE Prontuario = ?', [prontuario]);
     }
 }

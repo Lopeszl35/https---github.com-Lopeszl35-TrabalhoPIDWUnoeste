@@ -1,6 +1,21 @@
 const API_BASE_URL = 'http://localhost:3001';
 
 class PacientesService {
+    async buscarUltimoPaciente() {
+        const response = await fetch('/api/pacientes/ultimo', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erro ao obter ultimo prontuario!');
+        } else {
+            const dados = await response.json();
+            return dados;
+        }
+      }
     async obterTodos() {
         const response = await fetch(`${API_BASE_URL}/pacientes`, {
             method: 'GET',

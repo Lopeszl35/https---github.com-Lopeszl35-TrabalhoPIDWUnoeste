@@ -27,7 +27,7 @@ class EnderecosModel {
         await connection.query('UPDATE enderecos SET ? WHERE Prontuario = ?', [dadosEndereco, prontuario]);
     }
 
-    async deletar(prontuario) {
+    async deletar(prontuario, connection) {
         await dataBase.executaComandoNonQuery('DELETE FROM enderecos WHERE Prontuario = ?', [prontuario]);
     }
 }

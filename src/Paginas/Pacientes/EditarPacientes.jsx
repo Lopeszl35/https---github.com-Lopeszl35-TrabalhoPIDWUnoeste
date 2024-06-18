@@ -10,22 +10,31 @@ function EditarPacientes() {
   const { show } = useOutletContext();
   const { prontuario } = useParams();
   const navigate = useNavigate();
-
+  const estados = [
+    "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+  ];
   const [pacienteInfo, setPacienteInfo] = useState({
-    nomeCompleto: '', 
-    dataNasc: '', 
-    cpf: '', 
-    rg: '',
-    mae: { nome: '', telefone: '' },
-    pai: { nome: '', telefone: '' },
-    enderecos: [{ logradouro: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '' }],
-    escola: '',
-    anoEscolar: '',
-    periodo: '',
+    Prontuario: '1',
+    Nome_Completo: '', 
+    Data_De_Nascimento: '', 
+    CPF: '', 
+    RG: '',
+    Nome_Mae: '', 
+    Telefone_Mae: '',
+    Nome_Pai: '',
+    Telefone_Pai: '',
+    Numero: '', 
+    Logradouro: '', 
+    Bairro: '', 
+    Estado: '',
+    cidadeEscola: '',
+    Escola: '',
+    Ano_Escolar: '',
+    Periodo: '',
     autorizacaoImagem: false,
-    cns: '',
-    cidade: '',
-    cep: '',
+    CartaoSUS: '',
+    Cidade: '',
+    CEP: '',
   });
 
   const handleInputChange = (e) => {
@@ -58,19 +67,15 @@ function EditarPacientes() {
       try {
         const paciente = await pacientesService.obterPorProntuario(prontuario);
         setPacienteInfo({
-          nomeCompleto: paciente.Nome_Completo || '',
-          dataNasc: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
-          cpf: paciente.CPF || '',
-          rg: paciente.RG || '',
-          cns: paciente.CartaoSUS || '',
-          mae: {
-            nome: paciente.responsavel ? paciente.responsavel.Nome_Mae : '',
-            telefone: paciente.responsavel ? paciente.responsavel.Telefone_Mae : '',
-          },
-          pai: {
-            nome: paciente.responsavel ? paciente.responsavel.Nome_Pai : '',
-            telefone: paciente.responsavel ? paciente.responsavel.Telefone_Pai : '',
-          },
+          Nome_Completo: paciente.Nome_Completo || '',
+          Data_De_Nascimento: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
+          CPF: paciente.CPF || '',
+          RG: paciente.RG || '',
+          CartaoSUS: paciente.CartaoSUS || '',
+          Nome_Mae: paciente.responsavel ? paciente.responsavel.Nome_Mae : '',
+          Telefone_Mae: paciente.responsavel ? paciente.responsavel.Telefone_Mae : '',
+          Nome_Pai: paciente.responsavel ? paciente.responsavel.Nome_Pai : '',
+          Telefone_Pai: paciente.responsavel ? paciente.responsavel.Telefone_Pai : '',
           enderecos: paciente.enderecos.length > 0 ? paciente.enderecos.map(endereco => ({
             logradouro: endereco.Logradouro,
             numero: endereco.Numero,

@@ -1,7 +1,7 @@
+import React, { useState, useEffect } from 'react';
 import { Container, Button } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft } from "react-icons/fa";
-import { useOutletContext, Link } from "react-router-dom";
-import React, { useState } from 'react';
+import { useOutletContext, Link, useNavigate } from "react-router-dom";
 import "./CadastrarPacientes.css";
 import PacientesService from "../../services/pacientesService";
 
@@ -10,41 +10,58 @@ const pacientesService = new PacientesService();
 function CadastrarPacientes() {
   const { show } = useOutletContext();
   const [erros, setErros] = useState({});
+  const navigate = useNavigate();
   const estados = [
     "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
   ];
   const [pacienteInfo, setPacienteInfo] = useState({
-    nomeCompleto: '', 
-    dataNasc: '', 
-    cpf: '', 
-    rg: '',
-    mae: {nome: '', telefone: '',},
-    pai: {nome: '',telefone: '',},
-    endereco: {numero: '', rua: '', bairro: '', estado: '',},
+    Prontuario: '1',
+    Nome_Completo: '', 
+    Data_De_Nascimento: '', 
+    CPF: '', 
+    RG: '',
+    Nome_Mae: '', 
+    Telefone_Mae: '',
+    Nome_Pai: '',
+    Telefone_Pai: '',
+    Numero: '', 
+    Logradouro: '', 
+    Bairro: '', 
+    Estado: '',
     cidadeEscola: '',
-    escola: '',
-    anoEscolar: '',
-    periodo: '',
+    Escola: '',
+    Ano_Escolar: '',
+    Periodo: '',
     autorizacaoImagem: false,
-    cns: '',
-    cidade: '',
-    cep: '',
+    CartaoSUS: '',
+    Cidade: '',
+    CEP: '',
   });
+
+  useEffect(() => {
+    const fetchUltimoProntuario = async () => {
+      try {
+        console.log('Chamando fetchUltimoPaciente...');
+        const ultimoProntuario = await pacientesService.buscarUltimoPaciente();
+        console.log('Último prontuário recebido:', ultimoProntuario);
+        
+        // Atualiza o estado do componente com o último prontuário
+        setPacienteInfo(prevState => ({
+          ...prevState,
+          Prontuario: ultimoProntuario + 1  // Define o próximo prontuário disponível
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar o último paciente:', error);
+      }
+    };
+
+    fetchUltimoProntuario();
+  }, []);
 
   const handleInputChange = (e) => {
     setPacienteInfo({
       ...pacienteInfo,
       [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleAddressInputChange = (e, addressType) => {
-    setPacienteInfo({
-      ...pacienteInfo,
-      [addressType]: {
-        ...pacienteInfo[addressType],
-        [e.target.name]: e.target.value,
-      },
     });
   };
 
@@ -54,63 +71,66 @@ function CadastrarPacientes() {
       autorizacaoImagem: e.target.checked,
     });
   };
-
  
-
   //-------------------------------------------
 
   const validate = () => {
     const newErros = {};
 
-    if (!pacienteInfo.nomeCompleto) {
-      newErros.nomeCompleto = 'Nome completo é obrigatório';
+    if (!pacienteInfo.Nome_Completo) {
+      newErros.Nome_Completo = 'Nome completo é obrigatório';
     }
 
-    if (!pacienteInfo.mae.nome) {
-      newErros.maeNome = 'Nome mãe é obrigatório';
+    if (!pacienteInfo.Nome_Mae) {
+      newErros.Nome_Mae = 'Nome mãe é obrigatório';
     }
 
-    if (!pacienteInfo.pai.nome) {
-      newErros.paiNome = 'Nome pai é obrigatório';
+    if (!pacienteInfo.Nome_Pai) {
+      newErros.Nome_Pai = 'Nome pai é obrigatório';
     }
 
-    if (!pacienteInfo.dataNasc) {
-      newErros.dataNasc = 'Data de nascimento é obrigatória';
+    if (!pacienteInfo.Data_De_Nascimento) {
+      newErros.Data_De_Nascimento = 'Data de nascimento é obrigatória';
     }
 
     const cpfRegex = /^\d{11}$/;
-    if (!pacienteInfo.cpf || !cpfRegex.test(pacienteInfo.cpf)) {
-      newErros.cpf = 'CPF inválido. Deve conter 11 dígitos numéricos';
+    if (!pacienteInfo.CPF || !cpfRegex.test(pacienteInfo.CPF)) {
+      newErros.CPF = 'CPF inválido. Deve conter 11 dígitos numéricos';
     }
 
     const rgRegex = /^\d+$/;
-    if (!pacienteInfo.rg || !rgRegex.test(pacienteInfo.rg)) {
-      newErros.rg = 'RG inválido. Deve conter apenas dígitos numéricos';
+    if (!pacienteInfo.RG || !rgRegex.test(pacienteInfo.RG)) {
+      newErros.RG = 'RG inválido. Deve conter apenas dígitos numéricos';
     }
 
     const telRegex = /^\d{10,11}$/;
-    if (pacienteInfo.mae.telefone && !telRegex.test(pacienteInfo.mae.telefone)) {
-      newErros.telefoneMae = 'Telefone da mãe inválido. Deve conter 10 ou 11 dígitos numéricos';
+    if (pacienteInfo.Telefone_Mae && !telRegex.test(pacienteInfo.Telefone_Mae)) {
+      newErros.Telefone_Mae = 'Telefone da mãe inválido. Deve conter 10 ou 11 dígitos numéricos';
     }
 
-    if (pacienteInfo.pai.telefone && !telRegex.test(pacienteInfo.pai.telefone)) {
-      newErros.telefonePai = 'Telefone do pai inválido. Deve conter 10 ou 11 dígitos numéricos';
+    if (pacienteInfo.Telefone_Pai && !telRegex.test(pacienteInfo.Telefone_Pai)) {
+      newErros.Telefone_Pai = 'Telefone do pai inválido. Deve conter 10 ou 11 dígitos numéricos';
     }
 
     const cepRegex = /^\d{8}$/;
-    if (!pacienteInfo.cep || !cepRegex.test(pacienteInfo.cep)) {
-      newErros.cep = 'CEP inválido. Deve conter 8 dígitos numéricos';
+    if (!pacienteInfo.CEP || !cepRegex.test(pacienteInfo.CEP)) {
+      newErros.CEP = 'CEP inválido. Deve conter 8 dígitos numéricos';
     }
 
     setErros(newErros);
     return Object.keys(newErros).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      // Enviar os dados do paciente
-      console.log('Dados do paciente:', pacienteInfo);
+      try {
+        await pacientesService.adicionar(pacienteInfo);
+        console.log('Paciente cadastrado com sucesso');
+        navigate('/pacientes');
+      } catch (error) {
+        console.error('Erro ao cadastrar paciente:', error);
+      }
     }
   };
 
@@ -121,38 +141,38 @@ function CadastrarPacientes() {
         <form className="form-container" onSubmit={handleSubmit}>
 
           <h2>Paciente</h2>
-          <label htmlFor="nomeCompleto">Nome completo:</label>
-          <input type="text" id="nomeCompleto" name="nomeCompleto" value={pacienteInfo.nomeCompleto} onChange={handleInputChange} />
-          {erros.nomeCompleto && <p className="erros">{erros.nomeCompleto}</p>}
+          <label htmlFor="Nome_Completo">Nome completo:</label>
+          <input type="text" id="Nome_Completo" name="Nome_Completo" value={pacienteInfo.Nome_Completo} onChange={handleInputChange} />
+          {erros.Nome_Completo && <p className="erros">{erros.Nome_Completo}</p>}
 
           <div className="row">
             <div className="form-group col-md-6 col">
-              <label htmlFor="dataNasc">Data de nascimento:</label>
+              <label htmlFor="Data_De_Nascimento">Data de nascimento:</label>
               <div className="input-group">
-                <input type="date" id="dataNasc" name="dataNasc" value={pacienteInfo.dataNasc} onChange={handleInputChange} />
-                {erros.dataNasc && <p className="erros">{erros.dataNasc}</p>}
+                <input type="date" id="Data_De_Nascimento" name="Data_De_Nascimento" value={pacienteInfo.Data_De_Nascimento} onChange={handleInputChange} />
+                {erros.Data_De_Nascimento && <p className="erros">{erros.Data_De_Nascimento}</p>}
               </div>
             </div>
             <div className="form-group col-md-6">
-              <label htmlFor="cpf">CPF:</label>
+              <label htmlFor="CPF">CPF:</label>
               <div className="input-group">
-                <input type="text" id="cpf" name="cpf" value={pacienteInfo.cpf} onChange={handleInputChange} />
-                {erros.cpf && <p className="erros">{erros.cpf}</p>}
+                <input type="text" id="CPF" name="CPF" value={pacienteInfo.CPF} onChange={handleInputChange} />
+                {erros.CPF && <p className="erros">{erros.CPF}</p>}
               </div>
             </div>
           </div>
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="rg">RG:</label>
+              <label htmlFor="RG">RG:</label>
               <div className="input-group">
-                <input type="text" id="rg" name="rg" value={pacienteInfo.rg} onChange={handleInputChange} />
-                {erros.rg && <p className="erros">{erros.rg}</p>}
+                <input type="text" id="RG" name="RG" value={pacienteInfo.RG} onChange={handleInputChange} />
+                {erros.RG && <p className="erros">{erros.RG}</p>}
               </div>
             </div>
             <div className="form-group col-md-6">
-              <label htmlFor="cns">Cartão nacional de saúde (CNS):</label>
-              <input type="text" id="cns" name="cns" value={pacienteInfo.cns} onChange={handleInputChange} />
+              <label htmlFor="CartaoSUS">Cartão nacional de saúde (CNS):</label>
+              <input type="text" id="CartaoSUS" name="CartaoSUS" value={pacienteInfo.CartaoSUS} onChange={handleInputChange} />
             </div>
           </div>
 
@@ -160,35 +180,35 @@ function CadastrarPacientes() {
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="nomeMae">Nome da mãe:</label>
+              <label htmlFor="Nome_Mae">Nome da mãe:</label>
               <div className="input-group">
-                <input type="text" id="nomeMae" name="nome" value={pacienteInfo.mae.nome} onChange={(e) => handleAddressInputChange(e, 'mae')} />
-                {erros.maeNome && <p className="erros">{erros.maeNome}</p>}
+                <input type="text" id="Nome_Mae" name="Nome_Mae" value={pacienteInfo.Nome_Mae} onChange={handleInputChange} />
+                {erros.Nome_Mae && <p className="erros">{erros.Nome_Mae}</p>}
               </div>
             </div>
 
             <div className="form-group col-md-6">
-              <label htmlFor="telefoneMae">Telefone da mãe:</label>
+              <label htmlFor="Telefone_Mae">Telefone da mãe:</label>
               <div className="input-group">
-                <input type="tel" id="telefoneMae" name="telefone" value={pacienteInfo.mae.telefone} onChange={(e) => handleAddressInputChange(e, 'mae')} />
-                {erros.telefoneMae && <p className="erros">{erros.telefoneMae}</p>}
+                <input type="tel" id="Telefone_Mae" name="Telefone_Mae" value={pacienteInfo.Telefone_Mae} onChange={handleInputChange} />
+                {erros.Telefone_Mae && <p className="erros">{erros.Telefone_Mae}</p>}
               </div>
             </div>
           </div>
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="nomePai">Nome do pai:</label>
+              <label htmlFor="Nome_Pai">Nome do pai:</label>
               <div className="input-group">
-                <input type="text" id="nomePai" name="nome" value={pacienteInfo.pai.nome} onChange={(e) => handleAddressInputChange(e, 'pai')} />
-                {erros.paiNome && <p className="erros">{erros.paiNome}</p>}
+                <input type="text" id="Nome_Pai" name="Nome_Pai" value={pacienteInfo.Nome_Pai} onChange={handleInputChange} />
+                {erros.Nome_Pai && <p className="erros">{erros.Nome_Pai}</p>}
               </div>
             </div>
 
             <div className="form-group col-md-6">
-              <label htmlFor="telefonePai">Telefone do pai:</label>
-              <input type="tel" id="telefonePai" name="telefone" value={pacienteInfo.pai.telefone} onChange={(e) => handleAddressInputChange(e, 'pai')} />
-              {erros.telefonePai && <p className="erros">{erros.telefonePai}</p>}
+              <label htmlFor="Telefone_Pai">Telefone do pai:</label>
+              <input type="tel" id="Telefone_Pai" name="Telefone_Pai" value={pacienteInfo.Telefone_Pai} onChange={handleInputChange} />
+              {erros.Telefone_Pai && <p className="erros">{erros.Telefone_Pai}</p>}
             </div>
           </div>
 
@@ -196,43 +216,43 @@ function CadastrarPacientes() {
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="rua">Rua:</label>
-              <input type="text" id="rua" name="rua" value={pacienteInfo.endereco.rua} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
+              <label htmlFor="Logradouro">Rua:</label>
+              <input type="text" id="Logradouro" name="Logradouro" value={pacienteInfo.Logradouro} onChange={handleInputChange} />
             </div>
 
             <div className="form-group col-md-6">
-              <label htmlFor="numero">Numero:</label>
-              <input type="text" id="numero" name="numero" value={pacienteInfo.endereco.numero} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="bairro">Bairro:</label>
-              <input type="text" id="bairro" name="bairro" value={pacienteInfo.endereco.bairro} onChange={(e) => handleAddressInputChange(e, 'endereco')} />
-            </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="cidade">Cidade:</label>
-              <input type="text" id="cidade" name="cidade" value={pacienteInfo.cidade} onChange={handleInputChange} />
+              <label htmlFor="Numero">Numero:</label>
+              <input type="text" id="Numero" name="Numero" value={pacienteInfo.Numero} onChange={handleInputChange} />
             </div>
           </div>
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="estado">Estado:</label>
-              <select id="estado" name="estado" value={pacienteInfo.endereco.estado} onChange={(e) => handleAddressInputChange(e, 'endereco')}>
-                {estados.map((estado, index) => (
-                  <option key={index} value={estado}>{estado}</option>
+              <label htmlFor="Bairro">Bairro:</label>
+              <input type="text" id="Bairro" name="Bairro" value={pacienteInfo.Bairro} onChange={handleInputChange} />
+            </div>
+
+            <div className="form-group col-md-6">
+              <label htmlFor="Cidade">Cidade:</label>
+              <input type="text" id="Cidade" name="Cidade" value={pacienteInfo.Cidade} onChange={handleInputChange} />
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="form-group col-md-6">
+              <label htmlFor="Estado">Estado:</label>
+              <select id="Estado" name="Estado" value={pacienteInfo.Estado} onChange={handleInputChange}>
+                {estados.map((Estado, index) => (
+                  <option key={index} value={Estado}>{Estado}</option>
                 ))}
               </select>
             </div>
 
             <div className="form-group col-md-6">
-              <label htmlFor="cep">CEP:</label>
+              <label htmlFor="CEP">CEP:</label>
               <div className="input-group">
-                <input type="text" id="cep" name="cep" value={pacienteInfo.cep} onChange={handleInputChange} />
-                {erros.cep && <p className="erros">{erros.cep}</p>}
+                <input type="text" id="CEP" name="CEP" value={pacienteInfo.CEP} onChange={handleInputChange} />
+                {erros.CEP&& <p className="erros">{erros.CEP}</p>}
               </div>
             </div>
           </div>
@@ -241,8 +261,8 @@ function CadastrarPacientes() {
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="escola">Escola:</label>
-              <input type="text" id="escola" name="escola" value={pacienteInfo.escola} onChange={handleInputChange} />
+              <label htmlFor="Escola">Escola:</label>
+              <input type="text" id="Escola" name="Escola" value={pacienteInfo.Escola} onChange={handleInputChange} />
             </div>
 
             <div className="form-group col-md-6">
@@ -253,13 +273,13 @@ function CadastrarPacientes() {
 
           <div className="row">
             <div className="form-group col-md-6">
-              <label htmlFor="anoEscolar">Ano Escolar:</label>
-              <input type="text" id="anoEscolar" name="anoEscolar" value={pacienteInfo.anoEscolar} onChange={handleInputChange} />
+              <label htmlFor="Ano_Escolar">Ano Escolar:</label>
+              <input type="text" id="Ano_Escolar" name="Ano_Escolar" value={pacienteInfo.Ano_Escolar} onChange={handleInputChange} />
             </div>
 
             <div className="form-group col-md-6">
-              <label htmlFor="periodo">Periodo:</label>
-              <input type="text" id="periodo" name="periodo" value={pacienteInfo.periodo} onChange={handleInputChange} />
+              <label htmlFor="Periodo">Periodo:</label>
+              <input type="text" id="Periodo" name="Periodo" value={pacienteInfo.Periodo} onChange={handleInputChange} />
             </div>
           </div>
 

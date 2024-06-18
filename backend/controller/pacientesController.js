@@ -10,6 +10,16 @@ const enderecoModel = new EnderecosModel();
 const dataBase = new DataBase();
 
 class PacientesController {
+    async buscarUltimoPaciente(req, res) {
+        console.log('Buscando o último Paciente...');
+        try {
+            const paciente = await pacienteModel.buscarUltimoPaciente();
+            return res.status(200).json(paciente);
+        } catch (error) {
+            console.log('Erro ao buscar o Paciente:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }
 
     async obterTodos(req, res) {
         console.log('Obtendo todos os Pacientes...');
@@ -73,9 +83,9 @@ class PacientesController {
             }
 
             if (Logradouro || Numero || Complemento || Bairro || Cidade || Estado || CEP) {
-                endereco.Prontuario = Prontuario;
                 const endereco = new EnderecosModel(Prontuario, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP);
-                await enderecoModel.adicionar(enderecoModelInstance, connection);
+                endereco.Prontuario = Prontuario;
+                await enderecoModel.adicionar(endereco, connection);
             }
 
             await dataBase.commitTransaction(connection);
@@ -129,10 +139,23 @@ class PacientesController {
     async deletar(req, res) {
         console.log('Deletando o Paciente...');
         const { id } = req.params;
+        let connection;
         try {
-            await pacienteModel.deletar(id);
+            connection = await dataBase.beginTransaction();
+
+            // Excluir registros das tabelas relacionadas
+            await responsavelModel.deletar(id, connection);
+            await enderecoModel.deletar(id, connection);
+
+            // Excluir o paciente
+            await pacienteModel.deletar(id, connection);
+
+            await dataBase.commitTransaction(connection);
             return res.status(200).json({ message: 'Paciente deletado com sucesso!' });
         } catch (error) {
+            if (connection) {
+                await dataBase.rollbackTransaction(connection);
+            }
             console.error('Erro ao deletar paciente:', error.message);
             return res.status(500).json({ message: error.message });
         }

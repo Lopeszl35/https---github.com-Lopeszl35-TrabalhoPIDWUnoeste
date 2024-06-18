@@ -15,6 +15,9 @@ router.get('/pacientes/filtrar', [
 // Rota para obter todos os pacientes
 router.get('/pacientes', pacientesController.obterTodos.bind(pacientesController));
 
+// Rota para buscar o último paciente
+router.get('/pacientes/ultimo', pacientesController.buscarUltimoPaciente.bind(pacientesController));
+
 // Rota para obter o paciente por Prontuario
 router.get('/pacientes/:prontuario', pacientesController.filtrarPorProntuario.bind(pacientesController));
 

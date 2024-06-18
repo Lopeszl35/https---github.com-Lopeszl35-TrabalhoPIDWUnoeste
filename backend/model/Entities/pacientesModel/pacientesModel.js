@@ -31,6 +31,11 @@ class PacientesModel {
         return result;
     }
 
+    async buscarUltimoPaciente() {
+        const result = await dataBase.executaComando("SELECT MAX(prontuario) AS ultimo FROM pacientes");
+        return result;
+    }
+
     async adicionar(dadosPaciente, connection) {
         dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
         await connection.query('INSERT INTO pacientes SET ?', [dadosPaciente]);
