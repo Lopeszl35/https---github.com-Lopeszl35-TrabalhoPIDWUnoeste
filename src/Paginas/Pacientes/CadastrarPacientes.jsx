@@ -41,7 +41,6 @@ function CadastrarPacientes() {
   useEffect(() => {
     const fetchUltimoProntuario = async () => {
       try {
-        console.log('log de teste');
         const ultimoProntuario = await pacientesService.buscarUltimoPaciente();
         console.log('Último prontuário recebido:', ultimoProntuario);
         

@@ -36,6 +36,7 @@ function EditarPacientes() {
     CartaoSUS: '',
     Cidade: '',
     CEP: '',
+    Email: '',
   });
 
   const handleInputChange = (e) => {
@@ -90,6 +91,7 @@ function EditarPacientes() {
           CartaoSUS: paciente.CartaoSUS || '',
           Cidade: paciente.endereco.Cidade || '',
           CEP: paciente.endereco.CEP || '',
+          Email: paciente.Email || '',
         });
       } catch (error) {
         console.error('Erro ao obter paciente:', error);
@@ -141,6 +143,10 @@ function EditarPacientes() {
       newErros.CEP = 'CEP inválido. Deve conter 8 dígitos numéricos';
     }
 
+    if (!pacienteInfo.Email) {
+      newErros.Email = 'O email é obrigatório';
+    }
+
     setErros(newErros);
     return Object.keys(newErros).length === 0;
   };
@@ -159,6 +165,7 @@ function EditarPacientes() {
           Telefone_Mae: pacienteInfo.Telefone_Mae,
           Nome_Pai: pacienteInfo.Nome_Pai,
           Telefone_Pai: pacienteInfo.Telefone_Pai,
+          Email: pacienteInfo.Email,
           Endereco: {
             Numero: pacienteInfo.Numero,
             Logradouro: pacienteInfo.Logradouro,
@@ -248,6 +255,14 @@ function EditarPacientes() {
               <input type="tel" id="Telefone_Pai" name="telefone" value={pacienteInfo.Telefone_Pai} onChange={handleInputChange} />
               {erros.Telefone_Pai && <p className="erros">{erros.Telefone_Pai}</p>}
             </div>
+          </div>
+
+          <div className="row">
+                <div className="form-group">
+                  <label htmlFor="Email">Email:</label>
+                  <input type="text" id="Email" name="Email" value={pacienteInfo.Email} onChange={handleInputChange} />
+                  {erros.Email && <p className="erros">{erros.Email}</p>}
+                </div>
           </div>
 
           <h2>Endereço</h2>

@@ -169,7 +169,7 @@ function Pacientes() {
                             <p><strong>Email:</strong> {paciente.Email}</p>
                           </Col>
                           <Col md={4}>
-                            <p><strong>Telefone:</strong> {paciente.Telefone}</p>
+                            <p><strong>Telefone:</strong> {paciente.responsavel.Telefone_Mae}</p>
                             <p><strong>Endereço:</strong> {paciente.endereco.Logradouro}</p>
                           </Col>
                         </Row>

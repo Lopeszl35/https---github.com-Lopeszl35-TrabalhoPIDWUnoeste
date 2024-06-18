@@ -44,7 +44,8 @@ router.put('/pacientes/:id', [
     body('CartaoSUS').optional().notEmpty().withMessage('Cartão SUS é obrigatório'),
     body('Escola').optional().notEmpty().withMessage('Escola é obrigatória'),
     body('Ano_Escolar').optional().notEmpty().withMessage('Ano escolar é obrigatório'),
-    body('Periodo').optional().notEmpty().withMessage('Período é obrigatório')
+    body('Periodo').optional().notEmpty().withMessage('Período é obrigatório'),
+    body('Email').optional().notEmpty().withMessage('Email é obrigatório')
 ], pacientesController.atualizar.bind(pacientesController));
 
 // Rota para deletar um paciente
