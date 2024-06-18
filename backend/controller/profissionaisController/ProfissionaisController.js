@@ -1,10 +1,12 @@
 const ProfissionaisModel = require('../../model/Entities/profissionaisModel/ProfissionaisModel');
 const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel');
+const ProfissionaisServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const { validationResult } = require('express-validator');
 const DataBase = require('../../model/database');
 
 const profissionalModel = new ProfissionaisModel();
 const usuarioModel = new UsuariosModel();
+const profissionaisServicosModel = new ProfissionaisServicos();
 const dataBase = new DataBase();
 
 class ProfissionaisController {
@@ -108,6 +110,7 @@ class ProfissionaisController {
                     Profissional: ${profissional} | Usuario: ${usuario}` });
             }
             await usuarioModel.excluirUsuarioPeloProfissional(id, connection);
+            await profissionaisServicosModel.excluir(id, connection);
             await profissionalModel.excluirProfissional(id, connection);
             await dataBase.commitTransaction(connection);
             return res.status(200).json({ message: 'Profissional excluído com sucesso!' });

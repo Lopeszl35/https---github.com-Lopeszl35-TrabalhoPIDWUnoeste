@@ -35,6 +35,15 @@ class ProfissionaisServicosModel {
         );
         return result;
     }
+
+    async excluir(idProfissional, connection) {
+        const result = await connection.query(
+            "DELETE FROM profissionalservicos WHERE ID_Profissional = ?",
+            [idProfissional]
+        );
+        return result;
+    }
+
 }
 
 module.exports = ProfissionaisServicosModel;

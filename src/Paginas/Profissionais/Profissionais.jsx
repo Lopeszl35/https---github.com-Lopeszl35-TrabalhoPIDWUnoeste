@@ -3,6 +3,7 @@ import { Accordion, Card, Col, Container, Form, Row, Button, Pagination } from "
 import { useOutletContext, Link } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import moment from "moment";
 import ProfissionaisService from "../../services/profissionaisService";
 import ModalExcluir from './ModalExcluir';
 import ModalEditar from './ModalEditar';
@@ -160,7 +161,7 @@ function Profissionais() {
                           <Col md={4}>
                             <p><strong>ID:</strong> {profissional.ID_Profissional}</p>
                             <p><strong>Nome:</strong> {profissional.Nome_Completo}</p>
-                            <p><strong>Data de Nascimento:</strong> {profissional.Data_Nascimento}</p>
+                            <p><strong>Data de Nascimento:</strong> {moment(profissional.Data_Nascimento).format('DD/MM/YYYY')}</p>
                             <p><strong>CPF:</strong> {profissional.CPF}</p>
                           </Col>
                           <Col md={4}>

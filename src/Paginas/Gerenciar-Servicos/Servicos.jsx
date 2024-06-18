@@ -62,6 +62,35 @@ function Servicos() {
     listarProfissionais();
   }, []);
 
+  useEffect(() => {
+    filtrarServicos();
+  }, [busca, filtro]);
+
+  const filtrarServicos = () => {
+    let resultados = [...listaServicos];
+
+    if (filtro === '4') {
+      resultados = resultados.filter(servico => 
+        servico.Status.toLowerCase() === 'ativo'
+      );
+    } else if (filtro === '5') {
+      resultados = resultados.filter(servico => 
+        servico.Status.toLowerCase() === 'inativo'
+      );
+    } else if (busca) {
+      if (filtro === '2') {
+        resultados = resultados.filter(servico => 
+          servico.Nome_Servico.toLowerCase().includes(busca.toLowerCase())
+        );
+      } else if (filtro === '3') {
+        resultados = resultados.filter(servico => 
+          servico.Nome_Profissional.toLowerCase().includes(busca.toLowerCase())
+        );
+      }
+    }
+
+    setServicosFiltrados(resultados);
+  };
 
   const abrirModalEdicao = async (id) => {
     try {
@@ -88,42 +117,6 @@ function Servicos() {
   const fecharModalConfirmacao = () => {
     setShowConfirmDeleteModal(false);
     setServicoToDelete(null);
-  };
-
-  const handleBuscar = async () => {
-    try {
-        let resultados;
-        if (busca !== "") {
-            if (filtro === '2') {
-                resultados = await servicosService.filtrar('nome', busca);
-            } else if (filtro === '3') {
-                resultados = await servicosService.filtrar('profissional', busca);
-            } else if (filtro === '4') {
-                resultados = await servicosService.filtrar('status', 'ativo');
-            } else if (filtro === '5') {
-                resultados = await servicosService.filtrar('status', 'inativo');
-            } else {
-                resultados = await servicosService.obterTodos();
-            }
-
-            const servicosComNomes = await Promise.all(resultados.map(async servico => {
-                try {
-                    const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
-                    return { ...servico, Nome_Profissional: nomeProfissional };
-                } catch (error) {
-                    console.error(`Erro ao obter o nome do profissional para o serviço ${servico.ID_Servico}:`, error);
-                    return { ...servico, Nome_Profissional: 'Erro ao obter nome' };
-                }
-            }));
-
-            servicosComNomes.sort((a, b) => a.Nome_Servico.localeCompare(b.Nome_Servico));
-            setServicosFiltrados(servicosComNomes);
-        } else {
-            listarServicos();
-        }
-    } catch (error) {
-        console.error("Erro ao filtrar os serviços:", error);
-    }
   };
 
   const handleSalvarEdicao = async () => {
@@ -237,11 +230,6 @@ function Servicos() {
                   </Form.Group>
                 </Form>
               </Col>
-              <Col lg="2">
-                <Button variant="secondary" onClick={handleBuscar}>
-                  <FaSearch /> Pesquisar
-                </Button>
-              </Col>
             </Row>
           </Card.Body>
         </Container>
@@ -292,17 +280,17 @@ function Servicos() {
         servicoToDelete={servicoToDelete}
       />
 
-<ModalEditarServico
-      show={showEditarModal}
-      setShowEditarModal={setShowEditarModal}
-      handleSalvarEdicao={handleSalvarEdicao}
-      servicoEditando={servicoEditando}
-      setServicoEditando={setServicoEditando}
-      handleDescricaoChange={handleDescricaoChange}
-      handleProfissionalChange={handleProfissionalChange}
-      errors={errors}
-      profissionais={profissionais} 
-    />
+      <ModalEditarServico
+        show={showEditarModal}
+        setShowEditarModal={setShowEditarModal}
+        handleSalvarEdicao={handleSalvarEdicao}
+        servicoEditando={servicoEditando}
+        setServicoEditando={setServicoEditando}
+        handleDescricaoChange={handleDescricaoChange}
+        handleProfissionalChange={handleProfissionalChange}
+        errors={errors}
+        profissionais={profissionais} 
+      />
     </main>
   );
 }
