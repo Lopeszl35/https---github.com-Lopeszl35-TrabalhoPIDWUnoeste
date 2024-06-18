@@ -65,8 +65,8 @@ function ServicosNovo() {
 
     if (!formState.descricao) {
       newErrors.descricao = "O campo descrição é obrigatório";
-    } else if (formState.descricao.length > 100) {
-      newErrors.descricao = "A descrição deve ter no máximo 100 caracteres";
+    } else if (formState.descricao.length > 150) {
+      newErrors.descricao = "A descrição deve ter no máximo 150 caracteres";
     }
 
     if (!formState.dataCadastro) {

@@ -27,6 +27,7 @@ function CadastrarProfissionais() {
     //Métodos do banco de dados
     const cadastrarProfissional = async () => {
         try {
+            console.log('Dados do profissional a serem cadastrados:', usuarioInfo);
             await profissionaisService.cadastrarProfissional(usuarioInfo);
             setUsuarioInfo({
                 nomeCompleto: '',
@@ -45,7 +46,6 @@ function CadastrarProfissionais() {
         } 
     }
 
-    //Métodos do formulário
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setUsuarioInfo({
@@ -86,7 +86,7 @@ function CadastrarProfissionais() {
         if (!usuarioInfo.especialidade) {
             newErros.especialidade = 'Especialidade é obrigatória';
         }
-        if (usuarioInfo.tipoUsuario === 'profissionalSaude' && !usuarioInfo.registroProfissional) {
+        if (!usuarioInfo.registroProfissional) {
             newErros.registroProfissional = 'Registro profissional é obrigatório';
         }
         if (!usuarioInfo.senha) {
@@ -152,11 +152,11 @@ function CadastrarProfissionais() {
                     <label htmlFor="especialidade">Especialidade:</label>
                     <select id="especialidade" name="especialidade" value={usuarioInfo.especialidade} onChange={handleInputChange}>
                         <option value="">Selecione</option>
-                        <option value="medico">Médico</option>
-                        <option value="psicologo">Psicólogo</option>
                         <option value="nutricionista">Nutricionista</option>
-                        <option value="enfermeiro">Enfermeiro</option>
-                        {/* Adicione outras especialidades conforme necessário */}
+                        <option value="fisioterapeuta">Fisioterapeuta</option>
+                        <option value="psicologia">Psicologia</option>
+                        <option value="serviço social">Serviço Social</option>
+                        <option value="pedagoga">Pedagoga</option>
                     </select>
                     {erros.especialidade && <p className="erros">{erros.especialidade}</p>}
 

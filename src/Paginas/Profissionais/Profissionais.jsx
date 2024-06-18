@@ -154,7 +154,7 @@ function Profissionais() {
                   currentProfissionais.map((profissional) => (
                     <Accordion.Item eventKey={profissional.ID_Profissional} key={profissional.ID_Profissional}>
                       <Accordion.Header>
-                        {profissional.Nome_Completo} - {profissional.Email}
+                      <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p> - {profissional.Especialidade}
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>

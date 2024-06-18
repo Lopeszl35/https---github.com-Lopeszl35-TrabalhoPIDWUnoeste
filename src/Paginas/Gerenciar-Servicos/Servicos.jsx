@@ -244,7 +244,7 @@ function Servicos() {
               servicosFiltrados.map((servico) => (
                 <Accordion.Item eventKey={servico.ID_Servico} key={servico.ID_Servico}>
                   <Accordion.Header>
-                    {servico.Nome_Servico} - {servico.Nome_Profissional}
+                    <p className="m-2 text-primary"><strong>{servico.Nome_Servico}</strong></p> - {servico.Descricao}
                   </Accordion.Header>
                   <Accordion.Body>
                     <Row>
