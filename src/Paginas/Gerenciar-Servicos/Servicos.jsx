@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import { Accordion, Container, Table, Button, Row, Col, Form, Card } from "react-bootstrap";
+import { Accordion, Container, Button, Row, Col, Form, Card } from "react-bootstrap";
 import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
+import ProfissionaisService from "../../services/profissionaisService";
 import ModalConfirmDelete from "./ModalConfirmDelete";
 import ModalEditarServico from "./ModalEditarServico";
 import moment from "moment";
 
 const servicosService = new ServicosService();
+const profissionaisService = new ProfissionaisService();
 
 function Servicos() {
   const { show } = useOutletContext();
   const [listaServicos, setListaServicos] = useState([]);
+  const [profissionais, setProfissionais] = useState([]);
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const [servicoToDelete, setServicoToDelete] = useState(null);
   const [busca, setBusca] = useState("");
@@ -26,7 +29,7 @@ function Servicos() {
       const dados = await servicosService.obterTodos();
       const servicosComNomes = await Promise.all(dados.map(async servico => {
         try {
-          const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
+          const nomeProfissional = await profissionaisService.obterNomeProfissionalPorId(servico.ID_Servico);
           return { ...servico, Nome_Profissional: nomeProfissional };
         } catch (error) {
           console.error(`Erro ao obter o nome do profissional para o serviço ${servico.ID_Servico}:`, error);
@@ -46,10 +49,24 @@ function Servicos() {
     listarServicos();
   }, []);
 
+  useEffect(() => {
+    const listarProfissionais = async () => {
+      try {
+        const dados = await profissionaisService.obterTodos();
+        setProfissionais(dados);
+      } catch (error) {
+        console.error("Erro ao obter profissionais:", error);
+      }
+    };
+
+    listarProfissionais();
+  }, []);
+
+
   const abrirModalEdicao = async (id) => {
     try {
       const servico = await servicosService.obterPorId(id);
-      const nomeProfissional = await servicosService.obterNomeProfissionalPorId(servico.Profissional_Responsavel);
+      const nomeProfissional = await profissionaisService.obterNomeProfissionalPorId(id);
       setServicoEditando({ ...servico, Profissional_Responsavel: nomeProfissional });
       setShowEditarModal(true);
     } catch (error) {
@@ -275,16 +292,17 @@ function Servicos() {
         servicoToDelete={servicoToDelete}
       />
 
-      <ModalEditarServico
-        show={showEditarModal}
-        setShowEditarModal={setShowEditarModal}
-        handleSalvarEdicao={handleSalvarEdicao}
-        servicoEditando={servicoEditando}
-        setServicoEditando={setServicoEditando}
-        handleDescricaoChange={handleDescricaoChange}
-        handleProfissionalChange={handleProfissionalChange}
-        errors={errors}
-      />
+<ModalEditarServico
+      show={showEditarModal}
+      setShowEditarModal={setShowEditarModal}
+      handleSalvarEdicao={handleSalvarEdicao}
+      servicoEditando={servicoEditando}
+      setServicoEditando={setServicoEditando}
+      handleDescricaoChange={handleDescricaoChange}
+      handleProfissionalChange={handleProfissionalChange}
+      errors={errors}
+      profissionais={profissionais} 
+    />
     </main>
   );
 }

@@ -16,20 +16,6 @@ class ServicosService {
         }
     }
 
-    async obterNomeProfissionalPorId(id) {
-        const response = await fetch(`${API_BASE_URL}/servicos/profissionalNome/${id}`, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao obter o nome do profissional!');
-        } else {
-            const dados = await response.json();
-            return dados.nomeProfissional;
-        }
-    }
-
     async adicionar(servico) {
         const response = await fetch(`${API_BASE_URL}/servicos`, {
             method: 'POST',
@@ -38,13 +24,6 @@ class ServicosService {
             },
             body: JSON.stringify(servico)
         });
-
-        if (response.status === 400) {
-            const errorData = await response.json();
-            if (errorData.message.includes("Profissional não encontrado")) {
-                throw new Error('Profissional não encontrado');
-            }
-        }
 
         if (!response.ok) {
             throw new Error('Erro ao adicionar o Serviço!');

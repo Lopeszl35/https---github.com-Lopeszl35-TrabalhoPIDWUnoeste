@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { FaRegSave } from "react-icons/fa";
 
-function ModalEditarServico({ show, setShowEditarModal, handleSalvarEdicao, servicoEditando, setServicoEditando, handleDescricaoChange, handleProfissionalChange, errors }) {
+function ModalEditarServico({ show, setShowEditarModal, handleSalvarEdicao, servicoEditando, setServicoEditando, handleDescricaoChange, handleProfissionalChange, errors, profissionais }) {
   return (
     <Modal show={show} onHide={() => setShowEditarModal(false)} centered>
       <Modal.Header closeButton>
@@ -49,13 +49,18 @@ function ModalEditarServico({ show, setShowEditarModal, handleSalvarEdicao, serv
 
           <Form.Group className="mb-3" controlId="formProfissional">
             <Form.Label>Profissional Responsável</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Nome do profissional"
+            <Form.Select
               value={servicoEditando?.Profissional_Responsavel || ""}
               isInvalid={errors.profissional}
-              onChange={handleProfissionalChange}
-            />
+              onChange={(e) => setServicoEditando({ ...servicoEditando, Profissional_Responsavel: e.target.value })}
+            >
+              <option value="">Selecione um profissional</option>
+              {profissionais.map((profissional) => (
+                <option key={profissional.Nome_Completo} value={profissional.Nome_Completo}>
+                  {profissional.Nome_Completo}
+                </option>
+              ))}
+            </Form.Select>
             <Form.Control.Feedback type="invalid">
               {errors.profissional}
             </Form.Control.Feedback>

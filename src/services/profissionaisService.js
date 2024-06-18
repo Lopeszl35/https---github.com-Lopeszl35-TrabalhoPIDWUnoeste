@@ -79,6 +79,20 @@ class ProfissionaisService {
             return dados;
         }
     }
+
+    async obterNomeProfissionalPorId(id) {
+        const response = await fetch(`${API_BASE_URL}/profissionais/profissionalNome/${id}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao obter o nome do profissional!');
+        } else {
+            const dados = await response.json();
+            return dados.nomeProfissional;
+        }
+    }
         
 }
 

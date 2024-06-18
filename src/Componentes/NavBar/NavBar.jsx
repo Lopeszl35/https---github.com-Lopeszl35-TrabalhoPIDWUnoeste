@@ -55,15 +55,15 @@ function NavBar({ onLogout }) {
           </Link>
         </li>
         <li className="nav-link">
-          <Link to="/relatorios">
-            <BsFileText />
-            <span className="mx-2">Relatórios</span>
+          <Link to="/servicos">
+            <MdOutlineMedicalServices />
+            <span className="mx-2">Áreas de Serviços</span>
           </Link>
         </li>
         <li className="nav-link">
-          <Link to="/servicos">
-            <MdOutlineMedicalServices />
-            <span className="mx-2">Áreas de Atendimento</span>
+          <Link to="/relatorios">
+            <BsFileText />
+            <span className="mx-2">Relatórios</span>
           </Link>
         </li>
         <div className="logo-container">
