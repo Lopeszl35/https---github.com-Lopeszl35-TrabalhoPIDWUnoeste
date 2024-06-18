@@ -24,8 +24,10 @@ class PacientesController {
     async obterTodos(req, res) {
         console.log('Obtendo todos os Pacientes...');
         try {
-            const pacientes = await pacienteModel.obterTodos();
-            return res.status(200).json(pacientes);
+            const paciente = await pacienteModel.obterTodos();
+            const endereco = await enderecoModel.obterTodos();
+            const responsavel = await responsavelModel.obterTodos();
+            res.status(200).json({paciente, endereco, responsavel});
         } catch (error) {
             console.log('Erro ao obter os Pacientes:', error);
             return res.status(500).json({ message: error.message });
