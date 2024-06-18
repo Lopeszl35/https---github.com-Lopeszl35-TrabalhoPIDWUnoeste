@@ -73,23 +73,23 @@ function EditarPacientes() {
           Data_De_Nascimento: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
           CPF: paciente.CPF || '',
           RG: paciente.RG || '',
-          Nome_Mae: paciente.Nome_Mae || '',
-          Telefone_Mae: paciente.Telefone_Mae || '',
-          Nome_Pai: paciente.Nome_Pai || '',
-          Telefone_Pai: paciente.Telefone_Pai || '',
-          Numero: paciente.Numero || '', 
-          Logradouro: paciente.Logradouro || '', 
-          Bairro: paciente.Bairro || '', 
-          Complemento: paciente.Complemento || '',
-          Estado: paciente.Estado || '',
+          Nome_Mae: paciente.responsavel.Nome_Mae || '',
+          Telefone_Mae: paciente.responsavel.Telefone_Mae || '',
+          Nome_Pai: paciente.responsavel.Nome_Pai || '',
+          Telefone_Pai: paciente.responsavel.Telefone_Pai || '',
+          Numero: paciente.endereco.Numero || '', 
+          Logradouro: paciente.endereco.Logradouro || '', 
+          Bairro: paciente.endereco.Bairro || '', 
+          Complemento: paciente.endereco.Complemento || '',
+          Estado: paciente.endereco.Estado || '',
           cidadeEscola: paciente.cidadeEscola || '',
           Escola: paciente.Escola || '',
           Ano_Escolar: paciente.Ano_Escolar || '',
           Periodo: paciente.Periodo || '',
           autorizacaoImagem: paciente.autorizacaoImagem || false,
           CartaoSUS: paciente.CartaoSUS || '',
-          Cidade: paciente.Cidade || '',
-          CEP: paciente.CEP || '',
+          Cidade: paciente.endereco.Cidade || '',
+          CEP: paciente.endereco.CEP || '',
         });
       } catch (error) {
         console.error('Erro ao obter paciente:', error);
@@ -149,7 +149,34 @@ function EditarPacientes() {
     e.preventDefault();
     if (validate()) {
       try {
-        await pacientesService.atualizar(prontuario, pacienteInfo);
+        const pacienteAtualizado = {
+          Prontuario: pacienteInfo.Prontuario,
+          Nome_Completo: pacienteInfo.Nome_Completo,
+          Data_De_Nascimento: pacienteInfo.Data_De_Nascimento,
+          CPF: pacienteInfo.CPF,
+          RG: pacienteInfo.RG,
+          Nome_Mae: pacienteInfo.Nome_Mae,
+          Telefone_Mae: pacienteInfo.Telefone_Mae,
+          Nome_Pai: pacienteInfo.Nome_Pai,
+          Telefone_Pai: pacienteInfo.Telefone_Pai,
+          Endereco: {
+            Numero: pacienteInfo.Numero,
+            Logradouro: pacienteInfo.Logradouro,
+            Bairro: pacienteInfo.Bairro,
+            Complemento: pacienteInfo.Complemento,
+            Estado: pacienteInfo.Estado,
+            Cidade: pacienteInfo.Cidade,
+            CEP: pacienteInfo.CEP,
+          },
+          cidadeEscola: pacienteInfo.cidadeEscola,
+          Escola: pacienteInfo.Escola,
+          Ano_Escolar: pacienteInfo.Ano_Escolar,
+          Periodo: pacienteInfo.Periodo,
+          autorizacaoImagem: pacienteInfo.autorizacaoImagem,
+          CartaoSUS: pacienteInfo.CartaoSUS,
+        };
+
+        await pacientesService.atualizar(prontuario, pacienteAtualizado);
         console.log('Paciente atualizado com sucesso');
         navigate('/pacientes');
       } catch (error) {
@@ -255,8 +282,12 @@ function EditarPacientes() {
                 </div>
 
                 <div className="form-group col-md-6">
-                  <label htmlFor="Estado">Estado:</label>
-                  <input type="text" id="Estado" name="Estado" value={pacienteInfo.Estado} onChange={handleInputChange} />
+                <label htmlFor="Estado">Estado:</label>
+                  <select id="Estado" name="Estado" value={pacienteInfo.Estado} onChange={handleInputChange}>
+                    {estados.map((Estado, index) => (
+                      <option key={index} value={Estado}>{Estado}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

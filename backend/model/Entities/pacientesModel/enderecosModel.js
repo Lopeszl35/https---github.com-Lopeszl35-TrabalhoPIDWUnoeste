@@ -16,7 +16,7 @@ class EnderecosModel {
 
     async obterPorProntuario(prontuario) {
         const result = await dataBase.executaComando("SELECT * FROM enderecos WHERE Prontuario = ?", [prontuario]);
-        return result;
+        return result[0];
     }
 
     async adicionar(dadosEndereco, connection) {
