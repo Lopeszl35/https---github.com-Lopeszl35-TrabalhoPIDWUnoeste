@@ -55,10 +55,21 @@ function Pacientes() {
   const atualizarPacientes = async () => {
     try {
       const dados = await pacientesService.obterTodos();
-      setPacientes(dados);
-      setPacientesFiltrados(dados);
+      if (dados.paciente && dados.endereco && dados.responsavel) {
+        const pacientesCompletos = dados.paciente.map(paciente => {
+          const endereco = dados.endereco.find(end => end.Prontuario === paciente.Prontuario);
+          const responsavel = dados.responsavel.find(resp => resp.Prontuario === paciente.Prontuario);
+          return {
+            ...paciente,
+            endereco,
+            responsavel
+          };
+        });
+        setPacientes(pacientesCompletos);
+        setPacientesFiltrados(pacientesCompletos);
+      }
     } catch (error) {
-      console.error("Erro ao obter pacientes:", error); 
+      console.error("Erro ao obter pacientes:", error);
     }
   };
 
