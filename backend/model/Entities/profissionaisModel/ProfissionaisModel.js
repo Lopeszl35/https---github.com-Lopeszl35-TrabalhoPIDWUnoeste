@@ -36,6 +36,21 @@ class ProfissionaisModel {
         if (result.length === 1) {
             return result[0].ID_Profissional;
         }
+        console.log(`Profissional com nome ${nomeProfissional} não encontrado ou múltiplos resultados.`);
+        return null;
+    }
+
+    async obterNomeProfissionalPorId(idServico) {
+        const result = await dataBase.executaComando(
+            `SELECT p.Nome_Completo 
+             FROM Profissionais p
+             JOIN ProfissionalServicos ps ON p.ID_Profissional = ps.ID_Profissional
+             WHERE ps.ID_Servico = ?`,
+            [idServico]
+        );
+        if (result.length === 1) {
+            return result[0].Nome_Completo;
+        }
         return null;
     }
 

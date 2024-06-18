@@ -11,8 +11,6 @@ router.get('/servicos/filtrar', [
     query('valor').notEmpty().withMessage('Valor do filtro não pode ser vazio')
 ], servicoController.filtrar.bind(servicoController));
 
-// Rota para obter o nome do profissional responsável pelo serviço
-router.get('/servicos/profissionalNome/:id', servicoController.obterNomeProfissionalPorId.bind(servicoController));
 
 // Rotas para CRUD de serviços
 router.get('/servicos', servicoController.obterTodos.bind(servicoController));

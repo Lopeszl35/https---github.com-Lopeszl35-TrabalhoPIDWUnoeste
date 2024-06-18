@@ -22,14 +22,6 @@ class ServicosModel {
         return result[0];
     }
 
-    async obterNomeProfissionalPorId(idProfissional) {
-        const result = await dataBase.executaComando("SELECT Nome_Completo FROM profissionais WHERE ID_Profissional = ?", [idProfissional]);
-        if (result.length === 1) {
-            return result[0].Nome_Completo;
-        }
-        return null;
-    }
-
     async adicionar(dadosServico, connection) {
         dadosServico.Data_De_Cadastro = moment(dadosServico.Data_De_Cadastro).format('YYYY-MM-DD');
         const [result] = await connection.query('INSERT INTO servicos SET ?', dadosServico);

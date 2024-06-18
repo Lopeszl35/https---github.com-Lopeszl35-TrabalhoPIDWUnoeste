@@ -133,6 +133,23 @@ class ProfissionaisController {
             return res.status(500).json({ message: error.message });
         }
     }
+
+    async obterNomeProfissionalPorId(req, res) {
+        console.log('Obtendo o nome do profissional por ID...');
+        const { id } = req.params;
+        try {
+            const nomeProfissional = await profissionalModel.obterNomeProfissionalPorId(id);
+            if (!nomeProfissional) {
+                return res.status(404).json({ message: 'Profissional não encontrado' });
+            }
+            return res.status(200).json({ nomeProfissional });
+        } catch (error) {
+            console.log('Erro ao obter o nome do profissional:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+
 }
 
 module.exports = ProfissionaisController;

@@ -21,6 +21,9 @@ router.put('/profissionais/:id', profissionaisController.editarProfissional.bind
 // Rota para excluir um profissional
 router.delete('/profissionais/:id', profissionaisController.excluirUsuario.bind(profissionaisController));
 
+// Rota para obter o nome do profissional responsável pelo serviço
+router.get('/profissionais/profissionalNome/:id', profissionaisController.obterNomeProfissionalPorId.bind(profissionaisController));
+
 
 
 module.exports = router;

@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const ServicosModel = require('../model/Entities/servicosModel');
 const DataBase = require('../model/database');
 const ProfissionaisServicos = require('../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
-const ProfissionaisModel = require('../model/Entities/profissionaisModel/profissionaisModel');
+const ProfissionaisModel = require('../model/Entities/profissionaisModel/ProfissionaisModel');
 
 const profissionalModel = new ProfissionaisModel();
 const servicoModel = new ServicosModel();
@@ -33,24 +33,10 @@ class ServicoController {
         }
     }
 
-    async obterNomeProfissionalPorId(req, res) {
-        console.log('Obtendo o nome do profissional por ID...');
-        const { id } = req.params;
-        try {
-            const nomeProfissional = await servicoModel.obterNomeProfissionalPorId(id);
-            if (!nomeProfissional) {
-                return res.status(404).json({ message: 'Profissional não encontrado' });
-            }
-            return res.status(200).json({ nomeProfissional });
-        } catch (error) {
-            console.log('Erro ao obter o nome do profissional:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
     async adicionar(req, res) {
         console.log('Adicionando o Serviço...');
         const errors = validationResult(req);
+        console.log(JSON.stringify(req.body));
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
@@ -64,13 +50,17 @@ class ServicoController {
             const servicoId = await servicoModel.adicionar(servico, connection);
 
             const profissionalId = await profissionalModel.obterIdProfissionalPorNome(Profissional_Responsavel);
+            if (!profissionalId) {
+                throw new Error(`Profissional com nome ${Profissional_Responsavel} não encontrado`);
+            }
 
-            await profissionaisServicosModel.inserir(servicoId, profissionalId, connection);
+            await profissionaisServicosModel.inserir(profissionalId, servicoId, connection);
 
             await dataBase.commitTransaction(connection);
             return res.status(201).json({ message: "Serviço adicionado com sucesso!" });
         } catch (error) {
             console.log(error);
+            await dataBase.rollbackTransaction(connection);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -85,21 +75,32 @@ class ServicoController {
     
         const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
     
+        let connection;
         try {
-            const profissionalId = await servicoModel.obterIdProfissionalPorNome(Profissional_Responsavel);
+            connection = await dataBase.beginTransaction();
+    
+            // Obter ID do profissional pelo nome
+            const profissionalId = await profissionalModel.obterIdProfissionalPorNome(Profissional_Responsavel);
             if (!profissionalId) {
-                return res.status(400).json({ message: "Profissional não encontrado ou nome incompleto." });
+                throw new Error(`Profissional com nome ${Profissional_Responsavel} não encontrado ou múltiplos resultados.`);
             }
-            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status, profissionalId);
+    
+            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status);
             await servicoModel.atualizar(id, servico);
+    
+            // Atualizar a relação entre o serviço e o profissional
+            await profissionaisServicosModel.atualizar(profissionalId, id, connection);
+    
+            await dataBase.commitTransaction(connection);
             const servicoAtualizado = await servicoModel.obterPorId(id);
             return res.status(200).json(servicoAtualizado);
         } catch (error) {
             console.log(error);
+            await dataBase.rollbackTransaction(connection);
             return res.status(500).json({ message: error.message });
         }
     }
-
+    
     async deletar(req, res) {
         console.log('Deletando o Serviço...');
         const { id } = req.params;
@@ -124,10 +125,10 @@ class ServicoController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-    
+
         try {
             let result;
-    
+
             if (filtro === 'nome') {
                 result = await servicoModel.filtrarPorNome(valor);
             } else if (filtro === 'profissional') {
@@ -137,7 +138,7 @@ class ServicoController {
             } else {
                 return res.status(400).json({ message: "Filtro inválido." });
             }
-    
+
             return res.status(200).json(result);
         } catch (error) {
             console.log('Erro ao filtrar os serviços:', error);
