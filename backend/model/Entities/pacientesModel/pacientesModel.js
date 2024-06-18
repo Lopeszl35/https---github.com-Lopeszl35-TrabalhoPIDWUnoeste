@@ -33,7 +33,7 @@ class PacientesModel {
 
     async buscarUltimoPaciente() {
         const result = await dataBase.executaComando("SELECT MAX(prontuario) AS ultimo FROM pacientes");
-        return result;
+        return result[0];
     }
 
     async adicionar(dadosPaciente, connection) {

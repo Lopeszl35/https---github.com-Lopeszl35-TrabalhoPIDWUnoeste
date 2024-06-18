@@ -41,14 +41,14 @@ function CadastrarPacientes() {
   useEffect(() => {
     const fetchUltimoProntuario = async () => {
       try {
-        console.log('Chamando fetchUltimoPaciente...');
+        console.log('log de teste');
         const ultimoProntuario = await pacientesService.buscarUltimoPaciente();
         console.log('Último prontuário recebido:', ultimoProntuario);
         
         // Atualiza o estado do componente com o último prontuário
         setPacienteInfo(prevState => ({
           ...prevState,
-          Prontuario: ultimoProntuario + 1  // Define o próximo prontuário disponível
+          Prontuario: ultimoProntuario.ultimo + 1  // Define o próximo prontuário disponível
         }));
       } catch (error) {
         console.error('Erro ao buscar o último paciente:', error);
