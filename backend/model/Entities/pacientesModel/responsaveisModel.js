@@ -10,6 +10,11 @@ class ResponsaveisModel {
         this.Telefone_Pai = Telefone_Pai;
     }
 
+    async obterTodos() {
+        const result = await dataBase.executaComando("SELECT * FROM responsaveis");
+        return result;
+    }
+
     async obterPorProntuario(prontuario) {
         const result = await dataBase.executaComando("SELECT * FROM responsaveis WHERE Prontuario = ?", [prontuario]);
         return result[0];

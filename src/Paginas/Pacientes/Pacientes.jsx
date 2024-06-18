@@ -26,13 +26,23 @@ function Pacientes() {
   const obterTodos = async () => {
     try {
       const dados = await pacientesService.obterTodos();
-      setPacientes(dados);
-      setPacientesFiltrados(dados);
+      if (dados.paciente && dados.endereco && dados.responsavel) {
+        const pacientesCompletos = dados.paciente.map(paciente => {
+          const endereco = dados.endereco.find(end => end.Prontuario === paciente.Prontuario);
+          const responsavel = dados.responsavel.find(resp => resp.Prontuario === paciente.Prontuario);
+          return {
+            ...paciente,
+            endereco,
+            responsavel
+          };
+        });
+        setPacientes(pacientesCompletos);
+        setPacientesFiltrados(pacientesCompletos);
+      }
     } catch (error) {
       console.error("Erro ao obter pacientes:", error);
     }
   };
-
   const showDelete = (prontuario) => {
     setShowModalDelete(true);
     setPacienteToDelete(prontuario);
@@ -45,10 +55,21 @@ function Pacientes() {
   const atualizarPacientes = async () => {
     try {
       const dados = await pacientesService.obterTodos();
-      setPacientes(dados);
-      setPacientesFiltrados(dados);
+      if (dados.paciente && dados.endereco && dados.responsavel) {
+        const pacientesCompletos = dados.paciente.map(paciente => {
+          const endereco = dados.endereco.find(end => end.Prontuario === paciente.Prontuario);
+          const responsavel = dados.responsavel.find(resp => resp.Prontuario === paciente.Prontuario);
+          return {
+            ...paciente,
+            endereco,
+            responsavel
+          };
+        });
+        setPacientes(pacientesCompletos);
+        setPacientesFiltrados(pacientesCompletos);
+      }
     } catch (error) {
-      console.error("Erro ao obter pacientes:", error); 
+      console.error("Erro ao obter pacientes:", error);
     }
   };
 
@@ -133,14 +154,14 @@ function Pacientes() {
                   currentPacientes.map((paciente) => (
                     <Accordion.Item eventKey={paciente.Prontuario} key={paciente.Prontuario}>
                       <Accordion.Header>
-                        {paciente.Nome_Completo} - {paciente.Prontuario}
+                      {paciente.Prontuario} - {paciente.Nome_Completo} 
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>
                           <Col md={4}>
                             <p><strong>Prontuário:</strong> {paciente.Prontuario}</p>
                             <p><strong>Nome:</strong> {paciente.Nome_Completo}</p>
-                            <p><strong>Data de Nascimento:</strong> {paciente.Data_Nascimento}</p>
+                            <p><strong>Data de Nascimento:</strong> {new Date(paciente.Data_De_Nascimento).toLocaleDateString()}</p>
                           </Col>
                           <Col md={4}>
                             <p><strong>CPF:</strong> {paciente.CPF}</p>
@@ -149,7 +170,7 @@ function Pacientes() {
                           </Col>
                           <Col md={4}>
                             <p><strong>Telefone:</strong> {paciente.Telefone}</p>
-                            <p><strong>Endereço:</strong> {paciente.Endereco}</p>
+                            <p><strong>Endereço:</strong> {paciente.endereco.Logradouro}</p>
                           </Col>
                         </Row>
                         <div className="d-flex flex-row gap-2">

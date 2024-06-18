@@ -14,6 +14,11 @@ class EnderecosModel {
         this.CEP = CEP;
     }
 
+    async obterTodos() {
+        const result = await dataBase.executaComando("SELECT * FROM enderecos");
+        return result;
+    }
+
     async obterPorProntuario(prontuario) {
         const result = await dataBase.executaComando("SELECT * FROM enderecos WHERE Prontuario = ?", [prontuario]);
         return result[0];
