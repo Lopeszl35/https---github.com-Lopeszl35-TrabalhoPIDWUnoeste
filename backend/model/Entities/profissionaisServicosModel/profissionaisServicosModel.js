@@ -38,7 +38,7 @@ class ProfissionaisServicosModel {
 
     async excluir(idProfissional, connection) {
         const result = await connection.query(
-            "DELETE FROM profissionalservicos WHERE ID_Profissional = ?",
+            "DELETE FROM profissionalservicos WHERE ID_Servico = ?",
             [idProfissional]
         );
         return result;

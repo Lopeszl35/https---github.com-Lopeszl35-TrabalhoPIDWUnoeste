@@ -33,8 +33,8 @@ class ServicosModel {
         await dataBase.executaComandoNonQuery('UPDATE servicos SET ? WHERE ID_Servico = ?', [dadosServico, id]);
     }
 
-    async deletar(id) {
-        await dataBase.executaComandoNonQuery('DELETE FROM servicos WHERE ID_Servico = ?', [id]);
+    async deletar(id, connection) {
+        await connection.query('DELETE FROM servicos WHERE ID_Servico = ?', [id]);
     }
 
     async filtrarPorNome(nome) {

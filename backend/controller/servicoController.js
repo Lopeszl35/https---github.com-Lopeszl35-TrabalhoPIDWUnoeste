@@ -108,9 +108,14 @@ class ServicoController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+        let connection;
         try {
-            await servicoModel.deletar(id);
+            connection = await dataBase.beginTransaction();
+
+            await profissionaisServicosModel.excluir(id, connection);
+            await servicoModel.deletar(id, connection);
+
+            await dataBase.commitTransaction(connection);
             return res.status(200).json({ message: "Serviço excluído com sucesso!" });
         } catch (error) {
             console.log('Erro ao excluir o serviço:', error);

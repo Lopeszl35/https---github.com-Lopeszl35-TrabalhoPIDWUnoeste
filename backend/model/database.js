@@ -6,7 +6,6 @@ class DataBase {
             host: 'localhost',
             user: 'root',
             database: 'careconnectdb',
-            password: '12345'
         });
     }
 
