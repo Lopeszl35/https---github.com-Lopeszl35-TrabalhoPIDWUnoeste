@@ -175,7 +175,7 @@ function Servicos() {
     const { Descricao, Profissional_Responsavel } = servicoEditando;
     let newErrors = {};
 
-    if (!Descricao || Descricao.length > 100) {
+    if (!Descricao || Descricao.length > 150) {
       newErrors.descricao = "A descrição deve ter no máximo 100 caracteres";
       isValid = false;
     }
