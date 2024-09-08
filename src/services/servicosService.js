@@ -3,6 +3,7 @@ const API_BASE_URL = 'http://localhost:3001';
 class ServicosService {
     async obterTodos() {
         const response = await fetch(`${API_BASE_URL}/servicos`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }

@@ -3,7 +3,11 @@ const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel'
 const ProfissionaisServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const { validationResult } = require('express-validator');
 const DataBase = require('../../model/database');
+const ProfissionalServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
+const ServicosModel = require('../../model/Entities/servicosModel');
 
+const servicosModel = new ServicosModel();
+const profissionalServicos = new ProfissionalServicos();
 const profissionalModel = new ProfissionaisModel();
 const usuarioModel = new UsuariosModel();
 const profissionaisServicosModel = new ProfissionaisServicos();
@@ -51,11 +55,23 @@ class ProfissionaisController {
         try {
             connection = await dataBase.beginTransaction();
 
+            // Adiciona o profissional
             const profissional = new ProfissionaisModel(nomeCompleto, cpf, rg, dataNasc, telefone, email, especialidade, registroProfissional);
             const profissionalId = await profissionalModel.adicionar(profissional, connection);
 
+            // Filtra o serviço por nome da especialidade
+            const servicoEspecialidade = await servicosModel.filtrarPorNome(especialidade, connection);
+            if (servicoEspecialidade.length === 0) {
+                throw new Error('Serviço de especialidade não encontrado');
+            }
+            const especialidadeId = servicoEspecialidade[0].ID_Servico;
+
+            // Adiciona o usuário
             const usuario = new UsuariosModel(profissionalId, email, senha, 'profissionalSaude');
             await usuarioModel.adicionar(usuario, connection);
+
+            // Relaciona o profissional com a especialidade (serviço)
+            await profissionalServicos.inserir(profissionalId, especialidadeId ,connection);
 
             await dataBase.commitTransaction(connection);
             return res.status(201).json({ message: 'Profissional adicionado com sucesso!' });
