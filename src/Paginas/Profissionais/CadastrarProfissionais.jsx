@@ -2,16 +2,20 @@ import { Container, Alert, Button } from "react-bootstrap";
 import { useOutletContext, Link } from "react-router-dom";
 import { FaCheckCircle, FaArrowLeft, FaRegSave } from "react-icons/fa";
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import "./CadastrarProfissional.css";
 import ProfissionaisService from "../../services/profissionaisService";
+import ServicosService from "../../services/servicosService";
 
 const profissionaisService = new ProfissionaisService();
+const servicosService = new ServicosService();
 
 function CadastrarProfissionais() {
     const { show } = useOutletContext();
 
     const [showMensagem, setShowMensagem] = useState(false);
     const [erros, setErros] = useState({});
+    const [servicos, setServicos] = useState([]);
     const [usuarioInfo, setUsuarioInfo] = useState({
         nomeCompleto: '', 
         dataNasc: '', 
@@ -45,6 +49,20 @@ function CadastrarProfissionais() {
             console.error("Erro ao cadastrar profissional:", error);
         } 
     }
+
+    useEffect(() => {
+        const fetchServicos = async () => {
+            try {
+                const servicosData = await servicosService.obterTodos();
+                setServicos(servicosData);
+                console.log("Serviços:", servicosData); 
+            } catch (error) {
+                console.error("Erro ao buscar serviços:", error);
+            }
+        };
+    
+        fetchServicos();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -152,11 +170,9 @@ function CadastrarProfissionais() {
                     <label htmlFor="especialidade">Especialidade:</label>
                     <select id="especialidade" name="especialidade" value={usuarioInfo.especialidade} onChange={handleInputChange}>
                         <option value="">Selecione</option>
-                        <option value="nutricionista">Nutricionista</option>
-                        <option value="fisioterapeuta">Fisioterapeuta</option>
-                        <option value="psicologia">Psicologia</option>
-                        <option value="serviço social">Serviço Social</option>
-                        <option value="pedagoga">Pedagoga</option>
+                        {servicos.map((servico) => (
+                            <option key={servico.ID_Servico} value={servico.Nome_Servico}>{servico.Nome_Servico}</option>
+                        ))}
                     </select>
                     {erros.especialidade && <p className="erros">{erros.especialidade}</p>}
 
