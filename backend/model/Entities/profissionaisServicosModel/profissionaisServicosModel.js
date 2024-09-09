@@ -44,6 +44,19 @@ class ProfissionaisServicosModel {
         return result;
     }
 
+    async obterTodos() {
+        const sql = `
+          SELECT p.Nome_Completo AS Nome_Profissional, s.Nome_Servico
+          FROM profissionalservicos ps
+          JOIN profissionais p ON ps.ID_Profissional = p.ID_Profissional
+          JOIN servicos s ON ps.ID_Servico = s.ID_Servico
+        `;
+        console.log('Executando consulta SQL:', sql);  
+        const result = await dataBase.executaComando(sql);
+        console.log('Resultado da consulta:', result); 
+        return result;
+    }
+
 }
 
 module.exports = ProfissionaisServicosModel;
