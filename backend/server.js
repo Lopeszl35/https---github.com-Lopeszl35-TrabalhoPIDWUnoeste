@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const session = require ('express-session');
 const servicosRoutes = require('./routes/servicosRoutes');
 const pacientesRoutes = require('./routes/pacientesRoutes');
 const enderecosRoutes = require('./routes/enderecosRoutes');
@@ -9,6 +10,7 @@ const responsaveisRoutes = require('./routes/responsaveisRoutes');
 const profissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisRoutes');
 const profissionalservicosRoutes = require('./routes/profissionalServicosRoutes/ProfissionalServicosRoutes');
 const authRoutes = require('./routes/authRoutes');
+const { cookie } = require('express-validator');
 
 // Configurações do servidor
 const app = express();
@@ -18,6 +20,12 @@ const port = 3001;
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(session({
+    secret: 'seu_segredo',// Armazenar em variaves de ambiente
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 }
+}))
 
 // Rotas
 app.use(servicosRoutes);
