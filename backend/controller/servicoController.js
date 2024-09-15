@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const ServicosModel = require('../model/Entities/servicosModel');
+const ServicosModel = require('../model/Entities/servicosModel/servicosModel');
 const DataBase = require('../model/database');
 const ProfissionaisServicos = require('../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const ProfissionaisModel = require('../model/Entities/profissionaisModel/ProfissionaisModel');

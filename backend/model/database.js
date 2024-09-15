@@ -4,8 +4,8 @@ class DataBase {
     constructor() {
         this.pool = mysql.createPool({
             host: 'localhost',
-            user: 'root',
-            database: 'careconnectdb',
+            user: process.env.USUARIO_BD,
+            database: 'careconnectdb'
         });
     }
 

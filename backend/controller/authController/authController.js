@@ -35,7 +35,7 @@ class AuthController {
             }
 
             // Gera o token JWT
-            const token = jwt.sign({ id: usuarioFake.ID_Usuario, tipoPermissao: usuarioFake.Tipo_Permissao }, 'seu_segredo', {
+            const token = jwt.sign({ id: usuarioFake.ID_Usuario, tipoPermissao: usuarioFake.Tipo_Permissao }, process.env.CHAVE_SECRETA, {
                 expiresIn: '1h', // Define o tempo de expiração do token
             });
 

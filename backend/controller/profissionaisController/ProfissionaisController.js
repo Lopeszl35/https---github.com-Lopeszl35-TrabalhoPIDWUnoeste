@@ -4,7 +4,7 @@ const ProfissionaisServicos = require('../../model/Entities/profissionaisServico
 const { validationResult } = require('express-validator');
 const DataBase = require('../../model/database');
 const ProfissionalServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
-const ServicosModel = require('../../model/Entities/servicosModel');
+const ServicosModel = require('../../model/Entities/servicosModel/servicosModel');
 
 const servicosModel = new ServicosModel();
 const profissionalServicos = new ProfissionalServicos();

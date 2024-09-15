@@ -11,17 +11,20 @@ const profissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisR
 const profissionalservicosRoutes = require('./routes/profissionalServicosRoutes/ProfissionalServicosRoutes');
 const authRoutes = require('./routes/authRoutes');
 const { cookie } = require('express-validator');
+const dotenv = require('dotenv');
 
 // Configurações do servidor
 const app = express();
 const port = 3001;
+
+dotenv.config();
 
 // Middlewares
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(session({
-    secret: 'seu_segredo',// Armazenar em variaves de ambiente
+    secret: process.env.CHAVE_SECRETA,
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 60000 }

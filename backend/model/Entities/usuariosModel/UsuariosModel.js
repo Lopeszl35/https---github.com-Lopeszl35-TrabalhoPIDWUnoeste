@@ -26,6 +26,12 @@ class UsuariosModel {
         const result =await dataBase.executaComando('SELECT * FROM usuarios WHERE ID_Profissional = ?', [id]);
         return result[0];
     }
+
+    async obterPorEmail(email) {
+        const sql = `SELECT * FROM usuarios WHERE Email = ?`;
+        const result = await DataBase.executaComando(sql, [email]);
+        return result;
+    }
 }
 
 module.exports = UsuariosModel;
