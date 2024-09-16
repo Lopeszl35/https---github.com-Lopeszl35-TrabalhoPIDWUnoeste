@@ -13,11 +13,12 @@ const authRoutes = require('./routes/authRoutes');
 const { cookie } = require('express-validator');
 const dotenv = require('dotenv');
 
+// Carrega variaves de ambiente
+dotenv.config();
+
 // Configurações do servidor
 const app = express();
 const port = 3001;
-
-dotenv.config();
 
 // Middlewares
 app.use(morgan('combined'));
