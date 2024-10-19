@@ -142,6 +142,21 @@ class ProfissionalServicosController {
         }
     }
 
+    async obterProfissionaisPorServico(req, res) {
+        const { idServico } = req.params;
+
+        try {
+            const profissionais = await profissionaisServicosModel.obterProfissionaisPorServico(idServico);
+            if (profissionais.length === 0) {
+                return res.status(404).json({ message: 'Nenhum profissional encontrado para este serviço.' });
+            }
+            return res.status(200).json(profissionais);
+        } catch (error) {
+            console.error('Erro ao obter profissionais por serviço:', error);
+            return res.status(500).json({ message: 'Erro ao buscar profissionais responsáveis pelo serviço.' });
+        }
+    }
+
 }
 
 module.exports = ProfissionalServicosController;

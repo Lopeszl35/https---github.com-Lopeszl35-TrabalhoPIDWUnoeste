@@ -19,7 +19,7 @@ class AuthController {
             const usuarioFake = {
                 ID_Usuario: 1,
                 Email: 'teste@exemplo.com',
-                Senha: await bcrypt.hash('senha123', 10), // Senha encriptada
+                Senha: await bcrypt.hash('senha123', 10), 
                 Tipo_Permissao: 'profissionalSaude'
             };
 

@@ -4,10 +4,18 @@ dotenv.config();
 
 class DataBase {
     constructor() {
+        const dbUrl = process.env.DATABASE_URL;
+
+        // extraindo os detalhes da URL do banco de dados
+        const regex = /mysql:\/\/(.*?):(.*?)@(.*?):(\d+)\/(.*)/;
+        const [, user, password, host, port, database] = dbUrl.match(regex);
+
         this.pool = mysql.createPool({
-            host: 'localhost',
-            user: process.env.USUARIO_BD,
-            database: 'careconnectdb'
+            host: host,
+            user: user,
+            password: password,
+            database: database,
+            port: port,
         });
     }
 

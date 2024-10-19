@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = 'dcrhg4kh56j13bnu.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306';
 
 class ServicosService {
     async obterTodos() {
@@ -102,6 +102,20 @@ class ServicosService {
     
         const dados = await response.json();
         return dados;
+    }
+
+    async obterProfissionaisPorServico(idServico) {
+        const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao obter os profissionais para o serviço!');
+        } else {
+            return await response.json();
+        }
     }
 }
 

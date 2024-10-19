@@ -71,11 +71,11 @@ class PacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP } = req.body;
+        const { Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai, Logradouro, Numero, Bairro, Cidade, Estado, CEP, Complemento, Email  } = req.body;
         let connection;
         try {
             connection = await dataBase.beginTransaction();
-            const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo);
+            const paciente = new PacientesModel(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email);
             await pacienteModel.adicionar(paciente, connection);
 
             if (Nome_Mae || Telefone_Mae || Nome_Pai || Telefone_Pai) {

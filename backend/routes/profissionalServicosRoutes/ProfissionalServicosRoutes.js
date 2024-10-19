@@ -15,4 +15,7 @@ router.put('/profissionaiservicos/:id_profissional/:id_servico', authMiddleware,
 
 router.delete('/profissionaiservicos/:id_profissional/:id_servico', authMiddleware, profissionalServicosController.remover);
 
+// Rota para listar profissionais por serviço
+router.get('/servicos/:idServico/profissionais', profissionalServicosController.obterProfissionaisPorServico);
+
 module.exports = router;

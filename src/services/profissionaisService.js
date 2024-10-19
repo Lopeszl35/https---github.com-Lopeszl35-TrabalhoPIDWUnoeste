@@ -19,24 +19,18 @@ class ProfissionaisService {
     }
 
     async cadastrarProfissional(profissional) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/profissionais`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(profissional)
-            });
-            if (!response.ok) {
-                const errorData = await response.json(); // Captura o corpo da resposta
-                throw new Error(errorData.message || 'Erro ao cadastrar o Profissional!');
-            } else {
-                const dados = await response.json();
-                return dados;
-            }
-        } catch (error) {
-            console.error("Erro ao cadastrar profissional:", error);
-            throw error;
+        const response = await fetch(`${API_BASE_URL}/profissionais`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(profissional)
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao cadastrar o Profissional!');
+        } else {
+            const dados = await response.json();
+            return dados;
         }
     }
 

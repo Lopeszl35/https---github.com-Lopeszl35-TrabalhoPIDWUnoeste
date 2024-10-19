@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Accordion, Container, Button, Row, Col, Form, Card } from "react-bootstrap";
-import { FaListAlt, FaPlus, FaSearch, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaListAlt, FaPlus, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
 import ProfissionaisService from "../../services/profissionaisService";
@@ -14,7 +14,7 @@ const profissionaisService = new ProfissionaisService();
 function Servicos() {
   const { show } = useOutletContext();
   const [listaServicos, setListaServicos] = useState([]);
-  const [profissionais, setProfissionais] = useState([]);
+  const [profissionaisPorServico, setProfissionaisPorServico] = useState({});
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const [servicoToDelete, setServicoToDelete] = useState(null);
   const [busca, setBusca] = useState("");
@@ -27,39 +27,27 @@ function Servicos() {
   const listarServicos = async () => {
     try {
       const dados = await servicosService.obterTodos();
-      const servicosComNomes = await Promise.all(dados.map(async servico => {
-        try {
-          const nomeProfissional = await profissionaisService.obterNomeProfissionalPorId(servico.ID_Servico);
-          return { ...servico, Nome_Profissional: nomeProfissional };
-        } catch (error) {
-          console.error(`Erro ao obter o nome do profissional para o serviço ${servico.ID_Servico}:`, error);
-          return { ...servico, Nome_Profissional: 'Erro ao obter nome' };
-        }
-      }));
-
-      servicosComNomes.sort((a, b) => a.Nome_Servico.localeCompare(b.Nome_Servico));
-      setListaServicos(servicosComNomes);
-      setServicosFiltrados(servicosComNomes);
+      setListaServicos(dados);
+      setServicosFiltrados(dados);
     } catch (error) {
       console.error("Erro ao obter serviços:", error);
     }
   };
 
+  const carregarProfissionaisPorServico = async (idServico) => {
+    try {
+      const profissionais = await servicosService.obterProfissionaisPorServico(idServico);
+      setProfissionaisPorServico((prevState) => ({
+        ...prevState,
+        [idServico]: profissionais,
+      }));
+    } catch (error) {
+      console.error(`Erro ao carregar profissionais para o serviço ${idServico}:`, error);
+    }
+  };
+
   useEffect(() => {
     listarServicos();
-  }, []);
-
-  useEffect(() => {
-    const listarProfissionais = async () => {
-      try {
-        const dados = await profissionaisService.obterTodos();
-        setProfissionais(dados);
-      } catch (error) {
-        console.error("Erro ao obter profissionais:", error);
-      }
-    };
-
-    listarProfissionais();
   }, []);
 
   useEffect(() => {
@@ -134,39 +122,6 @@ function Servicos() {
           console.error('Erro ao atualizar o serviço:', error);
         }
       }
-    }
-  };
-
-  const handleDescricaoChange = (e) => {
-    const value = e.target.value;
-    setServicoEditando({ ...servicoEditando, Descricao: value });
-    if (value && value.length <= 100) {
-      setErrors((prev) => ({ ...prev, descricao: null }));
-    } else {
-      if (value === "") {
-        setErrors((prev) => ({
-          ...prev,
-          descricao: "O campo descrição é obrigatório",
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          descricao: "A descrição deve ter no máximo 100 caracteres",
-        }));
-      }
-    }
-  };
-
-  const handleProfissionalChange = (e) => {
-    const value = e.target.value;
-    setServicoEditando({ ...servicoEditando, Profissional_Responsavel: value });
-    if (value) {
-      setErrors((prev) => ({ ...prev, profissional: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        profissional: "O campo profissional responsável é obrigatório",
-      }));
     }
   };
 
@@ -257,10 +212,27 @@ function Servicos() {
                         <p><strong>Status:</strong> {servico.Status}</p>
                       </Col>
                       <Col md={4}>
-                        <p><strong>Profissional Responsável:</strong> {servico.Nome_Profissional}</p>
                         <p><strong>Data Cadastro:</strong> {moment(servico.Data_De_Cadastro).format('DD/MM/YYYY')}</p>
                       </Col>
                     </Row>
+                    <Button
+                      variant="primary"
+                      onClick={() => carregarProfissionaisPorServico(servico.ID_Servico)}
+                    >
+                      Ver Profissionais Responsáveis
+                    </Button>
+                    {profissionaisPorServico[servico.ID_Servico] && (
+                      <div className="mt-3">
+                        <h5>Profissionais Responsáveis</h5>
+                        {profissionaisPorServico[servico.ID_Servico].map((profissional, index) => (
+                          <div key={index}>
+                            <p><strong>Nome:</strong> {profissional.Nome_Profissional}</p>
+                            <p><strong>Email:</strong> {profissional.Email}</p>
+                            <p><strong>Telefone:</strong> {profissional.Telefone}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className="d-flex flex-row gap-2">
                       <Button className='btn-primary' onClick={() => abrirModalEdicao(servico.ID_Servico)}><FaEdit /></Button>
                       <Button className='btn-danger' onClick={() => abrirModalConfirmacao(servico.ID_Servico)}><FaTrashAlt /></Button>
@@ -286,10 +258,7 @@ function Servicos() {
         handleSalvarEdicao={handleSalvarEdicao}
         servicoEditando={servicoEditando}
         setServicoEditando={setServicoEditando}
-        handleDescricaoChange={handleDescricaoChange}
-        handleProfissionalChange={handleProfissionalChange}
         errors={errors}
-        profissionais={profissionais} 
       />
     </main>
   );

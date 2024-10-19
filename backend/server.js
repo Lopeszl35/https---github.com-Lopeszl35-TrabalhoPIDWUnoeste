@@ -10,7 +10,6 @@ const responsaveisRoutes = require('./routes/responsaveisRoutes');
 const profissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisRoutes');
 const profissionalservicosRoutes = require('./routes/profissionalServicosRoutes/ProfissionalServicosRoutes');
 const authRoutes = require('./routes/authRoutes');
-const { cookie } = require('express-validator');
 const dotenv = require('dotenv');
 
 // Carrega variaves de ambiente

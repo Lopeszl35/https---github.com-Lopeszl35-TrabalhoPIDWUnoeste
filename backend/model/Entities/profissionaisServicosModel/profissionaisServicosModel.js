@@ -57,6 +57,18 @@ class ProfissionaisServicosModel {
         return result;
     }
 
+    // Método para obter todos os profissionais responsáveis por um serviço
+    async obterProfissionaisPorServico(idServico) {
+        const sql = `
+            SELECT p.Nome_Completo AS Nome_Profissional, p.Email, p.Telefone
+            FROM profissionalservicos ps
+            JOIN profissionais p ON ps.ID_Profissional = p.ID_Profissional
+            WHERE ps.ID_Servico = ?
+        `;
+        const result = await dataBase.executaComando(sql, [idServico]);
+        return result;
+    }
+
 }
 
 module.exports = ProfissionaisServicosModel;
