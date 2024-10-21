@@ -17,11 +17,11 @@ dotenv.config();
 
 // Configurações do servidor
 const app = express();
-const port = process.env.PORT || 3006;
+const port = process.env.PORT;
 
 // Configuração do CORS
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://seu-app.herokuapp.com'], // Adicione seu frontend local e produção
+    origin: ['http://localhost:3000'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Permitir envio de cookies e credenciais

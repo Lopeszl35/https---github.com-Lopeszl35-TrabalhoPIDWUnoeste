@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Accordion, Card, Col, Container, Form, Row, Button, Table, Pagination, Modal, ModalBody } from "react-bootstrap";
+import { Accordion, Card, Col, Container, Form, Row, Button, Pagination, Modal, ModalBody } from "react-bootstrap";
 import { useOutletContext, Link, useNavigate } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";

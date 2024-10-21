@@ -19,8 +19,7 @@ router.post('/servicos', [
     body('Nome_Servico').notEmpty().withMessage('Nome do serviço é obrigatório'),
     body('Descricao').notEmpty().withMessage('Descrição é obrigatória'),
     body('Data_De_Cadastro').isISO8601().withMessage('Data de cadastro inválida'),
-    body('Status').isIn(['Ativo', 'Inativo']).withMessage('Status inválido'),
-    body('Profissional_Responsavel').notEmpty().withMessage('Profissional responsável é obrigatório')
+    body('Status').isIn(['Ativo', 'Inativo']).withMessage('Status inválido')
 ], servicoController.adicionar.bind(servicoController));
 
 router.put('/servicos/:id', [

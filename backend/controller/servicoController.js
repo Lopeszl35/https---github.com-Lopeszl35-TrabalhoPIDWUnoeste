@@ -40,22 +40,15 @@ class ServicoController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
+    
+        const { Nome_Servico, Descricao, Data_De_Cadastro, Status } = req.body;
         let connection;
         try {
             connection = await dataBase.beginTransaction();
-
+    
             const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status);
-            const servicoId = await servicoModel.adicionar(servico, connection);
-
-            const profissionalId = await profissionalModel.obterIdProfissionalPorNome(Profissional_Responsavel);
-            if (!profissionalId) {
-                throw new Error(`Profissional com nome ${Profissional_Responsavel} não encontrado`);
-            }
-
-            await profissionaisServicosModel.inserir(profissionalId, servicoId, connection);
-
+            await servicoModel.adicionar(servico, connection);
+    
             await dataBase.commitTransaction(connection);
             return res.status(201).json({ message: "Serviço adicionado com sucesso!" });
         } catch (error) {

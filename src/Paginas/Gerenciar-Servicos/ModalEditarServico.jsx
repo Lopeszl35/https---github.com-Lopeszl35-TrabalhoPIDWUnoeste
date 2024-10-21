@@ -55,7 +55,7 @@ function ModalEditarServico({ show, setShowEditarModal, handleSalvarEdicao, serv
               onChange={(e) => setServicoEditando({ ...servicoEditando, Profissional_Responsavel: e.target.value })}
             >
               <option value="">Selecione um profissional</option>
-              {profissionais.map((profissional) => (
+              {(profissionais || []).map((profissional) => (
                 <option key={profissional.Nome_Completo} value={profissional.Nome_Completo}>
                   {profissional.Nome_Completo}
                 </option>

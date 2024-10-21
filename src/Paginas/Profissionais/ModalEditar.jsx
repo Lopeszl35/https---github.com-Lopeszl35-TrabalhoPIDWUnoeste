@@ -21,7 +21,7 @@ function ModalEditar({ modalEditarShow, fecharModalEditar, profissionalEditando,
         <section>
             <Modal show={modalEditarShow} onHide={fecharModalEditar} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Editar Usuário</Modal.Title>
+                    <Modal.Title>Editar Profissional</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>

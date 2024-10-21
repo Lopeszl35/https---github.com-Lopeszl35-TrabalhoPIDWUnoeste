@@ -5,12 +5,10 @@ import Row from "react-bootstrap/Row";
 import { Link, useOutletContext } from "react-router-dom";
 import { Container, Card, Alert } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft, FaCheckCircle } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./Servicos.css";
 import ServicosService from "../../services/servicosService";
-import ProfissionaisService from "../../services/profissionaisService";
 
-const profissionaisService = new ProfissionaisService();
 const servicosService = new ServicosService();
 
 function ServicosNovo() {
@@ -21,13 +19,11 @@ function ServicosNovo() {
     dataCadastro: "",
     nomeServico: "",
     status: "Ativo",
-    profissional: "",
   };
 
   const [showMensagem, setShowMensagem] = useState(false);
   const [validated, setValidated] = useState(false);
   const [formState, setFormState] = useState(initialFormState);
-  const [profissionais, setProfissionais] = useState([]);
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
@@ -36,22 +32,6 @@ function ServicosNovo() {
       ...formState,
       [name]: value,
     });
-  };
-
-  const handleProfissionalChange = (e) => {
-    const value = e.target.value;
-    setFormState((prevState) => ({
-      ...prevState,
-      profissional: value,
-    }));
-    if (value) {
-      setErrors((prev) => ({ ...prev, profissional: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        profissional: "O campo profissional responsável é obrigatório",
-      }));
-    }
   };
 
   const validarForm = async (event) => {
@@ -81,10 +61,6 @@ function ServicosNovo() {
       newErrors.nomeServico = "O nome do serviço deve ter no máximo 100 caracteres";
     }
 
-    if (!formState.profissional) {
-      newErrors.profissional = "O campo profissional responsável é obrigatório";
-    }
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
@@ -93,168 +69,126 @@ function ServicosNovo() {
         Descricao: formState.descricao,
         Data_De_Cadastro: formState.dataCadastro,
         Status: formState.status,
-        Profissional_Responsavel: formState.profissional,
       };
 
       try {
         await servicosService.adicionar(novoServico);
         setShowMensagem(true);
-        setFormState(initialFormState); // Reset form fields
+        setFormState(initialFormState); 
       } catch (error) {
-        if (error.message === 'Profissional não encontrado') {
-          newErrors.profissional = 'Profissional não encontrado';
-          setErrors(newErrors);
-        } else {
-          console.error('Erro ao adicionar o Serviço:', error);
-          setErrors({ erro: 'Erro ao adicionar o Serviço. Por favor, tente novamente mais tarde.' });
-        }
+        console.error('Erro ao adicionar o Serviço:', error);
+        setErrors({ erro: 'Erro ao adicionar o Serviço. Por favor, tente novamente mais tarde.' });
       }
     }
 
     setValidated(true);
   };
 
-  const obterProfissionais = async () => {
-    try {
-      const profissionais = await profissionaisService.obterTodos();
-      setProfissionais(profissionais);
-    } catch (error) {
-      console.error('Erro ao obter profissionais:', error);
-    }
-  };
-
-  useEffect(() => {
-    obterProfissionais();
-  }, []);
-
   return (
-    <>
-      <Container>
-        <Card className={`container-add-servico ${show ? "side-active-add-servico" : ""}`}>
-          <Card.Header>
-            <h3>Adicionar Serviço</h3>
-          </Card.Header>
-          <Card.Body>
-            <Form noValidate validated={validated} onSubmit={validarForm}>
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="nomeServico">
-                  <Form.Label className="fw-bold">Nome do Serviço</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Serviço"
-                    name="nomeServico"
-                    required
-                    value={formState.nomeServico}
-                    onChange={handleInputChange}
-                    isInvalid={!!errors.nomeServico}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.nomeServico}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group as={Col} controlId="status">
-                  <Form.Label className="fw-bold">Status</Form.Label>
-                  <Form.Select
-                    name="status"
-                    required
-                    value={formState.status}
-                    onChange={handleInputChange}
-                    isInvalid={!!errors.status}
-                  >
-                    <option value="Ativo">Ativo</option>
-                    <option value="Inativo">Inativo</option>
-                  </Form.Select>
-                  <Form.Control.Feedback type="invalid">
-                    {errors.status}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Row>
-
-              <Form.Group className="mb-3" controlId="descricao">
-                <Form.Label className="fw-bold">Descrição</Form.Label>
+    <Container>
+      <Card className={`container-add-servico ${show ? "side-active-add-servico" : ""}`}>
+        <Card.Header>
+          <h3>Adicionar Serviço</h3>
+        </Card.Header>
+        <Card.Body>
+          <Form noValidate validated={validated} onSubmit={validarForm}>
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="nomeServico">
+                <Form.Label className="fw-bold">Nome do Serviço</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Descrição"
-                  name="descricao"
+                  placeholder="Serviço"
+                  name="nomeServico"
                   required
-                  value={formState.descricao}
+                  value={formState.nomeServico}
                   onChange={handleInputChange}
-                  isInvalid={!!errors.descricao}
+                  isInvalid={!!errors.nomeServico}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.descricao}
+                  {errors.nomeServico}
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="profissional">
-                <Form.Label className="fw-bold">Profissional Responsável</Form.Label>
+              <Form.Group as={Col} controlId="status">
+                <Form.Label className="fw-bold">Status</Form.Label>
                 <Form.Select
-                  name="profissional"
+                  name="status"
                   required
-                  value={formState.profissional}
-                  onChange={handleProfissionalChange}
-                  isInvalid={!!errors.profissional}
+                  value={formState.status}
+                  onChange={handleInputChange}
+                  isInvalid={!!errors.status}
                 >
-                  <option value="">Selecione</option> {/* Opção padrão */}
-                  {profissionais.map((profissional) => (
-                    <option key={profissional.id} value={profissional.id}>
-                      {profissional.Nome_Completo}
-                    </option>
-                  ))}
+                  <option value="Ativo">Ativo</option>
+                  <option value="Inativo">Inativo</option>
                 </Form.Select>
                 <Form.Control.Feedback type="invalid">
-                  {errors.profissional}
+                  {errors.status}
                 </Form.Control.Feedback>
               </Form.Group>
+            </Row>
 
-              <Row>
-                <Form.Group as={Col} controlId="dataCadastro">
-                  <Form.Label className="fw-bold">Data Cadastro</Form.Label>
-                  <Form.Control
-                    type="date"
-                    placeholder="Data Cadastro"
-                    name="dataCadastro"
-                    required
-                    value={formState.dataCadastro}
-                    onChange={handleInputChange}
-                    isInvalid={!!errors.dataCadastro}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.dataCadastro}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Row>
+            <Form.Group className="mb-3" controlId="descricao">
+              <Form.Label className="fw-bold">Descrição</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Descrição"
+                name="descricao"
+                required
+                value={formState.descricao}
+                onChange={handleInputChange}
+                isInvalid={!!errors.descricao}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.descricao}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-              <div className="d-flex justify-content-end mt-3">
-                <Link to={"/servicos"}>
-                  <Button variant="secondary" className="me-2">
-                    <FaArrowLeft className="me-2" />
-                    Voltar
-                  </Button>
-                </Link>
-                <Button variant="success" type="submit">
-                  <FaRegSave className="me-2" />
-                  Salvar
+            <Row>
+              <Form.Group as={Col} controlId="dataCadastro">
+                <Form.Label className="fw-bold">Data Cadastro</Form.Label>
+                <Form.Control
+                  type="date"
+                  placeholder="Data Cadastro"
+                  name="dataCadastro"
+                  required
+                  value={formState.dataCadastro}
+                  onChange={handleInputChange}
+                  isInvalid={!!errors.dataCadastro}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.dataCadastro}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Row>
+
+            <div className="d-flex justify-content-end mt-3">
+              <Link to={"/servicos"}>
+                <Button variant="secondary" className="me-2">
+                  <FaArrowLeft className="me-2" />
+                  Voltar
                 </Button>
-              </div>
-            </Form>
-          </Card.Body>
-          <Alert
-            show={showMensagem}
-            variant="success"
-            className="mt-3"
-            dismissible
-            onClose={() => setShowMensagem(false)}
-          >
-            <Alert.Heading>
-              <FaCheckCircle className="me-2" />
-              Serviço salvo com sucesso!
-            </Alert.Heading>
-          </Alert>
-        </Card>
-      </Container>
-    </>
+              </Link>
+              <Button variant="success" type="submit">
+                <FaRegSave className="me-2" />
+                Salvar
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+        <Alert
+          show={showMensagem}
+          variant="success"
+          className="mt-3"
+          dismissible
+          onClose={() => setShowMensagem(false)}
+        >
+          <Alert.Heading>
+            <FaCheckCircle className="me-2" />
+            Serviço salvo com sucesso!
+          </Alert.Heading>
+        </Alert>
+      </Card>
+    </Container>
   );
 }
 

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'dcrhg4kh56j13bnu.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306';
+const API_BASE_URL = 'http://localhost:3001';
 
 class ServicosService {
     async obterTodos() {
@@ -27,6 +27,7 @@ class ServicosService {
         });
 
         if (!response.ok) {
+            console.log('response: ', response);
             throw new Error('Erro ao adicionar o Serviço!');
         }
 
