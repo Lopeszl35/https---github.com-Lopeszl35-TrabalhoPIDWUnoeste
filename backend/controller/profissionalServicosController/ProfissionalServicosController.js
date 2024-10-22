@@ -26,6 +26,7 @@ class ProfissionalServicosController {
             );
 
             if (existingAssociation.length > 0) {
+                await dataBase.rollbackTransaction(connection);
                 return res.status(400).json({ message: 'Profissional já associado a este serviço.' });
             }
 
@@ -68,7 +69,8 @@ class ProfissionalServicosController {
             );
     
             if (existingAssociation.length === 0) {
-                throw new Error(`Associação entre o profissional ${id_profissional} e o serviço ${id_servico} não encontrada.`);
+                await dataBase.rollbackTransaction(connection);
+                return res.status(404).json({ message: 'Associação entre o profissional e o serviço não encontrada.' });
             }
     
             // Remove a associação
@@ -101,14 +103,16 @@ class ProfissionalServicosController {
             const [profissional] = await connection.query("SELECT * FROM profissionais WHERE ID_Profissional = ?", [id_profissional]);
     
             if (profissional.length === 0) {
-                throw new Error(`Profissional com ID ${id_profissional} não encontrado`);
+                await dataBase.rollbackTransaction(connection);
+                res.status(404).json({ message: 'Profissional nao encontrado' });
             }
     
             // Verifica se o serviço existe
             const [servico] = await connection.query("SELECT * FROM servicos WHERE ID_Servico = ?", [id_servico]);
     
             if (servico.length === 0) {
-                throw new Error(`Serviço com ID ${id_servico} não encontrado`);
+                await dataBase.rollbackTransaction(connection);
+                res.status(404).json({ message: 'Servico nao encontrado' });
             }
     
             // Verifica se a nova associação já existe
@@ -118,7 +122,8 @@ class ProfissionalServicosController {
             );
     
             if (existingAssociation.length > 0) {
-                throw new Error(`A associação entre o profissional ${novoID_Profissional} e o serviço ${id_servico} já existe.`);
+                await dataBase.rollbackTransaction(connection);
+                res.status(400).json({ message: 'A nova associação entre o profissional e o servico ja existe' });
             }
     
             // Atualizar o relacionamento na tabela profissionalservicos

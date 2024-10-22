@@ -3,17 +3,16 @@ const cors = require('cors');
 const { check } = require('express-validator');
 const ProfissionalServicosController = require('../../controller/profissionalServicosController/ProfissionalServicosController');
 
-const authMiddleware = require('../../middleware/middleware');
 const router = express.Router();
 const profissionalServicosController = new ProfissionalServicosController();
 
-router.get('/profissionaiservicos', authMiddleware, profissionalServicosController.obterTodos);
+router.get('/profissionaiservicos', profissionalServicosController.obterTodos);
 
-router.post('/profissionaiservicos', authMiddleware, profissionalServicosController.adicionar);
+router.post('/profissionaiservicos', profissionalServicosController.adicionar);
 
-router.put('/profissionaiservicos/:id_profissional/:id_servico', authMiddleware, profissionalServicosController.atualizar);
+router.put('/profissionaiservicos/:id_profissional/:id_servico', profissionalServicosController.atualizar);
 
-router.delete('/profissionaiservicos/:id_profissional/:id_servico', authMiddleware, profissionalServicosController.remover);
+router.delete('/profissionaiservicos/:id_profissional/:id_servico',  profissionalServicosController.remover);
 
 // Rota para listar profissionais por serviço
 router.get('/servicos/:idServico/profissionais', profissionalServicosController.obterProfissionaisPorServico);

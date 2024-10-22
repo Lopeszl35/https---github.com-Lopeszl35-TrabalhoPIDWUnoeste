@@ -23,18 +23,29 @@ class ServicosModel {
     }
 
     async adicionar(dadosServico, connection) {
-        dadosServico.Data_De_Cadastro = moment(dadosServico.Data_De_Cadastro).format('YYYY-MM-DD');
+        try {
+            const servicoExiste = await dataBase.executaComando("SELECT * FROM servicos WHERE Nome_Servico = ?", [dadosServico.Nome_Servico]);
+            if (servicoExiste.length > 0) {
+                return false;
+            }
+            dadosServico.Data_De_Cadastro = moment(dadosServico.Data_De_Cadastro).format('YYYY-MM-DD');
         const [result] = await connection.query('INSERT INTO servicos SET ?', dadosServico);
         return result.insertId;
+        } catch (error) {
+            console.log('Erro ao adicionar o Serviço:', error);
+        }
+        
     }
 
-    async atualizar(id, dadosServico) {
+    async atualizar(id, dadosServico, connection) {
         dadosServico.Data_De_Cadastro = moment(dadosServico.Data_De_Cadastro).format('YYYY-MM-DD');
-        await dataBase.executaComandoNonQuery('UPDATE servicos SET ? WHERE ID_Servico = ?', [dadosServico, id]);
+        const [result] = await connection.query('UPDATE servicos SET ? WHERE ID_Servico = ?', [dadosServico, id]);
+        return result;
     }
 
     async deletar(id, connection) {
-        await connection.query('DELETE FROM servicos WHERE ID_Servico = ?', [id]);
+        const [result] = await connection.query('DELETE FROM servicos WHERE ID_Servico = ?', [id]);
+        return result;
     }
 
     async filtrarPorNome(nome) {

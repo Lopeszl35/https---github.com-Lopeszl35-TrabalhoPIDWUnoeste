@@ -37,11 +37,11 @@ class ProfissionaisServicosModel {
     }
 
     async excluir(idProfissional, connection) {
-        const result = await connection.query(
+        const [result] = await connection.query(
             "DELETE FROM profissionalservicos WHERE ID_Servico = ?",
             [idProfissional]
         );
-        return result;
+        return result; 
     }
 
     async obterTodos() {
@@ -60,7 +60,10 @@ class ProfissionaisServicosModel {
     // Método para obter todos os profissionais responsáveis por um serviço
     async obterProfissionaisPorServico(idServico) {
         const sql = `
-            SELECT p.Nome_Completo AS Nome_Profissional, p.Email, p.Telefone
+            SELECT p.Nome_Completo AS Nome_Profissional, 
+                   p.Email, 
+                   p.Telefone,
+                   p.registroProfissional   
             FROM profissionalservicos ps
             JOIN profissionais p ON ps.ID_Profissional = p.ID_Profissional
             WHERE ps.ID_Servico = ?

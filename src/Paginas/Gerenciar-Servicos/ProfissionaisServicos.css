@@ -1,0 +1,40 @@
+.container-servicos {
+    margin: 4em 0 0 6em;
+}
+
+.container-servicos-side-active {
+    margin-left: 16em;
+    transition: 0.5s;
+}
+
+.card-servicos {
+    margin-bottom: 2em;
+    border: 1px solid #ccc;
+    padding: 0.7em;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .small-input {
+    width: 35%; /* Menor campo para registro profissional */
+  }
+  
+  .custom-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    line-height: 1;
+    height: fit-content;
+    border-radius: 10px;
+  }
+  
+  .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .list-group-item:hover {
+    background-color: #f8f9fa;
+  }
+  

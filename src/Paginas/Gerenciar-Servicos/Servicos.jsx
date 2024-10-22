@@ -3,18 +3,15 @@ import { Accordion, Container, Button, Row, Col, Form, Card } from "react-bootst
 import { FaListAlt, FaPlus, FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
-import ProfissionaisService from "../../services/profissionaisService";
 import ModalConfirmDelete from "./ModalConfirmDelete";
 import ModalEditarServico from "./ModalEditarServico";
 import moment from "moment";
 
 const servicosService = new ServicosService();
-const profissionaisService = new ProfissionaisService();
 
 function Servicos() {
   const { show } = useOutletContext();
   const [listaServicos, setListaServicos] = useState([]);
-  const [profissionaisPorServico, setProfissionaisPorServico] = useState({});
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const [servicoToDelete, setServicoToDelete] = useState(null);
   const [busca, setBusca] = useState("");
@@ -31,18 +28,6 @@ function Servicos() {
       setServicosFiltrados(dados);
     } catch (error) {
       console.error("Erro ao obter serviços:", error);
-    }
-  };
-
-  const carregarProfissionaisPorServico = async (idServico) => {
-    try {
-      const profissionais = await servicosService.obterProfissionaisPorServico(idServico);
-      setProfissionaisPorServico((prevState) => ({
-        ...prevState,
-        [idServico]: profissionais,
-      }));
-    } catch (error) {
-      console.error(`Erro ao carregar profissionais para o serviço ${idServico}:`, error);
     }
   };
 
@@ -70,21 +55,15 @@ function Servicos() {
         resultados = resultados.filter(servico => 
           servico.Nome_Servico.toLowerCase().includes(busca.toLowerCase())
         );
-      } else if (filtro === '3') {
-        resultados = resultados.filter(servico => 
-          servico.Nome_Profissional.toLowerCase().includes(busca.toLowerCase())
-        );
       }
     }
-
     setServicosFiltrados(resultados);
   };
 
   const abrirModalEdicao = async (id) => {
     try {
       const servico = await servicosService.obterPorId(id);
-      const nomeProfissional = await profissionaisService.obterNomeProfissionalPorId(id);
-      setServicoEditando({ ...servico, Profissional_Responsavel: nomeProfissional });
+      setServicoEditando({ ...servico });
       setShowEditarModal(true);
     } catch (error) {
       console.error('Erro ao obter servico para edição:', error);
@@ -116,27 +95,18 @@ function Servicos() {
         setServicoEditando(null);
         setErrors({});
       } catch (error) {
-        if (error.message === 'Profissional não encontrado') {
-          setErrors((prev) => ({ ...prev, profissional: 'Profissional não encontrado' }));
-        } else {
           console.error('Erro ao atualizar o serviço:', error);
-        }
       }
     }
   };
 
   const validarEdicao = () => {
     let isValid = true;
-    const { Descricao, Profissional_Responsavel } = servicoEditando;
+    const { Descricao } = servicoEditando;
     let newErrors = {};
 
     if (!Descricao || Descricao.length > 150) {
-      newErrors.descricao = "A descrição deve ter no máximo 100 caracteres";
-      isValid = false;
-    }
-
-    if (!Profissional_Responsavel) {
-      newErrors.profissional = "O campo profissional responsável é obrigatório";
+      newErrors.descricao = "A descrição deve ter no máximo 150 caracteres";
       isValid = false;
     }
 
@@ -171,7 +141,6 @@ function Servicos() {
                     >
                       <option value="1">Filtro</option>
                       <option value="2">Nome</option>
-                      <option value="3">Profissional Responsável</option>
                       <option value="4">Ativo</option>
                       <option value="5">Inativo</option>
                     </Form.Select>
@@ -215,25 +184,10 @@ function Servicos() {
                         <p><strong>Data Cadastro:</strong> {moment(servico.Data_De_Cadastro).format('DD/MM/YYYY')}</p>
                       </Col>
                     </Row>
-                    <Button
-                      variant="primary"
-                      onClick={() => carregarProfissionaisPorServico(servico.ID_Servico)}
-                    >
-                      Ver Profissionais Responsáveis
-                    </Button>
-                    {profissionaisPorServico[servico.ID_Servico] && (
-                      <div className="mt-3">
-                        <h5>Profissionais Responsáveis</h5>
-                        {profissionaisPorServico[servico.ID_Servico].map((profissional, index) => (
-                          <div key={index}>
-                            <p><strong>Nome:</strong> {profissional.Nome_Profissional}</p>
-                            <p><strong>Email:</strong> {profissional.Email}</p>
-                            <p><strong>Telefone:</strong> {profissional.Telefone}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                     <div className="d-flex flex-row gap-2">
+                      <Button className='btn-success' as={Link} to={`/servicos/${servico.ID_Servico}/profissionais`}>
+                        Ver Profissionais
+                      </Button>
                       <Button className='btn-primary' onClick={() => abrirModalEdicao(servico.ID_Servico)}><FaEdit /></Button>
                       <Button className='btn-danger' onClick={() => abrirModalConfirmacao(servico.ID_Servico)}><FaTrashAlt /></Button>
                     </div>

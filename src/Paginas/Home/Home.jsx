@@ -48,7 +48,7 @@ function Home() {
                         <Card className="text-center">
                             <Card.Body>
                                 <MdOutlineMedicalServices size={50} />
-                                <Card.Title>Áreas de Atendimento</Card.Title>
+                                <Card.Title>Áreas de Serviços</Card.Title>
                                 <Card.Text>
                                     Visualize e gerencie os serviços cadastrados.
                                 </Card.Text>

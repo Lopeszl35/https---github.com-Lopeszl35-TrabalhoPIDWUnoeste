@@ -17,6 +17,7 @@ import Pacientes from "./Paginas/Pacientes/Pacientes";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
 import CadastrarProfissionais from "./Paginas/Profissionais/CadastrarProfissionais";
 import Servicos from "./Paginas/Gerenciar-Servicos/Servicos";
+import ProfissionaisPorServico from "./Paginas/Gerenciar-Servicos/ProfissionaisPorServico";
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 import EditarPacientes from "./Paginas/Pacientes/EditarPacientes";
@@ -50,6 +51,7 @@ function AppRouter() {
             <Route path="Profissionais" element={<Profissionais />} />
             <Route path="/Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
             <Route path="servicos" element={<Servicos />} />
+            <Route path="/servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="relatorios" element={<GerarRelatorios />} />
             <Route path="*" element={<Navigate to="/home" />} />

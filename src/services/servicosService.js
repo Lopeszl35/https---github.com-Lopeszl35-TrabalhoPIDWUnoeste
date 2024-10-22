@@ -59,14 +59,8 @@ class ServicosService {
             body: JSON.stringify(servico) 
         });
 
-        if (response.status === 400) {
-            const errorData = await response.json();
-            if (errorData.message.includes("Profissional não encontrado")) {
-                throw new Error('Profissional não encontrado');
-            }
-        }
-
         if (!response.ok) {
+            console.error('response: ', response);
             throw new Error('Erro ao atualizar o Serviço!');
         } else {
             const dados = await response.json();
