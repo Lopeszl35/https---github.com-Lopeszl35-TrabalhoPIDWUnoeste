@@ -18,37 +18,37 @@ class PacientesModel {
     }
 
     async obterTodos() {
-        const listaPacientes = await dataBase.executaComando("SELECT * FROM pacientes");
+        const listaPacientes = await dataBase.executaComando("SELECT * FROM Pacientes");
         return listaPacientes;
     }
 
     async filtrarPorProntuario(id) {
-        const result = await dataBase.executaComando("SELECT * FROM pacientes WHERE Prontuario = ?", [id]);
+        const result = await dataBase.executaComando("SELECT * FROM Pacientes WHERE Prontuario = ?", [id]);
         return result[0];
     }
 
     async filtrarPorNome(nome) {
-        const result = await dataBase.executaComando("SELECT * FROM pacientes WHERE LOWER(Nome_Completo) LIKE LOWER(?)", [`%${nome}%`]);
+        const result = await dataBase.executaComando("SELECT * FROM Pacientes WHERE LOWER(Nome_Completo) LIKE LOWER(?)", [`%${nome}%`]);
         return result;
     }
 
     async buscarUltimoPaciente() {
-        const result = await dataBase.executaComando("SELECT MAX(prontuario) AS ultimo FROM pacientes");
+        const result = await dataBase.executaComando("SELECT MAX(prontuario) AS ultimo FROM Pacientes");
         return result[0];
     }
 
     async adicionar(dadosPaciente, connection) {
         dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
-        await connection.query('INSERT INTO pacientes SET ?', [dadosPaciente]);
+        await connection.query('INSERT INTO Pacientes SET ?', [dadosPaciente]);
     }
 
     async atualizar(id, dadosPaciente, connection) {
         dadosPaciente.Data_De_Nascimento = moment(dadosPaciente.Data_De_Nascimento).format('YYYY-MM-DD');
-        await connection.query('UPDATE pacientes SET ? WHERE Prontuario = ?', [dadosPaciente, id]);
+        await connection.query('UPDATE Pacientes SET ? WHERE Prontuario = ?', [dadosPaciente, id]);
     }
 
     async deletar(id) {
-        await dataBase.executaComandoNonQuery('DELETE FROM pacientes WHERE Prontuario = ?', [id]);
+        await dataBase.executaComandoNonQuery('DELETE FROM Pacientes WHERE Prontuario = ?', [id]);
     }
 }
 

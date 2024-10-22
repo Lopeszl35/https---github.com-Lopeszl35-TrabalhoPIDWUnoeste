@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const ServicosModel = require('../model/Entities/servicosModel');
+const ServicosModel = require('../model/Entities/servicosModel/servicosModel');
 const DataBase = require('../model/database');
 const ProfissionaisServicos = require('../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const ProfissionaisModel = require('../model/Entities/profissionaisModel/ProfissionaisModel');
@@ -40,24 +40,24 @@ class ServicoController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
+    
+        const { Nome_Servico, Descricao, Data_De_Cadastro, Status } = req.body;
         let connection;
         try {
             connection = await dataBase.beginTransaction();
-
+    
             const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status);
-            const servicoId = await servicoModel.adicionar(servico, connection);
+            const servicoAdicionado = await servicoModel.adicionar(servico, connection);
 
-            const profissionalId = await profissionalModel.obterIdProfissionalPorNome(Profissional_Responsavel);
-            if (!profissionalId) {
-                throw new Error(`Profissional com nome ${Profissional_Responsavel} não encontrado`);
+            if (servicoAdicionado === false) {
+                await dataBase.rollbackTransaction(connection);
+                console.error("Serviço ja existe");
+                return res.status(400).json({ message: "Serviço ja existe" });
+            } else {
+                await dataBase.commitTransaction(connection);
+                return res.status(201).json({ message: "Serviço adicionado com sucesso!" });
             }
-
-            await profissionaisServicosModel.inserir(profissionalId, servicoId, connection);
-
-            await dataBase.commitTransaction(connection);
-            return res.status(201).json({ message: "Serviço adicionado com sucesso!" });
+    
         } catch (error) {
             console.log(error);
             await dataBase.rollbackTransaction(connection);
@@ -73,34 +73,33 @@ class ServicoController {
             return res.status(400).json({ errors: errors.array() });
         }
     
-        const { Nome_Servico, Descricao, Data_De_Cadastro, Status, Profissional_Responsavel } = req.body;
+        const { Nome_Servico, Descricao, Data_De_Cadastro, Status } = req.body;
     
         let connection;
         try {
             connection = await dataBase.beginTransaction();
     
-            // Obter ID do profissional pelo nome
-            const profissionalId = await profissionalModel.obterIdProfissionalPorNome(Profissional_Responsavel);
-            if (!profissionalId) {
-                throw new Error(`Profissional com nome ${Profissional_Responsavel} não encontrado ou múltiplos resultados.`);
+            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status);
+            
+            // Atualiza o serviço
+            const result = await servicoModel.atualizar(id, servico, connection);
+            
+            // Validação com base no número de linhas afetadas
+            if (result.changedRows === 0) {
+                throw new Error('Nenhum dado foi alterado para este serviço.');
             }
     
-            const servico = new ServicosModel(Nome_Servico, Descricao, Data_De_Cadastro, Status);
-            await servicoModel.atualizar(id, servico);
-    
-            // Atualizar a relação entre o serviço e o profissional
-            await profissionaisServicosModel.atualizar(profissionalId, id, connection);
-    
             await dataBase.commitTransaction(connection);
-            const servicoAtualizado = await servicoModel.obterPorId(id);
-            return res.status(200).json(servicoAtualizado);
+            const servicoFinal = await servicoModel.obterPorId(id);
+            return res.status(200).json(servicoFinal);
+    
         } catch (error) {
             console.log(error);
-            await dataBase.rollbackTransaction(connection);
+            if (connection) await dataBase.rollbackTransaction(connection);
             return res.status(500).json({ message: error.message });
         }
     }
-    
+
     async deletar(req, res) {
         console.log('Deletando o Serviço...');
         const { id } = req.params;
@@ -112,13 +111,22 @@ class ServicoController {
         try {
             connection = await dataBase.beginTransaction();
 
-            await profissionaisServicosModel.excluir(id, connection);
-            await servicoModel.deletar(id, connection);
+            const excluirRelacao = await profissionaisServicosModel.excluir(id, connection);
+            const excluirServico = await servicoModel.deletar(id, connection);
+
+            if(excluirRelacao.affectedRows === 0) {
+                throw new Error('Erro ao excluir o Serviço.');
+            }
+
+            if(excluirServico.affectedRows === 0) {
+                throw new Error('Erro ao excluir o Serviço.');
+            }
 
             await dataBase.commitTransaction(connection);
             return res.status(200).json({ message: "Serviço excluído com sucesso!" });
         } catch (error) {
             console.log('Erro ao excluir o serviço:', error);
+            await dataBase.rollbackTransaction(connection);
             return res.status(500).json({ message: error.message });
         }
     }

@@ -4,7 +4,7 @@ const ProfissionaisServicos = require('../../model/Entities/profissionaisServico
 const { validationResult } = require('express-validator');
 const DataBase = require('../../model/database');
 const ProfissionalServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
-const ServicosModel = require('../../model/Entities/servicosModel');
+const ServicosModel = require('../../model/Entities/servicosModel/servicosModel');
 
 const servicosModel = new ServicosModel();
 const profissionalServicos = new ProfissionalServicos();
@@ -78,6 +78,22 @@ class ProfissionaisController {
         } catch (error) {
             if (connection) {
                 await dataBase.rollbackTransaction(connection);
+            }
+            if (error.sqlMessage && error.sqlMessage.includes('Duplicate entry')) {
+                const errorMessages = {};
+                if (error.sqlMessage.includes('CPF')) {
+                    errorMessages.cpf = 'Este CPF já está cadastrado.';
+                } 
+                if (error.sqlMessage.includes('Email')) {
+                    errorMessages.email = 'Este email já está cadastrado.';
+                }
+                if (error.sqlMessage.includes('RG')) {
+                    errorMessages.rg = 'Este RG já está cadastrado.';
+                }
+                if (error.sqlMessage.includes('Registro_Profissional')) {
+                    errorMessages.registroProfissional = 'Este Registro Profissional já está cadastrado.';
+                }
+                return res.status(409).json({ errors: errorMessages });
             }
             console.error('Erro ao adicionar profissional:', error.message);
             return res.status(500).json({ message: error.message });

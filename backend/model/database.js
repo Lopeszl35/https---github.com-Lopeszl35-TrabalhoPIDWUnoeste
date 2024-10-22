@@ -1,11 +1,16 @@
 const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
+dotenv.config();
 
 class DataBase {
     constructor() {
+       
+
         this.pool = mysql.createPool({
             host: 'localhost',
-            user: 'root',
+            user: process.env.USER_DB,
             database: 'careconnectdb',
+            port: 3306,
         });
     }
 

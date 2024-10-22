@@ -27,6 +27,7 @@ class ServicosService {
         });
 
         if (!response.ok) {
+            console.log('response: ', response);
             throw new Error('Erro ao adicionar o Serviço!');
         }
 
@@ -58,14 +59,8 @@ class ServicosService {
             body: JSON.stringify(servico) 
         });
 
-        if (response.status === 400) {
-            const errorData = await response.json();
-            if (errorData.message.includes("Profissional não encontrado")) {
-                throw new Error('Profissional não encontrado');
-            }
-        }
-
         if (!response.ok) {
+            console.error('response: ', response);
             throw new Error('Erro ao atualizar o Serviço!');
         } else {
             const dados = await response.json();
@@ -102,6 +97,20 @@ class ServicosService {
     
         const dados = await response.json();
         return dados;
+    }
+
+    async obterProfissionaisPorServico(idServico) {
+        const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao obter os profissionais para o serviço!');
+        } else {
+            return await response.json();
+        }
     }
 }
 

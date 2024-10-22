@@ -36,6 +36,8 @@ function CadastrarPacientes() {
     CartaoSUS: '',
     Cidade: '',
     CEP: '',
+    Email: '',
+    Complemento: ''
   });
 
   useEffect(() => {
@@ -145,6 +147,14 @@ function CadastrarPacientes() {
           {erros.Nome_Completo && <p className="erros">{erros.Nome_Completo}</p>}
 
           <div className="row">
+            <div className="form-group col-md-3">
+              <label htmlFor="Email">Email:</label>
+              <input type="email" id="Email" name="Email" value={pacienteInfo.Email} onChange={handleInputChange} />
+              {erros.Email && <p className="erros">{erros.Email}</p>}
+            </div>
+          </div>
+
+          <div className="row">
             <div className="form-group col-md-6 col">
               <label htmlFor="Data_De_Nascimento">Data de nascimento:</label>
               <div className="input-group">
@@ -234,6 +244,14 @@ function CadastrarPacientes() {
             <div className="form-group col-md-6">
               <label htmlFor="Cidade">Cidade:</label>
               <input type="text" id="Cidade" name="Cidade" value={pacienteInfo.Cidade} onChange={handleInputChange} />
+            </div>
+            
+          </div>
+
+          <div className="row">
+            <div className="form-group col-md-6">
+              <label htmlFor="Complemento">Complemento:</label>
+              <input type="text" id="Complemento" name="Complemento" value={pacienteInfo.Complemento} onChange={handleInputChange} />
             </div>
           </div>
 

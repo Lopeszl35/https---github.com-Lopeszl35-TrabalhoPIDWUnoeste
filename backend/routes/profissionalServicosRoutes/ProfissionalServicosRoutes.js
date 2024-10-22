@@ -6,8 +6,15 @@ const ProfissionalServicosController = require('../../controller/profissionalSer
 const router = express.Router();
 const profissionalServicosController = new ProfissionalServicosController();
 
-// Rota para associar um profissional a um serviço
-router.post('/profissionaisservicos', profissionalServicosController.adicionar.bind(profissionalServicosController),
-);
+router.get('/profissionaiservicos', profissionalServicosController.obterTodos);
+
+router.post('/profissionaiservicos', profissionalServicosController.adicionar);
+
+router.put('/profissionaiservicos/:id_profissional/:id_servico', profissionalServicosController.atualizar);
+
+router.delete('/profissionaiservicos/:id_profissional/:id_servico',  profissionalServicosController.remover);
+
+// Rota para listar profissionais por serviço
+router.get('/servicos/:idServico/profissionais', profissionalServicosController.obterProfissionaisPorServico);
 
 module.exports = router;

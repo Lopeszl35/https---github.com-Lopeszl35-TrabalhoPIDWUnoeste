@@ -37,10 +37,38 @@ class ProfissionaisServicosModel {
     }
 
     async excluir(idProfissional, connection) {
-        const result = await connection.query(
+        const [result] = await connection.query(
             "DELETE FROM profissionalservicos WHERE ID_Servico = ?",
             [idProfissional]
         );
+        return result; 
+    }
+
+    async obterTodos() {
+        const sql = `
+          SELECT p.Nome_Completo AS Nome_Profissional, s.Nome_Servico
+          FROM profissionalservicos ps
+          JOIN profissionais p ON ps.ID_Profissional = p.ID_Profissional
+          JOIN servicos s ON ps.ID_Servico = s.ID_Servico
+        `;
+        console.log('Executando consulta SQL:', sql);  
+        const result = await dataBase.executaComando(sql);
+        console.log('Resultado da consulta:', result); 
+        return result;
+    }
+
+    // Método para obter todos os profissionais responsáveis por um serviço
+    async obterProfissionaisPorServico(idServico) {
+        const sql = `
+            SELECT p.Nome_Completo AS Nome_Profissional, 
+                   p.Email, 
+                   p.Telefone,
+                   p.registroProfissional   
+            FROM profissionalservicos ps
+            JOIN profissionais p ON ps.ID_Profissional = p.ID_Profissional
+            WHERE ps.ID_Servico = ?
+        `;
+        const result = await dataBase.executaComando(sql, [idServico]);
         return result;
     }
 

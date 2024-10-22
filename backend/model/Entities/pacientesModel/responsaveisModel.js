@@ -11,25 +11,25 @@ class ResponsaveisModel {
     }
 
     async obterTodos() {
-        const result = await dataBase.executaComando("SELECT * FROM responsaveis");
+        const result = await dataBase.executaComando("SELECT * FROM Responsaveis");
         return result;
     }
 
     async obterPorProntuario(prontuario) {
-        const result = await dataBase.executaComando("SELECT * FROM responsaveis WHERE Prontuario = ?", [prontuario]);
+        const result = await dataBase.executaComando("SELECT * FROM Responsaveis WHERE Prontuario = ?", [prontuario]);
         return result[0];
     }
 
     async adicionar(dadosResponsavel, connection) {
-        await connection.query('INSERT INTO responsaveis SET ?', dadosResponsavel);
+        await connection.query('INSERT INTO Responsaveis SET ?', dadosResponsavel);
     }
 
     async atualizar(prontuario, dadosResponsavel, connection) {
-        await connection.query('UPDATE responsaveis SET ? WHERE Prontuario = ?', [dadosResponsavel, prontuario]);
+        await connection.query('UPDATE Responsaveis SET ? WHERE Prontuario = ?', [dadosResponsavel, prontuario]);
     }
 
     async deletar(prontuario, connection) {
-        await dataBase.executaComandoNonQuery('DELETE FROM responsaveis WHERE Prontuario = ?', [prontuario]);
+        await dataBase.executaComandoNonQuery('DELETE FROM Responsaveis WHERE Prontuario = ?', [prontuario]);
     }
 }
 

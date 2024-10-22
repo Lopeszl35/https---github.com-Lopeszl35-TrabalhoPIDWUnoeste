@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL ='http://localhost:3001';
 
 class PacientesService {
     async buscarUltimoPaciente() {
@@ -72,7 +72,7 @@ class PacientesService {
     }
 
     async atualizar(prontuario, pacienteInfo) {
-        const response = await fetch(`http://localhost:3001/pacientes/${prontuario}`, {
+        const response = await fetch(`${API_BASE_URL}/pacientes/${prontuario}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
