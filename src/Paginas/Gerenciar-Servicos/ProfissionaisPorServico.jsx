@@ -3,7 +3,6 @@ import { Container, Row, Col, Form, Card, Button, Modal } from "react-bootstrap"
 import { FaSearch, FaTrash } from "react-icons/fa";
 import { useParams, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
-import './ProfissionaisServicos.css';
 
 const servicosService = new ServicosService();
 
@@ -12,9 +11,9 @@ function ProfissionaisPorServico() {
   const { idServico } = useParams();
   const [servico, setServico] = useState(null);
   const [profissionais, setProfissionais] = useState([]);
-  const [filteredProfissionais, setFilteredProfissionais] = useState([]);
-  const [profissionalSelecionado, setProfissionalSelecionado] = useState(null);
+  const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [profissionalSelecionado, setProfissionalSelecionado] = useState(null);
 
   useEffect(() => {
     async function fetchServiceDetails() {
@@ -23,7 +22,6 @@ function ProfissionaisPorServico() {
         setServico(servicoData);
         const profData = await servicosService.obterProfissionaisPorServico(idServico);
         setProfissionais(profData);
-        setFilteredProfissionais(profData);
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       }
@@ -32,15 +30,24 @@ function ProfissionaisPorServico() {
   }, [idServico]);
 
   const handleOpenSearchModal = () => {
-    const filtered = profissionais.filter(prof =>
-      prof.Nome_Profissional.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prof.registroProfissional.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredProfissionais(filtered);
+    setShowSearchModal(true);
+  };
+
+  const handleCloseSearchModal = () => {
+    setShowSearchModal(false);
   };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleSearch = () => {
+    const filtered = profissionais.filter(prof =>
+      prof.Nome_Profissional.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prof.registroProfissional.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    handleCloseSearchModal();
+    setProfissionais(filtered);
   };
 
   const handleSelectProfissional = (profissional) => {
@@ -54,31 +61,34 @@ function ProfissionaisPorServico() {
   return (
     <Container className={`container-servicos ${show ? "container-servicos-side-active" : ""}`}>
       <h2>Profissionais Cadastrados para o Serviço {servico?.Nome_Servico}</h2>
-      <Row>
-        <Col md={12}>
-          <Card className="card-servicos">
-            <Card.Body className="d-flex align-items-center">
-              <Button variant="primary" onClick={handleOpenSearchModal}><FaSearch /></Button>
-              <Form.Control
-                type="text"
-                placeholder="Nome do profissional"
-                value={profissionalSelecionado?.Nome_Profissional || ""}
-                readOnly
-                className="mx-2"
-              />
-              <Form.Control
-                type="text"
-                placeholder="Registro Profissional"
-                value={profissionalSelecionado?.registroProfissional || ""}
-                readOnly
-                className="small-input mx-2"
-              />
-              <Button variant="danger" onClick={handleClearSelected}><FaTrash /></Button>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-      <Modal show={searchTerm !== ""} onHide={() => setSearchTerm("")}>
+      <Card className="card-servicos">
+        <Card.Body className="d-flex align-items-center">
+          <Button variant="primary" onClick={handleOpenSearchModal}><FaSearch /></Button>
+          <Form.Control
+            type="text"
+            placeholder="Nome do profissional"
+            value={profissionalSelecionado?.Nome_Profissional || ""}
+            readOnly
+            className="mx-2"
+          />
+          <Form.Control
+            type="text"
+            placeholder="Registro Profissional"
+            value={profissionalSelecionado?.registroProfissional || ""}
+            readOnly
+            className="small-input mx-2"
+          />
+          <Button variant="danger" onClick={handleClearSelected}><FaTrash /></Button>
+        </Card.Body>
+      </Card>
+      <ul className="list-group">
+        {profissionais.map((prof, index) => (
+          <li key={index} onClick={() => handleSelectProfissional(prof)} className="list-group-item">
+            {prof.Nome_Profissional} - {prof.registroProfissional}
+          </li>
+        ))}
+      </ul>
+      <Modal show={showSearchModal} onHide={handleCloseSearchModal}>
         <Modal.Header closeButton>
           <Modal.Title>Buscar Profissionais</Modal.Title>
         </Modal.Header>
@@ -91,17 +101,10 @@ function ProfissionaisPorServico() {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setSearchTerm("")}>Fechar</Button>
-          <Button variant="primary" onClick={handleOpenSearchModal}>Buscar</Button>
+          <Button variant="secondary" onClick={handleCloseSearchModal}>Fechar</Button>
+          <Button variant="primary" onClick={handleSearch}>Buscar</Button>
         </Modal.Footer>
       </Modal>
-      <ul className="list-group">
-        {filteredProfissionais.map((prof, index) => (
-          <li key={index} onClick={() => handleSelectProfissional(prof)} className="list-group-item">
-            {prof.Nome_Profissional} - {prof.registroProfissional}
-          </li>
-        ))}
-      </ul>
     </Container>
   );
 }
