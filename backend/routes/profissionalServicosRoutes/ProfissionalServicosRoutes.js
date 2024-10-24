@@ -12,7 +12,7 @@ router.post('/profissionaiservicos', profissionalServicosController.adicionar);
 
 router.put('/profissionaiservicos/:id_profissional/:id_servico', profissionalServicosController.atualizar);
 
-router.delete('/profissionaiservicos/:id_profissional/:id_servico',  profissionalServicosController.remover);
+router.delete('/profissionaiservicos/:id_servico', profissionalServicosController.remover);
 
 // Rota para listar profissionais por serviço
 router.get('/servicos/:idServico/profissionais', profissionalServicosController.obterProfissionaisPorServico);

@@ -50,10 +50,8 @@ class ProfissionaisServicosModel {
           FROM profissionalservicos ps
           JOIN profissionais p ON ps.ID_Profissional = p.ID_Profissional
           JOIN servicos s ON ps.ID_Servico = s.ID_Servico
-        `;
-        console.log('Executando consulta SQL:', sql);  
+        `; 
         const result = await dataBase.executaComando(sql);
-        console.log('Resultado da consulta:', result); 
         return result;
     }
 

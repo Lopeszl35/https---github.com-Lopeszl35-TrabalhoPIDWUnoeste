@@ -56,28 +56,24 @@ class ProfissionalServicosController {
     }
 
     async remover(req, res) {
-        const { id_profissional, id_servico } = req.params;
+        const { id_servico } = req.params;
         let connection;
     
         try {
             connection = await dataBase.beginTransaction();
-    
-            // Verifica se a associação entre o profissional e o serviço existe
+
+            // Verifica se o profissional está associado ao serviço
             const [existingAssociation] = await connection.query(
-                "SELECT * FROM profissionalservicos WHERE ID_Profissional = ? AND ID_Servico = ?",
-                [id_profissional, id_servico]
+                "SELECT * FROM profissionalservicos WHERE ID_Servico = ?",
+                [id_servico]
             );
-    
+
             if (existingAssociation.length === 0) {
                 await dataBase.rollbackTransaction(connection);
-                return res.status(404).json({ message: 'Associação entre o profissional e o serviço não encontrada.' });
+                return res.status(400).json({ message: 'Profissional não está associado a este serviço.' });
             }
-    
-            // Remove a associação
-            await connection.query(
-                "DELETE FROM profissionalservicos WHERE ID_Profissional = ? AND ID_Servico = ?",
-                [id_profissional, id_servico]
-            );
+
+            await profissionaisServicosModel.excluir(id_servico, connection);
     
             await dataBase.commitTransaction(connection);
             return res.status(200).json({ message: 'Associação removida com sucesso' });

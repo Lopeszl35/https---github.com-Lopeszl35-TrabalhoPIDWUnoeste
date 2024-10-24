@@ -26,4 +26,6 @@ router.get('/profissionais/profissionalNome/:id', profissionaisController.obterN
 
 
 
+
+
 module.exports = router;

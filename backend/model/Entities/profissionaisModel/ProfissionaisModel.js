@@ -56,7 +56,7 @@ class ProfissionaisModel {
 
     async editarProfissional(profissional, id, connection) {
         profissional.Data_Nascimento = moment(profissional.Data_Nascimento).format('YYYY-MM-DD');
-        const result = await dataBase.executaComando("UPDATE Profissionais SET ? WHERE ID_Profissional = ?", [profissional, id]);
+        const result = await connection.query("UPDATE Profissionais SET ? WHERE ID_Profissional = ?", [profissional, id]);
         return result;
     }
 
@@ -70,6 +70,23 @@ class ProfissionaisModel {
             return result;
         } catch (error) {
             throw new Error('Erro ao filtrar profissionais por especialidade', error);
+        }
+    }
+
+    async buscarProfissionais(searchTerm, searchType) {
+        try {
+            let sql = 'SELECT * FROM Profissionais WHERE 1=1';
+            if (searchTerm) {
+                if (searchType === 'nome') {
+                    sql += ` AND LOWER(Nome_Completo) LIKE LOWER('%${searchTerm}%')`;
+                } else if (searchType === 'especialidade') {
+                    sql += ` AND LOWER(Especialidade) LIKE LOWER('%${searchTerm}%')`;
+                }
+            }
+            const result = await dataBase.executaComando(sql);
+            return result;
+        } catch (error) {
+            throw new Error('Erro ao buscar profissionais', error);
         }
     }
 }
