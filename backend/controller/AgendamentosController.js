@@ -1,13 +1,14 @@
-const AgendamentoService = require('../Services/AgendamentoService');
+const AbstractAgendamentoController = require('./abstratos/AbstractAgendamentoController');
 
-class AgendamentosController {
+class AgendamentosController extends AbstractAgendamentoController {
     constructor(agendamentoService) {
+        super();
         this.agendamentoService = agendamentoService;
     };
 
     async criarAgendamento(req, res) {
         try {
-            const { prontuario, idProfissional, idServico, dataHora, observacoes, status } = req.body; // atualizando para manter a consistência
+            const { prontuario, idProfissional, idServico, dataHora, observacoes, status } = req.body; 
             const novoAgendamento = await this.agendamentoService.criarAgendamento(prontuario, idProfissional, idServico, dataHora, observacoes, status);
             res.status(201).json(novoAgendamento);
         } catch (error) {

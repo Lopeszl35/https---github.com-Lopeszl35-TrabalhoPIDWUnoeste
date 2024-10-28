@@ -1,0 +1,18 @@
+class AbstractAgendamentoRepository {
+    constructor() {
+        if(new.target === AbstractAgendamentoRepository) {
+            throw new Error('Não é possível instanciar uma classe abstrata.');
+        }
+    }
+
+    async verificarAgendamentoExistente(prontuario, idServico, dataHora) {
+        throw new Error('Metodo não implementado');
+    }
+
+    async criarAgendamento(agendamento) {
+        throw new Error('Metodo não implementado');
+    }
+
+}
+
+module.exports = AbstractAgendamentoRepository

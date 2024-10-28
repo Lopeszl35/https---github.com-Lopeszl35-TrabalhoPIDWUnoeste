@@ -1,7 +1,7 @@
-const InterfaceAgendamentoService = require('../interfaces/InterfaceAgendamentoService');
+const AbstractAgendamentoService = require('./abstratos/AbstractAgendamentoService');
 const Agendamento = require('../model/Entities/agendamentoModel/Agendamento');
 
-class AgendamentoService extends InterfaceAgendamentoService {
+class AgendamentoService extends AbstractAgendamentoService {
     constructor(agendamentoRepository, database) {
         super();
         this.agendamentoRepository = agendamentoRepository;
@@ -21,7 +21,8 @@ class AgendamentoService extends InterfaceAgendamentoService {
             // Cria o novo agendamento
             const novoAgendamento = new Agendamento(null, prontuario, idProfissional, idServico, dataHora, status, observacoes);
             const agendamentoId = await this.agendamentoRepository.criarAgendamento(novoAgendamento, connection);
-            novoAgendamento.id = agendamentoId; // Atualiza o objeto com o ID gerado
+            novoAgendamento.id = agendamentoId; 
+            
             await this.database.commitTransaction(connection);
             return novoAgendamento;
         } catch (error) {

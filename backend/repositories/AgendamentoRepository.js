@@ -1,6 +1,6 @@
-const InterfaceAgendamentoRepository = require('../interfaces/InterfaceAgendamentoRepository');
+const AbstractAgendamentoRepository = require('./abstratos/AbstractAgendamentoRepository');
 
-class AgendamentoRepository extends InterfaceAgendamentoRepository {
+class AgendamentoRepository extends AbstractAgendamentoRepository {
     constructor(database) {
         super();
         this.database = database;
@@ -38,8 +38,7 @@ class AgendamentoRepository extends InterfaceAgendamentoRepository {
         
         try {
             const [result] = await connection.query(sql, params);
-            const mensagem = 'Agendamento criado com sucesso';
-            return { id: result.insertId, mensagem };
+            return { id: result.insertId, message: 'Agendamento criado com sucesso' };
         } catch (error) {
             console.error('Erro ao criar agendamento no banco de dados:', error);
             throw new Error('Erro ao criar agendamento no banco de dados');
