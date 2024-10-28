@@ -4,8 +4,6 @@ dotenv.config();
 
 class DataBase {
     constructor() {
-       
-
         this.pool = mysql.createPool({
             host: 'localhost',
             user: process.env.USER_DB,

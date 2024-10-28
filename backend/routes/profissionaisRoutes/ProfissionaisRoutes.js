@@ -24,6 +24,8 @@ router.delete('/profissionais/:id', profissionaisController.excluirUsuario.bind(
 // Rota para obter o nome do profissional responsável pelo serviço
 router.get('/profissionais/profissionalNome/:id', profissionaisController.obterNomeProfissionalPorId.bind(profissionaisController));
 
+/* Rota para buscar profissional 
+router.get('/profissionais/buscar', profissionaisController.buscarProfissionais.bind(profissionaisController)); */
 
 
 

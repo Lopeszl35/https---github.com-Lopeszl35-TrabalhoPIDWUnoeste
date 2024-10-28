@@ -1,0 +1,48 @@
+backend/
+├── controllers/
+│   ├── PacientesController.js
+│   ├── EnderecosController.js
+│   ├── ResponsaveisController.js
+│   ├── ProfissionaisController.js
+│   ├── ServicosController.js
+│   └── UsuariosController.js      
+├── models/
+│   ├── Paciente.js
+│   ├── Endereco.js
+│   ├── Responsavel.js
+│   ├── Profissional.js
+│   ├── Servico.js
+│   └── Usuario.js                  
+├── repositories/
+│   ├── IPacienteRepository.js
+│   ├── IEnderecoRepository.js
+│   ├── IResponsavelRepository.js
+│   ├── IProfissionalRepository.js
+│   ├── IServicoRepository.js
+│   ├── PacienteRepository.js
+│   ├── EnderecoRepository.js
+│   ├── ResponsavelRepository.js
+│   ├── ProfissionalRepository.js
+│   ├── ServicoRepository.js
+│   ├── UsuarioRepository.js        
+│   └── IUsuarioRepository.js       
+├── services/
+│   ├── PacienteService.js
+│   ├── EnderecoService.js
+│   ├── ResponsavelService.js
+│   ├── ProfissionalService.js
+│   ├── ServicoService.js
+│   └── UsuarioService.js           
+├── routes/
+│   ├── PacientesRoutes.js
+│   ├── EnderecosRoutes.js
+│   ├── ResponsaveisRoutes.js
+│   ├── ProfissionaisRoutes.js
+│   ├── ServicosRoutes.js
+│   └── UsuariosRoutes.js           
+├── utils/
+│   └── Authentication.js           // Utilitário para autenticação (login e token)
+└── database/
+    └── database.js                 // Configuração da conexão com o banco de dados
+└── server.js                          # Inicialização do servidor e definição das rotas principais
+
