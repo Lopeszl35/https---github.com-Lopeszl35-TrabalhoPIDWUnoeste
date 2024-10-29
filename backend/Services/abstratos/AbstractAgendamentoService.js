@@ -5,7 +5,15 @@ class AbstractAgendamentoService {
         }
     }
 
+    async obterTodasConsultas() {
+        throw new Error('Metodo não implementado');
+    }
+
     async criarAgendamento(prontuario, idProfissional, idServico, dataHora, observacoes, status = 'Pendente') {
+        throw new Error('Metodo não implementado');
+    }
+
+    async arquivarAgendamento(idAgendamento) {
         throw new Error('Metodo não implementado');
     }
 

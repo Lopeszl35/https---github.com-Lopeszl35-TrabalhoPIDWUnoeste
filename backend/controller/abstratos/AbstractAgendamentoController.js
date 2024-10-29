@@ -5,7 +5,15 @@ class AbstractAgendamentoController {
         }
     }
 
+    async obterTodasConsultas(req, res) {
+        throw new Error('Metodo não implementado');
+    }
+
     async criarAgendamento(req, res) {
+        throw new Error('Metodo não implementado');
+    }
+
+    async arquivarConsulta(req, res) {
         throw new Error('Metodo não implementado');
     }
 

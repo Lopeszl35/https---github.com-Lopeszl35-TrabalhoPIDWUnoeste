@@ -6,6 +6,12 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
         this.database = database;
     }
 
+    async obterTodasConsultas() {
+        const sql = `SELECT * FROM Agendamentos`;
+        const rows = await this.database.executaComando(sql);
+        return rows;
+    }
+
     async verificarAgendamentoExistente(prontuario, idServico, dataHora) {
         const sql = `
             SELECT * FROM Agendamentos 
@@ -24,8 +30,8 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
 
     async criarAgendamento(agendamento, connection) {
         const sql = `
-            INSERT INTO Agendamentos (Prontuario, ID_Profissional, ID_Servico, Data_Hora, Status, Observacoes)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO Agendamentos (Prontuario, ID_Profissional, ID_Servico, Data_Hora, Status, Observacoes, arquivado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
         const params = [
             agendamento.prontuario,
@@ -33,7 +39,8 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
             agendamento.idServico,
             agendamento.dataHora,
             agendamento.status,
-            agendamento.observacoes
+            agendamento.observacoes,
+            false
         ];
         
         try {
@@ -44,6 +51,34 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
             throw new Error('Erro ao criar agendamento no banco de dados');
         }
     }
+
+    async buscarConsultaPorId(idAgendamento) {
+        const sql = `SELECT * FROM Agendamentos WHERE ID_Agendamento = ?`;
+        const result = await this.database.executaComando(sql, [idAgendamento]);
+        return result.length > 0 ? result[0] : null;
+    }
+
+
+    async arquivarConsulta(idAgendamento) {
+        const sql = `
+            UPDATE Agendamentos 
+            SET Arquivado = TRUE, Status = CASE WHEN Status = 'Pendente' THEN 'Cancelado' ELSE Status END
+            WHERE ID_Agendamento = ? AND (Status = 'Concluído' OR Status = 'Cancelado')
+        `;
+        const params = [idAgendamento];
+
+        try {
+            const result = await this.database.executaComandoNonQuery(sql, params);
+            if (result.affectedRows === 0) {
+                throw new Error('Consulta não encontrada ou já arquivada');
+            }
+            return { message: 'Consulta arquivada com sucesso' };
+        } catch (error) {
+            console.error('Erro ao arquivar consulta:', error);
+            throw new Error('Erro ao arquivar consulta');
+        }
+    }
+
 }
 
 module.exports = AgendamentoRepository;

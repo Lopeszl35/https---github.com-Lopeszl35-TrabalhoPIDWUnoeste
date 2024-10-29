@@ -9,8 +9,13 @@ const AgendamentoController = DependencyInjector.get('AgendamentoController');
 const router = express.Router();
 router.use(cors());
 
+// Rota para obter todos os agendamentos
+router.get('/agendamentos', (req, res) => AgendamentoController.obterTodasConsultas(req, res));
 
 // Defini rota para cadastro de agendamento
 router.post('/agendamentos', (req, res) => AgendamentoController.criarAgendamento(req, res));
+
+// Rota para arquivar consulta
+router.put('/agendamentos/:id/arquivar', (req, res) => AgendamentoController.arquivarConsulta(req, res));
 
 module.exports = router;
