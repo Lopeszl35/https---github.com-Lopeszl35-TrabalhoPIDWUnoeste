@@ -81,6 +81,39 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     }
   }
 
+  async editarAgendamento(agendamento, connection) {
+    const sql = `
+        UPDATE Agendamentos
+        SET 
+            ID_Profissional = ?, 
+            ID_Servico = ?, 
+            Data_Hora = ?, 
+            Status = ?, 
+            Observacoes = ?
+        WHERE 
+            ID_Agendamento = ?
+    `;
+    const params = [
+      agendamento.idProfissional,
+      agendamento.idServico,
+      agendamento.dataHora,
+      agendamento.status,
+      agendamento.observacoes,
+      agendamento.id,
+    ];
+
+    try {
+      const [result] = await connection.query(sql, params);
+      if (result.affectedRows === 0) {
+        throw new Error("Nenhum agendamento encontrado para atualizar");
+      }
+      return { message: "Agendamento atualizado com sucesso" };
+    } catch (error) {
+      console.error("Erro ao atualizar agendamento no banco de dados:", error);
+      throw new Error("Erro ao atualizar agendamento no banco de dados");
+    }
+  }
+
   async buscarConsultaPorId(idAgendamento) {
     const sql = `SELECT * FROM Agendamentos WHERE ID_Agendamento = ?`;
     const result = await this.database.executaComando(sql, [idAgendamento]);

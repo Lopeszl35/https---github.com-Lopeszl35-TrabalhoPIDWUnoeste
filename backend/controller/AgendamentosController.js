@@ -17,6 +17,13 @@ class AgendamentosController extends AbstractAgendamentoController {
 
   async obterConsultasDoPaciente(req, res) {
     const { prontuario } = req.body;
+    try {
+      const consultasPaciente =
+        await this.agendamentoService.obterConsultasDoPaciente(prontuario);
+      res.status(200).json(consultasPaciente);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
 
   async criarAgendamento(req, res) {

@@ -80,6 +80,8 @@ class AgendamentoService extends AbstractAgendamentoService {
     }
   }
 
+  async editarAgendamento() {}
+
   async arquivarAgendamento(idAgendamento) {
     const connection = await this.database.beginTransaction();
     try {

@@ -17,7 +17,7 @@ class AbstractAgendamentoRepository {
     throw new Error("Metodo não implementado");
   }
 
-  async criarAgendamento(agendamento) {
+  async criarAgendamento(agendamento, connection) {
     throw new Error("Metodo não implementado");
   }
 
@@ -31,6 +31,10 @@ class AbstractAgendamentoRepository {
 
   async verificarStatusAgendamento(id) {
     throw new Error("Metodo não implementado");
+  }
+
+  async editarAgendamento(agendamento) {
+    throw new Erroe("metodo não implementado");
   }
 }
 

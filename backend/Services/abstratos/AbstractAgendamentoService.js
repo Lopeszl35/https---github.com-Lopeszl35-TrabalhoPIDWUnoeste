@@ -24,6 +24,17 @@ class AbstractAgendamentoService {
     throw new Error("Metodo não implementado");
   }
 
+  async editarAgendamento(
+    prontuario,
+    idProfissional,
+    idServico,
+    dataHora,
+    observacoes,
+    status = "Pendente"
+  ) {
+    throw new Error("Metodo não implementado");
+  }
+
   async arquivarAgendamento(idAgendamento) {
     throw new Error("Metodo não implementado");
   }
