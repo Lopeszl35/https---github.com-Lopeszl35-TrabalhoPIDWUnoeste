@@ -11,14 +11,12 @@ class UsusariosService extends AbstractUsuariosService {
   async adicionarUsuario(email, senha, tipoPermissao) {
     try {
       //Verifica se usuario ja existe
-      const usuarioExiste =
-        this.UsuarioRepository.verificarSeUsuarioExiste(email);
+      const usuarioExiste = await this.UsuarioRepository.verificarSeUsuarioExiste(email);
       if (usuarioExiste) {
         throw new Error("Usuario ja cadastrado com o email: ", email);
       }
       const novoUsuarioModel = new Usuario(email, senha, tipoPermissao);
-      const novoUsuairo =
-        this.UsuarioRepository.adicionarUsuario(novoUsuarioModel);
+      const novoUsuairo = await this.UsuarioRepository.adicionarUsuario(novoUsuarioModel);
       return novoUsuairo;
     } catch (error) {
       throw new Error("Erro ao cadastrar usuário", error.message);
