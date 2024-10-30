@@ -43,7 +43,7 @@ CREATE TABLE Responsaveis (
 -- Criação da tabela de Profissionais
 CREATE TABLE Profissionais (
     ID_Profissional INT AUTO_INCREMENT PRIMARY KEY,
-    Nome_Completo VARCHAR(255) NOT NULL UNIQUE, 
+    Nome_Completo VARCHAR(255) NOT NULL, 
     CPF VARCHAR(11) NOT NULL UNIQUE,
     RG VARCHAR(20) UNIQUE,
     Data_Nascimento DATE NOT NULL,
@@ -71,7 +71,6 @@ CREATE TABLE ProfissionalServicos (
 );
 
 -- Criação da tabela de Relacionamento Pacientes-Serviços
--- Atualização da tabela PacienteServicos para incluir ON DELETE e ON UPDATE CASCADE
 CREATE TABLE PacienteServicos (
     Prontuario INT NOT NULL,
     ID_Servico INT NOT NULL,
@@ -96,6 +95,34 @@ CREATE TABLE usuarios (
     ID_Profissional INT NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Senha VARCHAR(255) NOT NULL,
-    Tipo_Permissao ENUM('admin', 'profissionalSaude', 'usuario') NOT NULL,
+    Tipo_Permissao ENUM('admin', 'profissionalSaude', 'usuarioPadrao') NOT NULL,
     FOREIGN KEY (ID_Profissional) REFERENCES Profissionais(ID_Profissional)
 );
+
+-- Criação da tabela de Agendamentos
+CREATE TABLE Agendamentos (
+    ID_Agendamento INT AUTO_INCREMENT PRIMARY KEY,
+    Prontuario INT NOT NULL,
+    ID_Profissional INT NULL,
+    ID_Servico INT,
+    Data_Hora DATETIME NOT NULL,
+    Status ENUM('Pendente', 'Confirmado', 'Cancelado', 'Concluído') DEFAULT 'Pendente',
+    Observacoes TEXT,
+
+    FOREIGN KEY (Prontuario) REFERENCES Pacientes(Prontuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (ID_Profissional) REFERENCES Profissionais(ID_Profissional)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+	FOREIGN KEY (ID_Servico) REFERENCES Servicos(ID_Servico)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+ALTER TABLE Agendamentos
+ADD COLUMN Arquivado BOOLEAN DEFAULT FALSE;
+
+
+
+

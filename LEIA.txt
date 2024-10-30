@@ -1,0 +1,4 @@
+Por enquanto somente o backend esta funcionando, estamos refatorando o código para aderir aos princípios solid, até a apresentação estará tudo ok
+
+LINK DO PROJETO NO GIT, ONDE O MASTER ESTA FUNCIONANDO BACK E FRONT 
+https://github.com/Lopeszl35/https---github.com-Lopeszl35-TrabalhoPIDWUnoeste

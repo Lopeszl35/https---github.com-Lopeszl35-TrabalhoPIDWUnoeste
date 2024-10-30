@@ -33,10 +33,6 @@ class AbstractAgendamentoRepository {
     throw new Error("Metodo não implementado");
   }
 
-  async verificarStatusAgendamento(id) {
-    throw new Error("Metodo não implementado");
-  }
-
   async editarAgendamento(agendamento, connection) {
     throw new Erroe("metodo não implementado");
   }
