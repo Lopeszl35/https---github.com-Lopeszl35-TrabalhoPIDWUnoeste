@@ -8,7 +8,22 @@ class UsusariosService extends AbstractUsuariosService {
     this.database = database;
   }
 
-  async adicionarUsuario(idProfissional, email, senha, tipoPermissao) {}
+  async adicionarUsuario(email, senha, tipoPermissao) {
+    try {
+      //Verifica se usuario ja existe
+      const usuarioExiste =
+        this.UsuarioRepository.verificarSeUsuarioExiste(email);
+      if (usuarioExiste) {
+        throw new Error("Usuario ja cadastrado com o email: ", email);
+      }
+      const novoUsuarioModel = new Usuario(email, senha, tipoPermissao);
+      const novoUsuairo =
+        this.UsuarioRepository.adicionarUsuario(novoUsuarioModel);
+      return novoUsuairo;
+    } catch (error) {
+      throw new Error("Erro ao cadastrar usuário", error.message);
+    }
+  }
 }
 
 module.exports = UsusariosService;

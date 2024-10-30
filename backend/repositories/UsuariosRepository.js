@@ -6,29 +6,27 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     this.database = database;
   }
 
-  async adicionarUsuario(usuario, connection) {
-    await connection.query("INSERT INTO Usuarios SET ?", [usuario]);
+  async adicionarUsuario(usuario) {
+    try {
+      await this.database.executaComandoNonQuery("INSERT INTO Usuarios SET ?", [
+        usuario,
+      ]);
+    } catch (error) {
+      throw new Error("Erro ao adicionar usuário");
+    }
   }
 
-  async editarUsuarioPeloProfissional(usuario, connection) {
-    await connection.query("UPDATE usuarios SET ? WHERE ID_Profissional = ?", [
-      usuario,
-      usuario.ID_Profissional,
-    ]);
-  }
-
-  async excluirUsuarioPeloProfissional(id, connection) {
-    await connection.query("DELETE FROM usuarios WHERE ID_Profissional = ?", [
-      id,
-    ]);
-  }
-
-  async obterPorIdProfissional(id) {
-    const result = await dataBase.executaComando(
-      "SELECT * FROM usuarios WHERE ID_Profissional = ?",
-      [id]
-    );
-    return result[0];
+  async verificarSeUsuarioExiste(usuario) {
+    const email = usuario.email;
+    try {
+      const usuarioExiste = await this.database.executaComando(
+        "SELECT * FROM Usuarios WHERE Email = ?",
+        [email]
+      );
+      return usuarioExiste;
+    } catch (error) {
+      throw new Error("Erro ao verificar usuario", error.message);
+    }
   }
 
   async obterPorEmail(email) {

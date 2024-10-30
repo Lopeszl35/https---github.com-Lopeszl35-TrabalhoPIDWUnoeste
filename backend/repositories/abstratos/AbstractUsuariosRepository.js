@@ -8,7 +8,10 @@ class AbstractUsuariosRepository {
   async adicionarUsuario(usuario, connection) {
     throw new Error("Metodo deve ser implementado");
   }
-  
+
+  async verificarSeUsuarioExiste(email) {
+    throw new Error("Metodo deve ser implementado");
+  }
 }
 
 module.exports = AbstractUsuariosRepository;

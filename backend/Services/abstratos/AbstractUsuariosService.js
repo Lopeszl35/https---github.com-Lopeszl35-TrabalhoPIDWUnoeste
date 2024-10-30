@@ -5,7 +5,7 @@ class AbstractUsuariosService {
     }
   }
 
-  async adicionarUsuario(idProfissional, email, senha, tipoPermissao) {
+  async adicionarUsuario(email, senha, tipoPermissao) {
     throw new Error("Metodo deve ser implementado");
   }
 }
