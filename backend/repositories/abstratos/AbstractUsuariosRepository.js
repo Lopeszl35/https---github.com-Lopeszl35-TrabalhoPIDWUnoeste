@@ -5,6 +5,9 @@ class AbstractUsuariosRepository {
     }
   }
 
+  async adicionarUsuario(usuario, connection) {
+    throw new Error("Metodo deve ser implementado");
+  }
   
 }
 

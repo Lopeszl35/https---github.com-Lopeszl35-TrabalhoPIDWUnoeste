@@ -6,7 +6,7 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     this.database = database;
   }
 
-  async adicionar(usuario, connection) {
+  async adicionarUsuario(usuario, connection) {
     await connection.query("INSERT INTO Usuarios SET ?", [usuario]);
   }
 
