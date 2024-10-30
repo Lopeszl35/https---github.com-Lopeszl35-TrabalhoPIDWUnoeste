@@ -80,7 +80,44 @@ class AgendamentoService extends AbstractAgendamentoService {
     }
   }
 
-  async editarAgendamento() {}
+  async editarAgendamento(
+    prontuario,
+    idProfissional,
+    idServico,
+    dataHora,
+    observacoes,
+    status,
+    idAgendamento
+  ) {
+    const connection = await this.database.beginTransaction();
+    let agendamentoAtualizado;
+    try {
+      const novoAgendamento = new Agendamento(
+        idAgendamento,
+        prontuario,
+        idProfissional,
+        idServico,
+        dataHora,
+        status,
+        observacoes
+      );
+        agendamentoAtualizado = await this.agendamentoRepository.editarAgendamento(novoAgendamento, connection);
+      console.log(`Status: ${status}`)
+      // Se o status atualizado é "Concluído" ou "Cancelado", arquive o agendamento
+      if (status === "Concluído" || status === "Cancelado") {
+        await this.agendamentoRepository.arquivarConsulta(idAgendamento, connection);
+      }
+      else if (status === "Pendente" || status === "Confirmado") {
+        await this.agendamentoRepository.desarquivarConsulta(idAgendamento, connection);
+      }
+  
+      await this.database.commitTransaction(connection);
+      return agendamentoAtualizado;
+    } catch (error) {
+      await this.database.rollbackTransaction(connection);
+      throw new Error(`Erro ao editar agendamento: ${error.message}`);
+    }
+  }
 
   async arquivarAgendamento(idAgendamento) {
     const connection = await this.database.beginTransaction();
@@ -113,6 +150,19 @@ class AgendamentoService extends AbstractAgendamentoService {
       throw new Error(`Erro ao deletar agendamento: ${error.message}`);
     }
   }
+
+  async obterConsultasNaoArquivadas() {
+    try {
+        const consultas = await this.agendamentoRepository.obterConsultasNaoArquivadas();
+        if (!consultas) {
+            throw new Error("Nenhum agendamento encontrado");
+        }
+        return consultas;
+    } catch (error) {
+        throw new Error(`Erro ao obter consultas: ${error.message}`);
+    }
+  }
+
 }
 
 module.exports = AgendamentoService;

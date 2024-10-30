@@ -99,7 +99,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       agendamento.dataHora,
       agendamento.status,
       agendamento.observacoes,
-      agendamento.id,
+      agendamento.idAgendamento,
     ];
 
     try {
@@ -120,7 +120,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     return result.length > 0 ? result[0] : null;
   }
 
-  async arquivarConsulta(idAgendamento) {
+  async arquivarConsulta(idAgendamento, connection) {
     const sql = `
             UPDATE Agendamentos 
             SET Arquivado = TRUE, Status = CASE WHEN Status = 'Pendente' THEN 'Cancelado' ELSE Status END
@@ -128,8 +128,13 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
         `;
     const params = [idAgendamento];
 
+    let result;
     try {
-      const result = await this.database.executaComandoNonQuery(sql, params);
+        if(connection) {
+            result = await connection.query(sql, params);
+        } else {
+            result = await this.database.executaComandoNonQuery(sql, params);
+        }
       if (result.affectedRows === 0) {
         throw new Error("Consulta não encontrada ou já arquivada");
       }
@@ -139,6 +144,48 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       throw new Error("Erro ao arquivar consulta");
     }
   }
+
+  async desarquivarConsulta(idAgendamento, connection) {
+    const sql = `
+            UPDATE Agendamentos 
+            SET Arquivado = FALSE, Status = CASE WHEN Status = 'Cancelado' THEN 'Pendente' ELSE Status END
+            WHERE ID_Agendamento = ? AND (Status = 'Pendente' OR Status = 'Confirmado')
+        `;
+    const params = [idAgendamento];
+
+    let result;
+    try {
+        if(connection) {
+            result = await connection.query(sql, params);
+        } else {
+            result = await this.database.executaComandoNonQuery(sql, params);
+        }
+      if (result.affectedRows === 0) {
+        throw new Error("Consulta não encontrada ou não arquivada");
+      }
+      return { message: "Consulta desarquivada com sucesso" };
+    } catch (error) {
+      console.error("Erro ao desarquivar consulta:", error);
+      throw new Error("Erro ao desarquivar consulta");
+    }
+  }
+
+  async obterConsultasNaoArquivadas() {
+    const sql = `
+            SELECT * FROM Agendamentos
+            WHERE Arquivado = FALSE
+    `
+    const rows = await this.database.executaComando(sql);
+    return rows;
+  }
+
+  /* implementar posteriormente
+  async obterAgendamentosPendentes() {
+    
+  } 
+  */
+
+
 }
 
 module.exports = AgendamentoRepository;

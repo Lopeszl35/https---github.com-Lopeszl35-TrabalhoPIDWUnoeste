@@ -30,7 +30,7 @@ class AbstractAgendamentoService {
     idServico,
     dataHora,
     observacoes,
-    status = "Pendente"
+    status
   ) {
     throw new Error("Metodo não implementado");
   }
@@ -38,6 +38,18 @@ class AbstractAgendamentoService {
   async arquivarAgendamento(idAgendamento) {
     throw new Error("Metodo não implementado");
   }
+
+  async obterConsultasNaoArquivadas() {
+    throw new Error("Metodo não implementado");
+  }
+
+  /* implementar posteriormente
+  async obterAgendamentosPendentes() {
+    throw new Error("Metodo nao implementado");
+  } 
+  */
+
+
 }
 
 module.exports = AbstractAgendamentoService;

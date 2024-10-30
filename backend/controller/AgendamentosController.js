@@ -16,7 +16,7 @@ class AgendamentosController extends AbstractAgendamentoController {
   }
 
   async obterConsultasDoPaciente(req, res) {
-    const { prontuario } = req.body;
+    const { prontuario } = req.params;
     try {
       const consultasPaciente =
         await this.agendamentoService.obterConsultasDoPaciente(prontuario);
@@ -52,6 +52,27 @@ class AgendamentosController extends AbstractAgendamentoController {
     }
   }
 
+  async editarAgendamento(req, res) {
+    const { idAgendamento } = req.params;
+    const { prontuario, idProfissional, idServico, dataHora, observacoes, status } = req.body;
+
+    try {
+      const agendamento = await this.agendamentoService.editarAgendamento(
+        prontuario,
+        idProfissional,
+        idServico,
+        dataHora,
+        observacoes,
+        status,
+        idAgendamento
+      );
+      res.status(200).json(agendamento);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+
+  }
+
   async arquivarConsulta(req, res) {
     try {
       const { id } = req.params;
@@ -61,6 +82,16 @@ class AgendamentosController extends AbstractAgendamentoController {
       res.status(400).json({ message: error.message });
     }
   }
+
+  async obterConsultasNaoArquivadas(req, res) {
+    try {
+      const consultas = await this.agendamentoService.obterConsultasNaoArquivadas();
+      res.status(200).json(consultas);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
 }
 
 module.exports = AgendamentosController;

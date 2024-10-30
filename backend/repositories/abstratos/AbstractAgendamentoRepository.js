@@ -29,13 +29,28 @@ class AbstractAgendamentoRepository {
     throw new Error("Metodo não implementado");
   }
 
+  async desarquivarConsulta(idAgendamento) {
+    throw new Error("Metodo não implementado");
+  }
+
   async verificarStatusAgendamento(id) {
     throw new Error("Metodo não implementado");
   }
 
-  async editarAgendamento(agendamento) {
+  async editarAgendamento(agendamento, connection) {
     throw new Erroe("metodo não implementado");
   }
+
+  async obterConsultasNaoArquivadas() {
+    throw new Error("Metodo não implementado");
+  }
+
+  /* implementar posteriormente
+  async obterAgendamentosPendentes() {
+    throw new Error("Metodo nao implementado");
+  } 
+  */
+
 }
 
 module.exports = AbstractAgendamentoRepository;
