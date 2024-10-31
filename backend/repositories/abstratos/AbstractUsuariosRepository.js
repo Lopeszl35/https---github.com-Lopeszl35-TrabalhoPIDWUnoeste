@@ -5,7 +5,7 @@ class AbstractUsuariosRepository {
     }
   }
 
-  async adicionarUsuario(usuario, connection) {
+  async adicionarUsuario(usuario) {
     throw new Error("Metodo deve ser implementado");
   }
 
@@ -13,7 +13,11 @@ class AbstractUsuariosRepository {
     throw new Error("Metodo deve ser implementado");
   }
 
-  async verificarSeUsuarioExiste(email) {
+  async obterPorEmail(email) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
+  async editarUsuario(novoUsuario) {
     throw new Error("Metodo deve ser implementado");
   }
 }

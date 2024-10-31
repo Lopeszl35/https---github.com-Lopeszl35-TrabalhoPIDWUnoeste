@@ -7,15 +7,14 @@ class UsuariosRepository extends AbstractUsuariosRepository {
   }
 
   async adicionarUsuario(usuario) {
-    console.log(`Adicionando o usuário ${usuario}`);
     const sql = `INSERT INTO usuarios (Email, Senha, Tipo_Permissao) VALUES (?, ?, ?)`;
     const params = [usuario.Email, usuario.Senha, usuario.Tipo_Permissao];
     try {
       await this.database.executaComandoNonQuery(sql, params);
-      return { message: 'Usuário adicionado com sucesso' };
+      return { message: "Usuário adicionado com sucesso" };
     } catch (error) {
-      console.error('Erro ao adicionar usuário:', error);
-      throw error;  // Propaga o erro para captura detalhada no service
+      console.error("Erro ao adicionar usuário:", error);
+      throw error;
     }
   }
 
@@ -29,7 +28,7 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     }
   }
 
-   async verificarSeUsuarioExiste(email) {
+  async obterPorEmail(email) {
     const sql = `SELECT * FROM usuarios WHERE Email = ?`;
     try {
       const result = await this.database.executaComando(sql, [email]);
@@ -39,10 +38,20 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     }
   }
 
-  async obterPorEmail(email) {
-    const sql = `SELECT * FROM usuarios WHERE Email = ?`;
-    const result = await DataBase.executaComando(sql, [email]);
-    return result;
+  async editarUsuario(novoUsuario) {
+    const sql = `UPDATE usuarios SET Senha = ?, Tipo_Permissao = ? WHERE Email = ?`;
+    const params = [
+      novoUsuario.Senha,
+      novoUsuario.Tipo_Permissao,
+      novoUsuario.Email,
+    ];
+    try {
+      await this.database.executaComandoNonQuery(sql, params);
+      return { message: "Usuário atualizado com sucesso" };
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+      throw error;
+    }
   }
 }
 

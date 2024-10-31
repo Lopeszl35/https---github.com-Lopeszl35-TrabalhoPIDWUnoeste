@@ -13,6 +13,10 @@ class AbstractUsuariosService {
     throw new Error("Metodo deve ser implementado");
   }
 
+  async editarUsuario(novoUsuairo) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
 }
 
 module.exports = AbstractUsuariosService;
