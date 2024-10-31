@@ -7,25 +7,35 @@ class UsuariosRepository extends AbstractUsuariosRepository {
   }
 
   async adicionarUsuario(usuario) {
+    console.log(`Adicionando o usuário ${usuario}`);
+    const sql = `INSERT INTO usuarios (Email, Senha, Tipo_Permissao) VALUES (?, ?, ?)`;
+    const params = [usuario.Email, usuario.Senha, usuario.Tipo_Permissao];
     try {
-      await this.database.executaComandoNonQuery("INSERT INTO Usuarios SET ?", [
-        usuario,
-      ]);
+      await this.database.executaComandoNonQuery(sql, params);
+      return { message: 'Usuário adicionado com sucesso' };
     } catch (error) {
-      throw new Error("Erro ao adicionar usuário");
+      console.error('Erro ao adicionar usuário:', error);
+      throw error;  // Propaga o erro para captura detalhada no service
     }
   }
 
-  async verificarSeUsuarioExiste(usuario) {
-    const email = usuario.email;
+  async login(email) {
+    const sql = `SELECT * FROM usuarios WHERE Email = ?`;
     try {
-      const usuarioExiste = await this.database.executaComando(
-        "SELECT * FROM Usuarios WHERE Email = ?",
-        [email]
-      );
-      return usuarioExiste;
+      const result = await this.database.executaComando(sql, [email]);
+      return result[0];
     } catch (error) {
-      throw new Error("Erro ao verificar usuario", error.message);
+      throw new Error("Erro ao realizar login: " + error.message);
+    }
+  }
+
+   async verificarSeUsuarioExiste(email) {
+    const sql = `SELECT * FROM usuarios WHERE Email = ?`;
+    try {
+      const result = await this.database.executaComando(sql, [email]);
+      return result.length > 0;
+    } catch (error) {
+      throw new Error("Erro ao verificar se usuário existe: " + error.message);
     }
   }
 
@@ -35,3 +45,5 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     return result;
   }
 }
+
+module.exports = UsuariosRepository;

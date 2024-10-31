@@ -8,6 +8,11 @@ class AbstractUsuariosService {
   async adicionarUsuario(email, senha, tipoPermissao) {
     throw new Error("Metodo deve ser implementado");
   }
+
+  async login(email, senha) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
 }
 
 module.exports = AbstractUsuariosService;

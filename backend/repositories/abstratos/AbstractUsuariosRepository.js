@@ -9,6 +9,10 @@ class AbstractUsuariosRepository {
     throw new Error("Metodo deve ser implementado");
   }
 
+  async login(email) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
   async verificarSeUsuarioExiste(email) {
     throw new Error("Metodo deve ser implementado");
   }

@@ -32,7 +32,7 @@ class DataBase {
             return results.affectedRows; 
         } catch (error) {
             console.error(`Erro ao executar comando non-query SQL: ${sql}`, error);
-            throw new Error('Erro ao executar comando non-query SQL');
+            throw error;  // Lança o erro original para captura detalhada
         } finally {
             connection.release();
         }
