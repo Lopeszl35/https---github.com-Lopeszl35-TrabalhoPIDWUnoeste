@@ -38,12 +38,13 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     }
   }
 
-  async editarUsuario(novoUsuario) {
-    const sql = `UPDATE usuarios SET Senha = ?, Tipo_Permissao = ? WHERE Email = ?`;
+  async editarUsuario(id, novoUsuario) {
+    const sql = `UPDATE usuarios SET Senha = ?, Tipo_Permissao = ?, Email = ? WHERE ID_Usuario = ?`;
     const params = [
       novoUsuario.Senha,
       novoUsuario.Tipo_Permissao,
       novoUsuario.Email,
+      id
     ];
     try {
       await this.database.executaComandoNonQuery(sql, params);
@@ -53,6 +54,28 @@ class UsuariosRepository extends AbstractUsuariosRepository {
       throw error;
     }
   }
+
+  async excluirUsuario(id) {
+    const sql = `DELETE FROM usuarios WHERE ID_Usuario = ?`;
+    try {
+      await this.database.executaComandoNonQuery(sql, [id]);
+      return { message: "Usuário excluido com sucesso" };
+    } catch (error) {
+      console.error("Erro ao excluir hete:", error);
+      throw error;
+    }
+  }
+
+  async obterUsuarios() {
+    const sql = `SELECT * FROM usuarios`;
+    try {
+      const result = await this.database.executaComando(sql);
+      return result;
+    } catch (error) {
+      throw new Error("Erro ao obter usuários: " + error.message);
+    }
+  }
+
 }
 
 module.exports = UsuariosRepository;

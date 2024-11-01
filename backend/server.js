@@ -8,6 +8,9 @@ const dotenv = require('dotenv');
 // Utilidades
 const DependencyInjector = require('./utils/DependencyInjector');
 
+// Middleware
+const verifyToken = require('./middleware/verifyToken');
+
 // Carrega variáveis de ambiente
 dotenv.config();
 
@@ -110,6 +113,7 @@ app.use(session({
 // Rotas
 const AgendamentoRoutes = require('./routes/AgendamentosRoutes');
 const UsuariosRoutes = require('./routes/usuariosRoutes');
+const loginRoute = require('./routes/loginRoute')
 /*
 const PacientesRoutes = require('./routes/PacientesRoutes');
 const EnderecosRoutes = require('./routes/EnderecosRoutes');
@@ -118,8 +122,9 @@ const ProfissionaisRoutes = require('./routes/ProfissionaisRoutes');
 const ServicosRoutes = require('./routes/ServicosRoutes');
 */
 
-app.use(AgendamentoRoutes);
-app.use(UsuariosRoutes);
+app.use(loginRoute);
+app.use(verifyToken, AgendamentoRoutes);
+app.use(verifyToken, UsuariosRoutes);
 /*
 app.use(PacientesRoutes);
 app.use(EnderecosRoutes);

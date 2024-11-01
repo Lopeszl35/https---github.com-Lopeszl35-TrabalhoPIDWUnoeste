@@ -13,7 +13,15 @@ class AbstractUsuariosService {
     throw new Error("Metodo deve ser implementado");
   }
 
-  async editarUsuario(novoUsuairo) {
+  async editarUsuario(id, email, senha, tipoPermissao) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
+  async excluirUsuario(id) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
+  async obterUsuarios() {
     throw new Error("Metodo deve ser implementado");
   }
 

@@ -17,9 +17,18 @@ class AbstractUsuariosRepository {
     throw new Error("Metodo deve ser implementado");
   }
 
-  async editarUsuario(novoUsuario) {
+  async editarUsuario(id, novoUsuario) {
     throw new Error("Metodo deve ser implementado");
   }
+
+  async  excluirUsuario(id) {
+    throw new Error("Metodo deve ser implementado");
+  }
+
+  async obterUsuarios() {
+    throw new Error("Metodo deve ser implementado");
+  }
+
 }
 
 module.exports = AbstractUsuariosRepository;

@@ -13,6 +13,18 @@ class AbstractUsuariosController {
         throw new Error("Metodo não implementado");
     }
 
+    async editarUsuario(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async excluirUsuario(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async obterUsuarios(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
 } 
 
 module.exports = AbstractUsuariosController
