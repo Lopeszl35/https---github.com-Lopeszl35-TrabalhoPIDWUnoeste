@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
-import './Login.css';
+import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button } from "react-bootstrap";
+import './Login.css';
+import { useAuth } from '../../context/AuthProvider';
 
-function Login({ onLoginSuccess }) {
+function Login() {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
 
-        const validEmail = 'usuario@exemplo.com';
-        const validPassword = 'senha123';
-
-        if (email === validEmail && password === validPassword) {
-            onLoginSuccess();
-        } else {
-            setError('Email ou senha incorretos.');
+        try {
+            await login(email, password);
+            navigate('/home');
+        } catch (error) {
+            setError(error.message || 'Erro ao fazer login');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -36,6 +43,7 @@ function Login({ onLoginSuccess }) {
                             placeholder="nome@exemplo.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            disabled={loading}
                         />
                         <label htmlFor="floatingInputCustom">Email</label>
                     </Form.Floating>
@@ -46,10 +54,18 @@ function Login({ onLoginSuccess }) {
                             placeholder="Senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            disabled={loading}
                         />
                         <label htmlFor="floatingPasswordCustom">Senha</label>
                     </Form.Floating>
-                    <Button variant="dark" type="submit" className="w-100 mt-3">Entrar</Button>
+                    <Button 
+                        variant="dark" 
+                        type="submit" 
+                        className="w-100 mt-3"
+                        disabled={loading}
+                    >
+                        {loading ? 'Entrando...' : 'Entrar'}
+                    </Button>
                 </Form>
             </Container>
         </div>

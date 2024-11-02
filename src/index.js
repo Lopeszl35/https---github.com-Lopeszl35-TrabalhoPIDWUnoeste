@@ -1,11 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -21,60 +16,57 @@ import ProfissionaisPorServico from "./Paginas/Gerenciar-Servicos/ProfissionaisP
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 import EditarPacientes from "./Paginas/Pacientes/EditarPacientes";
+import { AuthProvider } from "./context/AuthProvider";
+import PrivateRoute from "./components/PrivateRoute";
 
-
-function AppRouter() {
-  const [loggedIn, setLoggedIn] = React.useState(
-    () => localStorage.getItem("isLoggedIn") === "true"
+// Layout com NavBar e rotas privadas
+function Layout() {
+  return (
+    <NavBar>
+      <Routes>
+        <Route index element={<Navigate to="/home" />} />
+        <Route path="home" element={<Home />} />
+        <Route path="pacientes" element={<Pacientes />} />
+        <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
+        <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
+        <Route path="Profissionais" element={<Profissionais />} />
+        <Route path="Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
+        <Route path="servicos" element={<Servicos />} />
+        <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
+        <Route path="servicos/cadastro" element={<ServicosNovo />} />
+        <Route path="relatorios" element={<GerarRelatorios />} />
+        <Route path="*" element={<Navigate to="/home" />} />
+      </Routes>
+    </NavBar>
   );
+}
 
-  const handleLoginSuccess = () => {
-    localStorage.setItem("isLoggedIn", "true");
-    setLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    setLoggedIn(false);
-  };
-
+// AppRouter com AuthProvider e PrivateRoute
+function AppRouter() {
   return (
     <Router>
       <Routes>
-        {loggedIn ? (
-          <Route path="/" element={<NavBar onLogout={handleLogout} />}>
-            <Route index element={<Navigate to="/home" />} />
-            <Route path="home" element={<Home />} />
-            <Route path="pacientes" element={<Pacientes />} />
-            <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
-            <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
-            <Route path="Profissionais" element={<Profissionais />} />
-            <Route path="/Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
-            <Route path="servicos" element={<Servicos />} />
-            <Route path="/servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
-            <Route path="servicos/cadastro" element={<ServicosNovo />} />
-            <Route path="relatorios" element={<GerarRelatorios />} />
-            <Route path="*" element={<Navigate to="/home" />} />
-          </Route>
-        ) : (
-          <>
-            <Route 
-              path="/" 
-              element={<Login onLoginSuccess={handleLoginSuccess} />} 
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </>
-        )}
+        <Route element={<PrivateRoute />}>
+          <Route path="/*" element={<Layout />} />
+        </Route>
+        <Route path="/" element={<Login />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
 }
 
-const container = document.getElementById('root');
+const RootApp = () => (
+  <AuthProvider>
+    <AppRouter />
+  </AuthProvider>
+);
+
+const container = document.getElementById("root");
 const root = ReactDOM.createRoot(container);
 root.render(
   <React.StrictMode>
-    <AppRouter />
+    <RootApp />
   </React.StrictMode>
 );
 

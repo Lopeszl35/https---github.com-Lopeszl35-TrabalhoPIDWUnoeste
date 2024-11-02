@@ -7,12 +7,13 @@ import { TbUserHeart } from "react-icons/tb";
 import { LiaUserLockSolid, LiaHomeSolid } from "react-icons/lia";
 import { Container, Nav, Navbar, Button } from "react-bootstrap";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthProvider"; // Importa o contexto de autenticação
 
-function NavBar({ onLogout }) {
+function NavBar() {
   const [show, setShow] = useState(true);
-  const handleShow = () => {
-    setShow(!show);
-  };
+  const { logout } = useAuth(); // Obtém a função logout do contexto
+
+  const handleShow = () => setShow(!show);
 
   return (
     <>
@@ -25,7 +26,7 @@ function NavBar({ onLogout }) {
                 <span>Perfil Usuário</span>
               </Nav.Link>
             </Nav>
-            <Button variant="outline-light" onClick={onLogout}>
+            <Button variant="outline-light" onClick={logout}>
               <FaSignOutAlt /> Sair
             </Button>
           </Container>
@@ -50,7 +51,7 @@ function NavBar({ onLogout }) {
         </li>
         <li className="nav-link">
           <Link to="/Profissionais">
-            <LiaUserLockSolid Key />
+            <LiaUserLockSolid />
             <span className="mx-2">Profissionais</span>
           </Link>
         </li>
@@ -72,10 +73,7 @@ function NavBar({ onLogout }) {
       </div>
 
       <div className={`p-1 my-container ${show ? "active-cont" : ""}`}>
-        <nav
-          onClick={handleShow}
-          className="d-flex align-items-center gap-2 menu"
-        >
+        <nav onClick={handleShow} className="d-flex align-items-center gap-2 menu">
           {show ? <FaTimes /> : <FaBars />} Menu
         </nav>
       </div>
