@@ -62,6 +62,12 @@ function NavBar() {
           </Link>
         </li>
         <li className="nav-link">
+          <Link to="/agendamentos">
+            <MdOutlineMedicalServices />
+            <span className="mx-2">Agendar Consultas</span>
+          </Link>
+        </li>
+        <li className="nav-link">
           <Link to="/relatorios">
             <BsFileText />
             <span className="mx-2">Relatórios</span>

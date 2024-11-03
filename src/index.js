@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -16,41 +16,53 @@ import ProfissionaisPorServico from "./Paginas/Gerenciar-Servicos/ProfissionaisP
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 import EditarPacientes from "./Paginas/Pacientes/EditarPacientes";
-import { AuthProvider } from "./context/AuthProvider";
+import AgendarConsultas from "./Paginas/Agendamentos/AgendaConsulta";
+import { AuthProvider, useAuth } from "./context/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
 
-// Layout com NavBar e rotas privadas
+// Layout com NavBar e Outlet para rotas privadas
 function Layout() {
+  const [show, setShow] = useState(true);
   return (
-    <NavBar>
-      <Routes>
-        <Route index element={<Navigate to="/home" />} />
-        <Route path="home" element={<Home />} />
-        <Route path="pacientes" element={<Pacientes />} />
-        <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
-        <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
-        <Route path="Profissionais" element={<Profissionais />} />
-        <Route path="Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
-        <Route path="servicos" element={<Servicos />} />
-        <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
-        <Route path="servicos/cadastro" element={<ServicosNovo />} />
-        <Route path="relatorios" element={<GerarRelatorios />} />
-        <Route path="*" element={<Navigate to="/home" />} />
-      </Routes>
-    </NavBar>
+    <>
+      <NavBar  />
+    </>
   );
 }
 
 // AppRouter com AuthProvider e PrivateRoute
 function AppRouter() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Router>
       <Routes>
-        <Route element={<PrivateRoute />}>
-          <Route path="/*" element={<Layout />} />
-        </Route>
-        <Route path="/" element={<Login />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Rota pública para login, acessível apenas se não autenticado */}
+        {!isAuthenticated && (
+          <Route path="/" element={<Login />} />
+        )}
+
+        {/* Rotas privadas, acessíveis apenas se autenticado */}
+        {isAuthenticated && (
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/home" />} /> {/* Redireciona apenas na rota raiz */}
+            <Route path="home" element={<Home />} />
+            <Route path="pacientes" element={<Pacientes />} />
+            <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
+            <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
+            <Route path="Profissionais" element={<Profissionais />} />
+            <Route path="Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
+            <Route path="servicos" element={<Servicos />} />
+            <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
+            <Route path="servicos/cadastro" element={<ServicosNovo />} />
+            <Route path="agendamentos" element={<AgendarConsultas />} />
+            <Route path="relatorios" element={<GerarRelatorios />} />
+            <Route path="*" element={<Navigate to="/home" />} /> {/* Redireciona qualquer rota desconhecida para Home */}
+          </Route>
+        )}
+
+        {/* Redireciona qualquer rota desconhecida para login */}
+        {!isAuthenticated && <Route path="*" element={<Navigate to="/" />} />}
       </Routes>
     </Router>
   );
