@@ -3,17 +3,26 @@ const ServicosModel = require('../model/Entities/servicosModel/servicosModel');
 const DataBase = require('../model/database');
 const ProfissionaisServicos = require('../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const ProfissionaisModel = require('../model/Entities/profissionaisModel/ProfissionaisModel');
+const AbstractServicoController = require('./abstratos/AbstractServicoController');
 
 const profissionalModel = new ProfissionaisModel();
 const servicoModel = new ServicosModel();
 const profissionaisServicosModel = new ProfissionaisServicos();
 const dataBase = new DataBase();
 
-class ServicoController {
-    async obterTodos(req, res) {
-        console.log('Obtendo todos os Serviços...');
-        const servicos = await servicoModel.obterTodos();
-        return res.status(200).json(servicos);
+class ServicoController extends AbstractServicoController {
+    constructor(servicoService) {
+        super();
+        this.servicoService = servicoService;
+    }
+    async obterServicos(req, res) {
+        try {
+            const servicos = await servicoModel.obterTodos();
+            return res.status(200).json(servicos);
+        } catch (error) {
+            console.log('Erro ao obter os Serviços:', error);
+            return res.status(500).json({ message: error.message });
+        }
     }
 
     async obterPorId(req, res) {

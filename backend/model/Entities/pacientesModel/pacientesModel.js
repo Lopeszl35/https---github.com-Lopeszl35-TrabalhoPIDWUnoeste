@@ -17,11 +17,7 @@ class PacientesModel {
         this.Email = Email;
     }
 
-    async obterTodos() {
-        const listaPacientes = await dataBase.executaComando("SELECT * FROM Pacientes");
-        return listaPacientes;
-    }
-
+   
     async filtrarPorProntuario(id) {
         const result = await dataBase.executaComando("SELECT * FROM Pacientes WHERE Prontuario = ?", [id]);
         return result[0];

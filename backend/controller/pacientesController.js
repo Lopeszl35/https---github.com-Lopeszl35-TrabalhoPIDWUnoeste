@@ -3,13 +3,31 @@ const ResponsaveisModel = require('../model/Entities/pacientesModel/responsaveis
 const EnderecosModel = require('../model/Entities/pacientesModel/enderecosModel');
 const { validationResult } = require('express-validator');
 const DataBase = require('../model/database');
+const AbstractAgendamentoController = require('./abstratos/AbstractAgendamentoController');
 
 const pacienteModel = new PacientesModel();
 const responsavelModel = new ResponsaveisModel();
 const enderecoModel = new EnderecosModel();
 const dataBase = new DataBase();
 
-class PacientesController {
+class PacientesController extends AbstractAgendamentoController {
+    constructor(pacientesService) {
+        super();
+        this.pacientesService = pacientesService;
+    }
+
+    async obterPacientes(req, res) {
+        console.log('Obtendo todos os Pacientes...');
+        try {
+            const paciente = await this.pacientesService.obterPacientes();
+            return res.status(200).json(paciente);
+        } catch (error) {
+            console.log('Erro ao obter os Pacientes:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+
     async buscarUltimoPaciente(req, res) {
         console.log('Buscando o último Paciente...');
         try {
@@ -17,19 +35,6 @@ class PacientesController {
             return res.status(200).json(paciente);
         } catch (error) {
             console.log('Erro ao buscar o Paciente:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
-    async obterTodos(req, res) {
-        console.log('Obtendo todos os Pacientes...');
-        try {
-            const paciente = await pacienteModel.obterTodos();
-            const endereco = await enderecoModel.obterTodos();
-            const responsavel = await responsavelModel.obterTodos();
-            res.status(200).json({paciente, endereco, responsavel});
-        } catch (error) {
-            console.log('Erro ao obter os Pacientes:', error);
             return res.status(500).json({ message: error.message });
         }
     }

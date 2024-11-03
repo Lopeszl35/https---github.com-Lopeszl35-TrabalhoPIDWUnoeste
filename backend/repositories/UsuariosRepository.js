@@ -34,7 +34,7 @@ class UsuariosRepository extends AbstractUsuariosRepository {
       const result = await this.database.executaComando(sql, [email]);
       return result.length > 0;
     } catch (error) {
-      throw new Error("Erro ao verificar se usuário existe: " + error.message);
+      throw new Error("Erro ao obter usuário: " + error.message);
     }
   }
 

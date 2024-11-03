@@ -12,11 +12,6 @@ class ServicosModel {
         this.Status = status;
     }
 
-    async obterTodos() {
-        const listaServicos = await dataBase.executaComando("SELECT * FROM servicos");
-        return listaServicos;
-    }
-
     async obterPorId(id) {
         const result = await dataBase.executaComando("SELECT * FROM servicos WHERE ID_Servico = ?", [id]);
         return result[0];

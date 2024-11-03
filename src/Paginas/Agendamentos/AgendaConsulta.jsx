@@ -30,7 +30,9 @@ function AgendarConsultas() {
     const fetchPacientes = async () => {
       try {
         const dados = await pacientesService.obterTodos();
-        setPacientes(dados.paciente);
+        if (dados) {
+          setPacientes(dados);
+        }
       } catch (error) {
         console.error("Erro ao obter pacientes:", error);
       }
@@ -44,7 +46,9 @@ function AgendarConsultas() {
     const fetchServicos = async () => {
       try {
         const dados = await servicosService.obterTodos();
-        setServicos(dados.servicos);
+        if (dados) {
+          setServicos(dados);
+        }
       } catch (error) {
         console.error("Erro ao obter serviços:", error);
       }
@@ -59,13 +63,17 @@ function AgendarConsultas() {
       const fetchProfissionais = async () => {
         try {
           const dados = await profissionaisService.obterPorServico(selectedServico);
-          setProfissionais(dados.profissionais);
+          if (dados && dados.profissionais) {
+            setProfissionais(dados.profissionais);
+          }
         } catch (error) {
           console.error("Erro ao obter profissionais:", error);
         }
       };
 
       fetchProfissionais();
+    } else {
+      setProfissionais([]); // Reseta os profissionais se nenhum serviço estiver selecionado
     }
   }, [selectedServico]);
 
@@ -75,7 +83,9 @@ function AgendarConsultas() {
       const fetchDetalhesPaciente = async () => {
         try {
           const dados = await pacientesService.obterPorId(selectedPaciente);
-          setDetalhesPaciente(dados);
+          if (dados) {
+            setDetalhesPaciente(dados);
+          }
         } catch (error) {
           console.error("Erro ao obter detalhes do paciente:", error);
         }
@@ -130,7 +140,7 @@ function AgendarConsultas() {
                 isInvalid={!!errors.paciente}
               >
                 <option value="">Selecione o paciente</option>
-                {pacientes.map((paciente) => (
+                {Array.isArray(pacientes) && pacientes.map((paciente) => (
                   <option key={paciente.Prontuario} value={paciente.Prontuario}>
                     {paciente.Nome_Completo}
                   </option>
@@ -167,7 +177,7 @@ function AgendarConsultas() {
                 isInvalid={!!errors.servico}
               >
                 <option value="">Selecione o serviço</option>
-                {servicos.map((servico) => (
+                {Array.isArray(servicos) && servicos.map((servico) => (
                   <option key={servico.ID_Servico} value={servico.ID_Servico}>
                     {servico.Nome_Servico}
                   </option>
@@ -191,7 +201,7 @@ function AgendarConsultas() {
                 disabled={!selectedServico}
               >
                 <option value="">Selecione o profissional</option>
-                {profissionais.map((profissional) => (
+                {Array.isArray(profissionais) && profissionais.map((profissional) => (
                   <option key={profissional.ID_Profissional} value={profissional.ID_Profissional}>
                     {profissional.Nome_Completo}
                   </option>

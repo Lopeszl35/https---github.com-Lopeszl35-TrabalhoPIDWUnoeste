@@ -21,11 +21,6 @@ class ProfissionaisModel {
         return result.insertId;
     }
 
-    async obterTodos() {
-        const listaProfissionais = await dataBase.executaComando("SELECT * FROM Profissionais");
-        return listaProfissionais;
-    }
-
     async obterPorId(id) {
         const result = await dataBase.executaComando("SELECT * FROM profissionais WHERE ID_Profissional = ?", [id]);
         return result[0];
