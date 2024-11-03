@@ -1,31 +1,23 @@
+const DependencyInjector = require('../../utils/DependencyInjector');
 const express = require('express');
 const router = express.Router();
-const ProfissionaisController = require('../../controller/profissionaisController/ProfissionaisController');
-const profissionaisController = new ProfissionaisController();
+const cors = require('cors');
 
-// Rota para filtrar profissionais por especialidade
-router.get('/profissionais/especialidade/:especialidade', profissionaisController.filtrarPorEspecialidade.bind(profissionaisController));
+router.use(cors());
 
-// Rota para obter um profissional por ID
-router.get('/profissionais/:id', profissionaisController.obterPorId.bind(profissionaisController));
+// Importa o ProfissionaisController e injeta o ProfissionaisService
+const ProfissionaisController = DependencyInjector.get('ProfissionaisController');
 
 // Rota para obter todos os profissionais
-router.get('/profissionais', profissionaisController.obterTodos.bind(profissionaisController));
+router.get('/profissionais', (req, res) => 
+    ProfissionaisController.obterProfissionais(req, res)
+);
 
-// Rota para adicionar um profissional
-router.post('/profissionais', profissionaisController.adicionar.bind(profissionaisController));
+// Rota para obter profissional do Servico
+router.get('/profissionais/servico/:servico', (req, res) => 
+    ProfissionaisController.profissionalDoServico(req, res)
+);
 
-//Rota para atualizar profissional
-router.put('/profissionais/:id', profissionaisController.editarProfissional.bind(profissionaisController));
-
-// Rota para excluir um profissional
-router.delete('/profissionais/:id', profissionaisController.excluirUsuario.bind(profissionaisController));
-
-// Rota para obter o nome do profissional responsável pelo serviço
-router.get('/profissionais/profissionalNome/:id', profissionaisController.obterNomeProfissionalPorId.bind(profissionaisController));
-
-/* Rota para buscar profissional 
-router.get('/profissionais/buscar', profissionaisController.buscarProfissionais.bind(profissionaisController)); */
 
 
 

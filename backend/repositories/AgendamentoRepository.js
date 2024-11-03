@@ -171,12 +171,18 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
   }
 
   async obterConsultasNaoArquivadas() {
-    const sql = `
+    try {
+      const sql = `
             SELECT * FROM Agendamentos
             WHERE Arquivado = FALSE
     `
-    const rows = await this.database.executaComando(sql);
-    return rows;
+      const rows = await this.database.executaComando(sql);
+      return rows;
+    } catch (error) {
+      console.log("Erro ao obter consultas nao arquivadas");
+      throw error;
+    }
+    
   }
 
   /* implementar posteriormente

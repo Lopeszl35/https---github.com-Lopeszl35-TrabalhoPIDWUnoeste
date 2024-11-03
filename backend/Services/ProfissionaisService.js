@@ -9,9 +9,22 @@ class ProfissionaisService extends AbstractProfissionaisService {
 
     async obterProfissionais() {
         try {
-            const profissionais = await this.profissionaisRepository.obterTodos();
-            if(!profissionais) {
+            const profissionais = await this.profissionaisRepository.obterProfissionais();
+            if(profissionais.length === 0) {
                 throw new Error("Nenhum profissional encontrado");
+            }
+            return profissionais
+        } catch (error) {
+            console.log("Erro ao obter os Profissionais:", error);
+            throw error
+        }
+    }
+
+    async profissionalDoServico(servico) {
+        try {
+            const profissionais = await this.profissionaisRepository.profissionalDoServico(servico);
+            if(profissionais.length === 0) {
+                throw new Error("Nenhum profissional encontrado para este serviço");
             }
             return profissionais
         } catch (error) {

@@ -4,16 +4,27 @@ import { useOutletContext } from "react-router-dom";
 import PacientesService from "../../services/pacientesService";
 import ServicosService from "../../services/servicosService";
 import ProfissionaisService from "../../services/profissionaisService";
+import AgendamentoService from "../../services/agendamentoService";
 import './AgendaConsultas.css';
 
 const pacientesService = new PacientesService();
 const servicosService = new ServicosService();
 const profissionaisService = new ProfissionaisService();
+const agendamentoService = new AgendamentoService();
 
 function AgendarConsultas() {
   const { show } = useOutletContext();
 
+  const initialFormState = {
+    paciente: "",
+    servico: "",
+    profissional: "",
+    dataHora: "",
+    observacoes: "",
+  };
+
   // State hooks para armazenar dados
+  const [formState, setFormState] = useState(initialFormState);
   const [pacientes, setPacientes] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [profissionais, setProfissionais] = useState([]);
@@ -60,11 +71,12 @@ function AgendarConsultas() {
   // Obtém os profissionais com base no serviço selecionado
   useEffect(() => {
     if (selectedServico) {
+      console.log("Servico selecionado:", selectedServico);
       const fetchProfissionais = async () => {
         try {
           const dados = await profissionaisService.obterPorServico(selectedServico);
-          if (dados && dados.profissionais) {
-            setProfissionais(dados.profissionais);
+          if (dados) {
+            setProfissionais(dados);
           }
         } catch (error) {
           console.error("Erro ao obter profissionais:", error);
@@ -98,7 +110,7 @@ function AgendarConsultas() {
   }, [selectedPaciente]);
 
   // Função para lidar com o envio do formulário
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validação simples
@@ -120,9 +132,14 @@ function AgendarConsultas() {
         status: "Pendente",
         observacoes: observacoes,
       };
+      try {
+        await agendamentoService.criarAgendamento(agendamento);
+        alert("Agendamento criado com sucesso!");
 
-      console.log("Agendamento realizado com sucesso", agendamento);
-      // Aqui você pode enviar o agendamento para o backend
+      } catch (error) {
+        console.error("Erro ao criar agendamento:", error);
+        alert("Erro ao criar agendamento. Por favor, tente novamente mais tarde.");
+      }
     }
   };
 

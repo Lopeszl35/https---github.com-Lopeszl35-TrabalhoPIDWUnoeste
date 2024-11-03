@@ -1,4 +1,4 @@
-const AbstractProfissionaisController = require('./abstratos/AbstractProfissionaisController');
+const AbstractProfissionaisController = require('../abstratos/AbstractProfissionaisController');
 const ProfissionaisModel = require('../../model/Entities/profissionaisModel/ProfissionaisModel');
 const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel');
 const ProfissionaisServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
@@ -24,6 +24,17 @@ class ProfissionaisController extends AbstractProfissionaisController {
         console.log('Obtendo todos os Profissionais...');
         try {
             const profissionais = await this.profissionaisService.obterProfissionais();
+            return res.status(200).json(profissionais);
+        } catch (error) {
+            console.log('Erro ao obter os Profissionais:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async profissionalDoServico(req, res) {
+        const { servico } = req.params;
+        try {
+            const profissionais = await this.profissionaisService.profissionalDoServico(servico);
             return res.status(200).json(profissionais);
         } catch (error) {
             console.log('Erro ao obter os Profissionais:', error);

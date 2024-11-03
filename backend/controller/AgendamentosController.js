@@ -36,7 +36,7 @@ class AgendamentosController extends AbstractAgendamentoController {
         observacoes,
         status,
       } = req.body;
-
+      console.log("Body: ", req.body);
       const novoAgendamento = await this.agendamentoService.criarAgendamento(
         prontuario,
         idProfissional,
@@ -45,7 +45,7 @@ class AgendamentosController extends AbstractAgendamentoController {
         observacoes,
         status
       );
-
+      console.log("Novo Agendamento: ", novoAgendamento);
       res.status(201).json(novoAgendamento);
     } catch (error) {
       res.status(400).json({ message: error.message });

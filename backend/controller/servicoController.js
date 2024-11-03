@@ -17,7 +17,7 @@ class ServicoController extends AbstractServicoController {
     }
     async obterServicos(req, res) {
         try {
-            const servicos = await servicoModel.obterTodos();
+            const servicos = await this.servicoService.obterServicos();
             return res.status(200).json(servicos);
         } catch (error) {
             console.log('Erro ao obter os Serviços:', error);

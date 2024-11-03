@@ -1,6 +1,6 @@
-class AbstractProfissionaisService {
+class AbstractProfissionaisRepository {
     constructor() {
-        if(new.target === AbstractProfissionaisService) {
+        if (new.target === AbstractProfissionaisRepository) {
             throw new Error("Classe abstrata não pode ser instanciada");
         }
     }
@@ -9,10 +9,10 @@ class AbstractProfissionaisService {
         throw new Error("Metodo nao implementado");
     }
 
-    async profissionalDoServico(servico) {
+    async profissionalDoServico(id) {
         throw new Error("Metodo nao implementado");
     }
 
 }
 
-module.exports = AbstractProfissionaisService;
+module.exports = AbstractProfissionaisRepository
