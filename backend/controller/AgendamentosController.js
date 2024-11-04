@@ -36,7 +36,6 @@ class AgendamentosController extends AbstractAgendamentoController {
         observacoes,
         status,
       } = req.body;
-      console.log("Body: ", req.body);
       const novoAgendamento = await this.agendamentoService.criarAgendamento(
         prontuario,
         idProfissional,

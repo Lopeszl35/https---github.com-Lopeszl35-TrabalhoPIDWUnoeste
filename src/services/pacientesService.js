@@ -44,18 +44,25 @@ class PacientesService {
         }
     }    
 
-    async obterPorProntuario(id) {
-        const response = await fetch(`${API_BASE_URL}/pacientes/${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+    async obterDadosCompletosDoPaciente(prontuario) {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/pacientes/${prontuario}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao obter o Paciente!');  
+            } else {
+                const dados = await response.json();
+                return dados;
             }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao obter o Paciente!');  
-        } else {
-            const dados = await response.json();
-            return dados;
+        } catch (error) {
+            console.error("Erro ao obter dados do paciente:", error);
+            throw error;
         }
     }
 

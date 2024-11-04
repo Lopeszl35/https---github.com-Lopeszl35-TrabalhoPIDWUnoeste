@@ -20,6 +20,19 @@ class PacientesService extends AbstractPacienteService {
         }
     }
 
+    async obterDadosCompletosDoPaciente(prontuario) {
+        try {
+            const paciente = await this.PacienteRepository.obterDadosCompletosDoPaciente(prontuario);
+            if (!paciente) {
+                throw new Error("Paciente não encontrado");
+            }
+            return paciente;
+        } catch (error) {
+            console.error("Erro ao obter dados do paciente:", error);
+            throw error;
+        }
+    }
+
 }
 
 module.exports = PacientesService

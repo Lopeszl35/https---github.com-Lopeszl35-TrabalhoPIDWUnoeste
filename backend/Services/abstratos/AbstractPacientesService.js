@@ -8,6 +8,10 @@ class AbstractPacienteService {
     async obterPacientes() {
         throw new Error("Metodo não implementado");
     }
+
+    async obterDadosCompletosDoPaciente(prontuario) {
+        throw new Error("Metodo não implementado");
+    }
 }
 
 module.exports = AbstractPacienteService;

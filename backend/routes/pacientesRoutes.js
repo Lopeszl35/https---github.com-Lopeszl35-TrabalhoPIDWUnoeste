@@ -17,4 +17,9 @@ router.get('/pacientes', (req, res) =>
     PacientesController.obterPacientes(req, res)
 );
 
+// Rota para obter dados completos do paciente
+router.get('/pacientes/:prontuario', (req, res) => 
+    PacientesController.obterDadosCompletosDoPaciente(req, res)
+);
+
 module.exports = router;

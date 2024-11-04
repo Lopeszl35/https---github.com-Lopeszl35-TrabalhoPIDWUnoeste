@@ -9,6 +9,10 @@ class AbstractAgendamentoController {
         throw new Error("Metodo não implementado");
     }
 
+    async obterDadosCompletosDoPaciente(req, res) {
+        throw new error("Metodo não implementado");
+    }
+
 }
 
 module.exports = AbstractAgendamentoController

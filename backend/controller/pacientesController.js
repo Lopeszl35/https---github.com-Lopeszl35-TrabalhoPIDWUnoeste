@@ -39,19 +39,12 @@ class PacientesController extends AbstractAgendamentoController {
         }
     }
 
-    async filtrarPorProntuario(req, res) {
-        console.log('Obtendo o Paciente por prontuário...');
+    async obterDadosCompletosDoPaciente(req, res) {
+        console.log('Obtendo o Paciente por prontuário...');
         const { prontuario } = req.params;
         try {
-            const paciente = await pacienteModel.filtrarPorProntuario(prontuario);
-            const endereco = await enderecoModel.obterPorProntuario(prontuario);
-            const responsavel = await responsavelModel.obterPorProntuario(prontuario);
-            console.log(`Paciente obtido: ${paciente}, endereco: ${endereco}, responsavel: ${responsavel}`);
-            res.status(200).json({
-                ...paciente,
-                endereco,
-                responsavel: responsavel
-            });
+            const paciente = await this.pacientesService.obterDadosCompletosDoPaciente(prontuario);
+            return res.status(200).json(paciente);
         } catch (error) {
             console.log('Erro ao obter o Paciente:', error);
             return res.status(500).json({ message: error.message });

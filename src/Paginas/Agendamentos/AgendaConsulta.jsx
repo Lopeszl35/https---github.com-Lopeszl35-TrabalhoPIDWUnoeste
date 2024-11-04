@@ -15,16 +15,7 @@ const agendamentoService = new AgendamentoService();
 function AgendarConsultas() {
   const { show } = useOutletContext();
 
-  const initialFormState = {
-    paciente: "",
-    servico: "",
-    profissional: "",
-    dataHora: "",
-    observacoes: "",
-  };
-
   // State hooks para armazenar dados
-  const [formState, setFormState] = useState(initialFormState);
   const [pacientes, setPacientes] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [profissionais, setProfissionais] = useState([]);
@@ -94,7 +85,7 @@ function AgendarConsultas() {
     if (selectedPaciente) {
       const fetchDetalhesPaciente = async () => {
         try {
-          const dados = await pacientesService.obterPorId(selectedPaciente);
+          const dados = await pacientesService.obterDadosCompletosDoPaciente(selectedPaciente);
           if (dados) {
             setDetalhesPaciente(dados);
           }
@@ -135,7 +126,7 @@ function AgendarConsultas() {
       try {
         await agendamentoService.criarAgendamento(agendamento);
         alert("Agendamento criado com sucesso!");
-
+        window.location.reload();
       } catch (error) {
         console.error("Erro ao criar agendamento:", error);
         alert("Erro ao criar agendamento. Por favor, tente novamente mais tarde.");
@@ -175,9 +166,9 @@ function AgendarConsultas() {
             <Col md={6}>
               <h5>Informações do Paciente</h5>
               <p><strong>Nome:</strong> {detalhesPaciente.Nome_Completo}</p>
-              <p><strong>Data de Nascimento:</strong> {new Date(detalhesPaciente.Data_Nascimento).toLocaleDateString()}</p>
-              <p><strong>Cartão SUS:</strong> {detalhesPaciente.Cartao_SUS}</p>
-              <p><strong>Período Escolar:</strong> {detalhesPaciente.Periodo_Escolar}</p>
+              <p><strong>Data de Nascimento:</strong> {new Date(detalhesPaciente.Data_De_Nascimento).toLocaleDateString()}</p>
+              <p><strong>Cartão SUS:</strong> {detalhesPaciente.CartaoSUS}</p>
+              <p><strong>Período Escolar:</strong> {detalhesPaciente.Periodo}</p>
               <p><strong>Telefone da Mãe:</strong> {detalhesPaciente.Telefone_Mae}</p>
               <p><strong>Telefone do Pai:</strong> {detalhesPaciente.Telefone_Pai}</p>
             </Col>

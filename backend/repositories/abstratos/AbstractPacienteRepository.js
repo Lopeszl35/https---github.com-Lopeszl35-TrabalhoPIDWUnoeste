@@ -9,6 +9,10 @@ class AbstractPacienteRepository {
         throw new Error("Metodo não implementado");
     }
 
+    async obterDadosCompletosDoPaciente(prontuario) {
+        throw new Error("Metodo não implementado");
+    }
+
 }
 
 module.exports = AbstractPacienteRepository;
