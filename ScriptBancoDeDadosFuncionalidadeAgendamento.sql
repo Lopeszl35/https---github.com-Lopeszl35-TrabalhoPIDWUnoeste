@@ -67,7 +67,11 @@ CREATE TABLE ProfissionalServicos (
     ID_Servico INT NOT NULL,
     PRIMARY KEY (ID_Profissional, ID_Servico),
     FOREIGN KEY (ID_Profissional) REFERENCES Profissionais(ID_Profissional),
-    FOREIGN KEY (ID_Servico) REFERENCES Servicos(ID_Servico)
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    FOREIGN KEY (ID_Servico) REFERENCES Servicos(ID_Servico),
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
 );
 
 -- Criação da tabela de Relacionamento Pacientes-Serviços

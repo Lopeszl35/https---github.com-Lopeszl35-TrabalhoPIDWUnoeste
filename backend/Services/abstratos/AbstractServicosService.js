@@ -9,7 +9,13 @@ class AbstractServicosService {
     throw new Error("Metodo não implementado");
   }
 
+  async obterPorId(id) {
+    throw new Error("Metodo não implementado");
+  }
 
+  async deletar(id) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicosService;

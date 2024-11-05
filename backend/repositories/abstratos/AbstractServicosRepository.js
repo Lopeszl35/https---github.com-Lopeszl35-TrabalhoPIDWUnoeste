@@ -9,6 +9,9 @@ class AbstractServicosRepository {
     throw new Error("Metodo não implementado");
   }
 
+  async obterPorId(id) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicosRepository;

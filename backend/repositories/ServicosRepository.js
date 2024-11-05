@@ -16,6 +16,17 @@ class ServicosRepository extends AbstractServicosRepository {
         }
     }
 
+    async obterPorId(id) {
+        const sql = `SELECT * FROM Servicos WHERE ID_Servico = ?`
+        try {
+            const servico = await this.database.executaComando(sql, [id]);
+            return servico[0];
+        } catch (error) {
+            throw error;
+        }
+        
+    }
+
 }
 
 module.exports = ServicosRepository;
