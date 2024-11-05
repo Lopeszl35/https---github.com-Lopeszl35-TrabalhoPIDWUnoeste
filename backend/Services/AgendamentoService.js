@@ -102,7 +102,6 @@ class AgendamentoService extends AbstractAgendamentoService {
         observacoes
       );
         agendamentoAtualizado = await this.agendamentoRepository.editarAgendamento(novoAgendamento, connection);
-      console.log(`Status: ${status}`)
       // Se o status atualizado é "Concluído" ou "Cancelado", arquive o agendamento
       if (status === "Concluído" || status === "Cancelado") {
         await this.agendamentoRepository.arquivarConsulta(idAgendamento, connection);
