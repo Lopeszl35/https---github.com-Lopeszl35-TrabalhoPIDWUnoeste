@@ -34,7 +34,28 @@ class ServicosService extends AbstractServicosService {
 
   async deletar(id) {
     try {
-        
+      await this.servicoRepository.deletar(id);
+      return { message: "Serviço excluido com sucesso" };
+    } catch (error) {
+      if (error.message.includes("ViolacaoChaveEstrageira")) {
+        throw new Error(
+          "Erro: Este serviço não pode ser excluido porque está associado a registros ativos"
+        );
+      } else if (error.message.includes("RestricaoIntegridadeReferencial")) {
+        throw new Error(
+          "Erro: O serviço possui relacionamentos que impedem a exclusão"
+        );
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async servicoExiste(nomeServico) {
+    try {
+      const servico = await this.
+    } catch (error) {
+
     }
   }
 

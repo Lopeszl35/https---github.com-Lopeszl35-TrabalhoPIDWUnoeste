@@ -15,6 +15,7 @@ class ServicoController extends AbstractServicoController {
     super();
     this.servicoService = servicoService;
   }
+
   async obterServicos(req, res) {
     try {
       const servicos = await this.servicoService.obterServicos();
@@ -38,6 +39,27 @@ class ServicoController extends AbstractServicoController {
       return res.status(200).json(servico);
     } catch (error) {
       console.log("Erro ao obter o serviço:", error);
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  async deletar(req, res) {
+    console.log("Deletando o Serviço...");
+    const { id } = req.params;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const excluirServico = await this.servicoService.deletar(id);
+
+      if (excluirServico.affectedRows === 0) {
+        throw new Error("Erro ao excluir o Serviço.");
+      }
+
+      return res.status(200).json({ message: "Serviço excluído com sucesso!" });
+    } catch (error) {
+      console.log("Erro ao excluir o serviço:", error);
       return res.status(500).json({ message: error.message });
     }
   }
@@ -118,27 +140,6 @@ class ServicoController extends AbstractServicoController {
     } catch (error) {
       console.log(error);
       if (connection) await dataBase.rollbackTransaction(connection);
-      return res.status(500).json({ message: error.message });
-    }
-  }
-
-  async deletar(req, res) {
-    console.log("Deletando o Serviço...");
-    const { id } = req.params;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    try {
-      const excluirServico = await this.servicoService.deletar(id);
-
-      if (excluirServico.affectedRows === 0) {
-        throw new Error("Erro ao excluir o Serviço.");
-      }
-
-      return res.status(200).json({ message: "Serviço excluído com sucesso!" });
-    } catch (error) {
-      console.log("Erro ao excluir o serviço:", error);
       return res.status(500).json({ message: error.message });
     }
   }

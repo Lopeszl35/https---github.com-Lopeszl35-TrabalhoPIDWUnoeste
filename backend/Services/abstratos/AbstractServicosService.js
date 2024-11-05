@@ -16,6 +16,10 @@ class AbstractServicosService {
   async deletar(id) {
     throw new Error("Metodo não implementado");
   }
+
+  async servicoExiste(nomeServico) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicosService;

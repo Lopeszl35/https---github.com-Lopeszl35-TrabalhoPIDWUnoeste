@@ -45,13 +45,6 @@ class ServicosModel {
     return result;
   }
 
-  async deletar(id, connection) {
-    const [result] = await connection.query(
-      "DELETE FROM servicos WHERE ID_Servico = ?",
-      [id]
-    );
-    return result;
-  }
 
   async filtrarPorNome(nome) {
     const result = await dataBase.executaComando(

@@ -12,6 +12,14 @@ class AbstractServicosRepository {
   async obterPorId(id) {
     throw new Error("Metodo não implementado");
   }
+
+  async deletar(id) {
+    throw new Error("Metodo não implementado");
+  }
+
+  async servicoExiste(nomeServico) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicosRepository;
