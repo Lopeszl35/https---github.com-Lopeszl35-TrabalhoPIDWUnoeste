@@ -53,12 +53,41 @@ class ServicosService extends AbstractServicosService {
 
   async servicoExiste(nomeServico) {
     try {
-      const servico = await this.
+      const existe = await this.servicoRepository.servicoExiste(nomeServico);
+      if (!existe) {
+        throw new Error("Serviço não encontrado");
+      } else {
+        return true;
+      }
     } catch (error) {
-
+      console.error("Erro ao verificar serviço:", error.message);
+      throw error;
     }
   }
 
+  async adicionar(Nome_Servico, Descricao, Data_De_Cadastro, Status) {
+    try {
+      //verifica se serviço ja existe
+      const existe = await this.servicoExiste(Nome_Servico);
+      if (existe) {
+        throw new Error("Serviço ja cadastrado com esse nome");
+      }
+      const novoServico = new Servico(
+        Nome_Servico,
+        Descricao,
+        Data_De_Cadastro,
+        Status
+      );
+      const adicionado = await this.servicoRepository.adicionar(novoServico);
+      if (!adicionado) {
+        throw new Error("Erro ao adicionar serviço");
+      }
+      return { message: "Serviço adicionado com sucesso!" };
+    } catch (error) {
+      console.log("Erro ao adicionar serviço");
+      throw error;
+    }
+  }
 }
 
 module.exports = ServicosService;

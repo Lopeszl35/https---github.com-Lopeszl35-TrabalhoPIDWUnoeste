@@ -20,6 +20,10 @@ class AbstractServicosService {
   async servicoExiste(nomeServico) {
     throw new Error("Metodo não implementado");
   }
+
+  async adicionar(Nome_Servico, Descricao, Data_De_Cadastro, Status) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicosService;

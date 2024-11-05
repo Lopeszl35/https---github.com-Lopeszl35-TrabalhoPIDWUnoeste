@@ -51,12 +51,7 @@ class ServicoController extends AbstractServicoController {
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const excluirServico = await this.servicoService.deletar(id);
-
-      if (excluirServico.affectedRows === 0) {
-        throw new Error("Erro ao excluir o Serviço.");
-      }
-
+      await this.servicoService.deletar(id);
       return res.status(200).json({ message: "Serviço excluído com sucesso!" });
     } catch (error) {
       console.log("Erro ao excluir o serviço:", error);
@@ -73,34 +68,16 @@ class ServicoController extends AbstractServicoController {
     }
 
     const { Nome_Servico, Descricao, Data_De_Cadastro, Status } = req.body;
-    let connection;
     try {
-      connection = await dataBase.beginTransaction();
-
-      const servico = new ServicosModel(
+      await this.servicoService.adicionar(
         Nome_Servico,
         Descricao,
         Data_De_Cadastro,
         Status
       );
-      const servicoAdicionado = await servicoModel.adicionar(
-        servico,
-        connection
-      );
-
-      if (servicoAdicionado === false) {
-        await dataBase.rollbackTransaction(connection);
-        console.error("Serviço ja existe");
-        return res.status(400).json({ message: "Serviço ja existe" });
-      } else {
-        await dataBase.commitTransaction(connection);
-        return res
-          .status(201)
-          .json({ message: "Serviço adicionado com sucesso!" });
-      }
+      return res.status(201).json(resultado);
     } catch (error) {
-      console.log(error);
-      await dataBase.rollbackTransaction(connection);
+      console.log("log acionado pelo controller adicionar: ", error);
       return res.status(500).json({ message: error.message });
     }
   }

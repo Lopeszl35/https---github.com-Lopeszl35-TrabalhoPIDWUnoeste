@@ -16,6 +16,10 @@ class AbstractServicoController {
   async deletar(req, res) {
     throw new Error("Metodo não implementado");
   }
+
+  async adicionar(req, res) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicoController;

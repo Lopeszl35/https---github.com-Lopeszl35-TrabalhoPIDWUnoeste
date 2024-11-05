@@ -50,8 +50,31 @@ class ServicosRepository extends AbstractServicosRepository {
   async servicoExiste(nomeServico) {
     const sql = `SELECT * FROM Servicos WHERE Nome_Servico = ? `;
     try {
-      await this.database.executaComando(sql, [nomeServico]);
+      const servicoExiste = await this.database.executaComando(sql, [
+        nomeServico,
+      ]);
+      return servicoExiste.length > 0;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  async adicionar(novoServico) {
+    const sql = `
+      INSERT INTO Servicos (Nome_Servico, Descricao, Data_De_Cadastro, Status)
+      VALUES (?, ?, ?, ?)
+    `;
+    const params = [
+      novoServico.Nome_Servico,
+      novoServico.Descricao,
+      novoServico.Data_De_Cadastro,
+      novoServico.Status,
+    ];
+    try {
+      const resultado = await this.database.executaComando(sql, params);
+      return resultado.affectedRows > 0;
+    } catch (error) {
+      console.log("Erro ao adicionar serviço");
       throw error;
     }
   }
