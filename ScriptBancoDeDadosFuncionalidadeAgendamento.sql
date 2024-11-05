@@ -92,11 +92,9 @@ CREATE TABLE PacienteServicos (
 -- Criação da tabela de Usuários, ao cadastrar um Profissional ele receberá automaticamente um acesso ao sistema
 CREATE TABLE usuarios (
     ID_Usuario INT AUTO_INCREMENT PRIMARY KEY,
-    ID_Profissional INT NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Senha VARCHAR(255) NOT NULL,
-    Tipo_Permissao ENUM('admin', 'profissionalSaude', 'usuarioPadrao') NOT NULL,
-    FOREIGN KEY (ID_Profissional) REFERENCES Profissionais(ID_Profissional)
+    Tipo_Permissao ENUM('admin', 'profissionalSaude', 'usuarioPadrao') NOT NULL
 );
 
 -- Criação da tabela de Agendamentos
@@ -122,7 +120,3 @@ CREATE TABLE Agendamentos (
 
 ALTER TABLE Agendamentos
 ADD COLUMN Arquivado BOOLEAN DEFAULT FALSE;
-
-
-
-
