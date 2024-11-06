@@ -63,6 +63,21 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
       throw error;
     }
   }
+
+  async obterRelacoesServico(id) {
+    try {
+      const relacoes =
+        await this.profissionalServicosRepository.obterRelacoesServico(id);
+      if (relacoes.length === 0) {
+        console.warn(`Nenhuma relação encontrada para o serviço com ID: ${id}`);
+        return []; // Retorna um array vazio, indicando que não há relações
+      }
+      return relacoes;
+    } catch (error) {
+      console.error("Erro ao procurar relações Erro: ", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = ProfissionalServicosService;

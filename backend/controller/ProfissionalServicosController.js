@@ -29,17 +29,28 @@ class ProfissionaisServicosController extends AbstractProfissionaisServicosContr
   async deletarRelacao(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(401).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
     }
     const { idServico, idProfissional } = req.body;
     try {
-      const deletado = await this.profissionalServicosService.deletarRelacao(
+      const resultado = await this.profissionalServicosService.deletarRelacao(
         idServico,
         idProfissional
       );
-      return res.status(201).json(deletado);
+      return res.status(200).json(resultado);
     } catch (error) {
-      throw error;
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  async profissionaisDoServico(req, res) {
+    const { id } = req.params;
+    try {
+      const resultado =
+        await this.profissionalServicosService.obterRelacoesServico(id);
+      return res.status(200).json(resultado);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
   }
 }

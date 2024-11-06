@@ -12,6 +12,10 @@ class AbstractProfissionalServicosController {
   async deletarRelacao(req, res) {
     throw new Error("Metodo não implementado");
   }
+
+  async profissionaisDoServico(req, res) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractProfissionalServicosController;

@@ -59,6 +59,29 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
       throw error;
     }
   }
+
+  async obterRelacoesServico(id) {
+    const sql = `
+    SELECT 
+    p.Nome_Completo AS Nome_Profissional,
+    p.Email,
+    p.Telefone,
+    p.registroProfissional
+  FROM 
+    ProfissionalServicos ps
+  JOIN 
+    Profissionais p ON ps.ID_Profissional = p.ID_Profissional
+  WHERE 
+    ps.ID_Servico = ?
+    `;
+    try {
+      const relacoesObtidas = await this.database.executaComando(sql, [id]);
+      return relacoesObtidas;
+    } catch (error) {
+      console.error("Erro ao obter relações de serviço:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = ProfissionalServicosRepository;
