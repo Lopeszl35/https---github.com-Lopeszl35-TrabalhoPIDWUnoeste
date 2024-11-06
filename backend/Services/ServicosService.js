@@ -1,5 +1,5 @@
 const AbstractServicosService = require("./abstratos/AbstractServicosService");
-const Servico = require("../model/Entities/servicosModel/ServicosModel");
+const Servico = require("../model/Entities/servicosModel");
 
 class ServicosService extends AbstractServicosService {
   constructor(servicoRepository, database) {
@@ -99,8 +99,9 @@ class ServicosService extends AbstractServicosService {
         Data_De_Cadastro,
         Status
       );
-      const {sucesso, servicoAtualizado} = await this.servicoRepository.atualizar(servico, id);
-      if(!sucesso) {
+      const { sucesso, servicoAtualizado } =
+        await this.servicoRepository.atualizar(servico, id);
+      if (!sucesso) {
         throw new Error("Erro ao atualizar servico");
       }
       return { message: "Serviço atualizado com sucesso!", servicoAtualizado };
@@ -109,7 +110,6 @@ class ServicosService extends AbstractServicosService {
       throw error;
     }
   }
-
 }
 
 module.exports = ServicosService;
