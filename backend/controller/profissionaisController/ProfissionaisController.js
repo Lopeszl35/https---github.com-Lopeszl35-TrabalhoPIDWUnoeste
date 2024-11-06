@@ -3,7 +3,6 @@ const ProfissionaisModel = require('../../model/Entities/profissionaisModel/Prof
 const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel');
 const ProfissionaisServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const { validationResult } = require('express-validator');
-const DataBase = require('../../model/database');
 const ProfissionalServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const ServicosModel = require('../../model/Entities/servicosModel/servicosModel');
 
@@ -12,7 +11,6 @@ const profissionalServicos = new ProfissionalServicos();
 const profissionalModel = new ProfissionaisModel();
 const usuarioModel = new UsuariosModel();
 const profissionaisServicosModel = new ProfissionaisServicos();
-const dataBase = new DataBase();
 
 class ProfissionaisController extends AbstractProfissionaisController {
     constructor(profissionaisService) {

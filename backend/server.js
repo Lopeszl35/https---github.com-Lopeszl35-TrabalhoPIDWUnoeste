@@ -20,7 +20,7 @@ const port = process.env.PORT || 3005;
 
 // Configuração do Banco de Dados
 const Database = require("./model/database");
-const database = new Database();
+const database = Database.getInstance();
 DependencyInjector.register("Database", database);
 
 // Registro de Repositórios

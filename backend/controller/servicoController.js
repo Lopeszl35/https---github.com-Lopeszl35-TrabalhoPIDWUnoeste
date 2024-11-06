@@ -1,14 +1,6 @@
 const { validationResult } = require("express-validator");
-const ServicosModel = require("../model/Entities/servicosModel/servicosModel");
-const DataBase = require("../model/database");
-const ProfissionaisServicos = require("../model/Entities/profissionaisServicosModel/profissionaisServicosModel");
-const ProfissionaisModel = require("../model/Entities/profissionaisModel/ProfissionaisModel");
 const AbstractServicoController = require("./abstratos/AbstractServicoController");
 
-const profissionalModel = new ProfissionaisModel();
-const servicoModel = new ServicosModel();
-const profissionaisServicosModel = new ProfissionaisServicos();
-const dataBase = new DataBase();
 
 class ServicoController extends AbstractServicoController {
   constructor(servicoService) {
@@ -69,7 +61,7 @@ class ServicoController extends AbstractServicoController {
 
     const { Nome_Servico, Descricao, Data_De_Cadastro, Status } = req.body;
     try {
-      await this.servicoService.adicionar(
+      const resultado = await this.servicoService.adicionar(
         Nome_Servico,
         Descricao,
         Data_De_Cadastro,

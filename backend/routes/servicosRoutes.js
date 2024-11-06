@@ -1,13 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const DependencyInjector = require("../utils/DependencyInjector");
-const { body, param, query } = require("express-validator");
-const ServicosModel = require("../model/Entities/servicosModel/servicosModel");
+
+
 
 const ServicoController = DependencyInjector.get("ServicoController");
 
 const router = express.Router();
 router.use(cors());
+
+// Rota para adicionar serviço
+router.post('/servicos', (req, res) =>
+  ServicoController.adicionar(req, res)
+);
 
 // Rota para obter servico por ID
 router.get("/servicos/:id", (req, res) =>

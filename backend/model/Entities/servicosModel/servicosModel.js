@@ -1,8 +1,5 @@
 const { validationResult } = require("express-validator");
 const moment = require("moment");
-const DataBase = require("../../database");
-
-const dataBase = new DataBase();
 
 class ServicosModel {
   constructor(nomeServico, descricao, dataDeCadastro, status) {

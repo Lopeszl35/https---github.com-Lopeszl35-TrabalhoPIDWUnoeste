@@ -1,6 +1,4 @@
-const DataBase = require("../../database");
 
-const dataBase = new DataBase();
 
 class EnderecosModel {
     constructor(Prontuario, Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP) {

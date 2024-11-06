@@ -1,4 +1,5 @@
 const AbstractServicosService = require("./abstratos/AbstractServicosService");
+const Servico = require("../model/Entities/servicosModel/ServicosModel");
 
 class ServicosService extends AbstractServicosService {
   constructor(servicoRepository, database) {
@@ -26,6 +27,7 @@ class ServicosService extends AbstractServicosService {
       if (!servicos) {
         throw new Error("Servico não encontrado para esse ID");
       }
+      return servicos;
     } catch (error) {
       console.log("Erro ao obter servico por ID");
       throw error;
@@ -54,10 +56,10 @@ class ServicosService extends AbstractServicosService {
   async servicoExiste(nomeServico) {
     try {
       const existe = await this.servicoRepository.servicoExiste(nomeServico);
-      if (!existe) {
-        throw new Error("Serviço não encontrado");
-      } else {
+      if (existe) {
         return true;
+      } else {
+        return false;
       }
     } catch (error) {
       console.error("Erro ao verificar serviço:", error.message);
@@ -80,7 +82,7 @@ class ServicosService extends AbstractServicosService {
       );
       const adicionado = await this.servicoRepository.adicionar(novoServico);
       if (!adicionado) {
-        throw new Error("Erro ao adicionar serviço");
+        throw error;
       }
       return { message: "Serviço adicionado com sucesso!" };
     } catch (error) {

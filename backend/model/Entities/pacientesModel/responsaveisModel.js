@@ -1,6 +1,4 @@
-const DataBase = require("../../database");
 
-const dataBase = new DataBase();
 
 class ResponsaveisModel {
     constructor(Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai) {

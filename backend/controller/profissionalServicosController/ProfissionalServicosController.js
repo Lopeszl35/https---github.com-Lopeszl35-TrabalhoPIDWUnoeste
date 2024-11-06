@@ -1,9 +1,7 @@
 const ProfissionaisServicosModel = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
-const DataBase = require('../../model/database');
 const { validationResult } = require('express-validator');
 
 const profissionaisServicosModel = new ProfissionaisServicosModel();
-const dataBase = new DataBase();
 
 class ProfissionalServicosController {
 

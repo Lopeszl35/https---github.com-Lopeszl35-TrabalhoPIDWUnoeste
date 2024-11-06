@@ -1,7 +1,6 @@
-const DataBase = require("../../database");
+
 const moment = require('moment');
 
-const dataBase = new DataBase();
 
 class PacientesModel {
     constructor(Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email) {

@@ -2,13 +2,12 @@ const PacientesModel = require('../model/Entities/pacientesModel/pacientesModel'
 const ResponsaveisModel = require('../model/Entities/pacientesModel/responsaveisModel');
 const EnderecosModel = require('../model/Entities/pacientesModel/enderecosModel');
 const { validationResult } = require('express-validator');
-const DataBase = require('../model/database');
 const AbstractAgendamentoController = require('./abstratos/AbstractAgendamentoController');
 
 const pacienteModel = new PacientesModel();
 const responsavelModel = new ResponsaveisModel();
 const enderecoModel = new EnderecosModel();
-const dataBase = new DataBase();
+
 
 class PacientesController extends AbstractAgendamentoController {
     constructor(pacientesService) {

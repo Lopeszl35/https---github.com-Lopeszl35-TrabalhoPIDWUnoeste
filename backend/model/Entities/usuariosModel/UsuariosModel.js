@@ -1,6 +1,3 @@
-const DataBase = require("../../database");
-
-const dataBase = new DataBase();
 
 class UsuariosModel {
   constructor(email, senha, tipoPermissao) {

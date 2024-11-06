@@ -4,12 +4,23 @@ dotenv.config();
 
 class DataBase {
     constructor() {
+        if(DataBase.instance) {
+            throw new Error('A classe Database deve ser instanciada apenas uma vez.');
+        }
+
         this.pool = mysql.createPool({
             host: 'localhost',
             user: process.env.USER_DB,
             database: 'careconnectdb',
             port: 3306,
         });
+    }
+
+    static getInstance() {
+        if (!DataBase.instance) {
+            DataBase.instance = new DataBase();
+        }
+        return DataBase.instance;
     }
 
     async executaComando(sql, params = []) {
