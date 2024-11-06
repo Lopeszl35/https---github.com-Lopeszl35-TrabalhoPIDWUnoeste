@@ -46,6 +46,23 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
       throw error;
     }
   }
+
+  async deletarRelacao(idServico, idProfissional) {
+    try {
+      const relacaoDeletada =
+        await this.profissionalServicosRepository.deletarRelacao(
+          idServico,
+          idProfissional
+        );
+      if (!relacaoDeletada) {
+        throw new Error("Não foi possivel deletar a relação Error: ");
+      }
+      return { message: "Relação deletada com sucesso" };
+    } catch (error) {
+      console.error("Erro ao deletar relação Erro: ", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = ProfissionalServicosService;

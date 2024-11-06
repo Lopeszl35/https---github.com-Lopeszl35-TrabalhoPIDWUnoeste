@@ -17,7 +17,7 @@ router.post("./profissionalServico/relacionar", (req, res) =>
 );
 
 // Rota para excluir relação
-router.delete(fissionalServico / deletar, (req, res) =>
+router.delete("profissionalServico/deletar", (req, res) =>
   ProfissionaisServicosController.deletarRelacao(req, res)
 );
 

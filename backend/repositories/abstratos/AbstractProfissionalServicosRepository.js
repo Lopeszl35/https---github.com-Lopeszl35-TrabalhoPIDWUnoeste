@@ -12,6 +12,10 @@ class AbstractProfissionalServicosRepository {
   async existeRelacionamentoProfissionalServico(idProfissional, idServico) {
     throw new Error("Metodo não implementado");
   }
+
+  async deletarRelacao(idServico, idProfissional) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractProfissionalServicosRepository;

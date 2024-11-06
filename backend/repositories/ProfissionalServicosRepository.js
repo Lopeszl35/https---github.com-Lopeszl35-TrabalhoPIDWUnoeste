@@ -44,6 +44,21 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
       throw error;
     }
   }
+
+  async deletarRelacao(idServico, idProfissional) {
+    const sql = `
+      DELETE FROM ProfissionalServicos
+      WHERE ID_Servico = ?
+      AND ID_Profissional = ?
+    `;
+    const params = [idServico, idProfissional];
+    try {
+      const relacaoDeletada = await this.database.executaComando(sql, params);
+      return relacaoDeletada.affectedRows > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = ProfissionalServicosRepository;
