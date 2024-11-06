@@ -78,6 +78,29 @@ class ServicosRepository extends AbstractServicosRepository {
       throw error;
     }
   }
+
+  async atualizar(servico, id) {
+    const sql = `
+      UPDATE Servicos
+      SET Nome_Servico = ?, Descricao = ?, Data_De_Cadastro = ?, Status = ?
+      WHERE ID_Servico = ?
+    `;
+    const params = [
+      servico.Nome_Servico,
+      servico.Descricao,
+      servico.Data_De_Cadastro,
+      servico.Status,
+      id,
+    ];
+    try {
+      const resultado = await this.database.executaComando(sql, params);
+      return {sucesso: resultado.affectedRows > 0, servicoEditado: servico};
+    } catch (error) {
+      console.log("Erro ao atualizar servico");
+      throw error;
+    }
+  }
+
 }
 
 module.exports = ServicosRepository;

@@ -20,6 +20,10 @@ class AbstractServicoController {
   async adicionar(req, res) {
     throw new Error("Metodo não implementado");
   }
+
+  async atualizar(req, res) {
+    throw new Error("Metodo não implementado");
+  }
 }
 
 module.exports = AbstractServicoController;

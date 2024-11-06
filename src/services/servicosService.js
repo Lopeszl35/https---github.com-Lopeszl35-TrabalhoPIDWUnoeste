@@ -26,9 +26,11 @@ class ServicosService {
     }
 
     async adicionar(servico) {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE_URL}/servicos`, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(servico)
@@ -44,8 +46,10 @@ class ServicosService {
     }
 
     async obterPorId(id) {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE_URL}/servicos/${id}`, {
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -59,9 +63,11 @@ class ServicosService {
     }
 
     async atualizar(id, servico) { 
-        const response = await fetch(`${API_BASE_URL}/servicos/${id}`, {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/servicos/atualizar/${id}`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(servico) 
@@ -77,9 +83,11 @@ class ServicosService {
     }
 
     async excluir(id) {
-        const response = await fetch(`${API_BASE_URL}/servicos/${id}`, {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/servicos/deletar/${id}`, {
             method: 'DELETE',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -89,64 +97,6 @@ class ServicosService {
         } else {
             const dados = await response.json();
             return dados;
-        }
-    }
-
-    async filtrar(filtro, valor) {
-        const response = await fetch(`${API_BASE_URL}/servicos/filtrar?filtro=${filtro}&valor=${valor}`, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    
-        if (!response.ok) {
-            throw new Error('Erro ao filtrar os Serviços!');
-        }
-    
-        const dados = await response.json();
-        return dados;
-    }
-
-    async obterProfissionaisPorServico(idServico) {
-        const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao obter os profissionais para o serviço!');
-        } else {
-            return await response.json();
-        }
-    }
-
-    async relacionarProfissionalServico(idProfissional, idServico) {
-        const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais/${idProfissional}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao relacionar o profissional ao serviço!');
-        } else {
-            return await response.json();
-        }
-    }
-
-    async deletarRelacaoProfissionalServico(idServico) {
-        const response = await fetch(`${API_BASE_URL}/profissionaiservicos/${idServico}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            console.log('response: ', response);
-            throw new Error('Erro ao deletar a relação do profissional ao serviço!');
-        } else {
-            return await response.json();
         }
     }
 

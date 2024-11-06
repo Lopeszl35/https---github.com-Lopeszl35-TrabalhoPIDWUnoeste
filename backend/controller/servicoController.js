@@ -83,60 +83,11 @@ class ServicoController extends AbstractServicoController {
     }
 
     const { Nome_Servico, Descricao, Data_De_Cadastro, Status } = req.body;
-
-    let connection;
     try {
-      connection = await dataBase.beginTransaction();
-
-      const servico = new ServicosModel(
-        Nome_Servico,
-        Descricao,
-        Data_De_Cadastro,
-        Status
-      );
-
-      // Atualiza o serviço
-      const result = await servicoModel.atualizar(id, servico, connection);
-
-      // Validação com base no número de linhas afetadas
-      if (result.changedRows === 0) {
-        throw new Error("Nenhum dado foi alterado para este serviço.");
-      }
-
-      await dataBase.commitTransaction(connection);
-      const servicoFinal = await servicoModel.obterPorId(id);
-      return res.status(200).json(servicoFinal);
-    } catch (error) {
-      console.log(error);
-      if (connection) await dataBase.rollbackTransaction(connection);
-      return res.status(500).json({ message: error.message });
-    }
-  }
-
-  async filtrar(req, res) {
-    console.log("Filtrando os Serviços...");
-    const { filtro, valor } = req.query;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    try {
-      let result;
-
-      if (filtro === "nome") {
-        result = await servicoModel.filtrarPorNome(valor);
-      } else if (filtro === "profissional") {
-        result = await servicoModel.filtrarPorProfissional(valor);
-      } else if (filtro === "status") {
-        result = await servicoModel.filtrarPorStatus(valor);
-      } else {
-        return res.status(400).json({ message: "Filtro inválido." });
-      }
-
+      const result = await this.servicoService.atualizar(id, Nome_Servico, Descricao, Data_De_Cadastro, Status);
       return res.status(200).json(result);
     } catch (error) {
-      console.log("Erro ao filtrar os serviços:", error);
+      console.log(error);
       return res.status(500).json({ message: error.message });
     }
   }

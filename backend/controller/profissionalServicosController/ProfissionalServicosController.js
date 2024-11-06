@@ -1,21 +1,6 @@
-const ProfissionaisServicosModel = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const { validationResult } = require('express-validator');
 
-const profissionaisServicosModel = new ProfissionaisServicosModel();
-
 class ProfissionalServicosController {
-
-    async obterProfissionais(req, res) {
-        try {
-          const relacoes = await profissionaisServicosModel.obterTodos();
-          console.log('Relações encontradas:', relacoes);
-          res.status(200).json(relacoes);
-        } catch (error) {
-          console.error('Erro ao buscar as relações:', error); 
-          res.status(500).json({ message: 'Erro ao buscar as relações' });
-        }
-    }
-
 
     async adicionar(req, res) {
         const errors = validationResult(req);

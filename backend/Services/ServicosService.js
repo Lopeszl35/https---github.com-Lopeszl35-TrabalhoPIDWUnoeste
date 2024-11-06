@@ -90,6 +90,26 @@ class ServicosService extends AbstractServicosService {
       throw error;
     }
   }
+
+  async atualizar(id, Nome_Servico, Descricao, Data_De_Cadastro, Status) {
+    try {
+      const servico = new Servico(
+        Nome_Servico,
+        Descricao,
+        Data_De_Cadastro,
+        Status
+      );
+      const {sucesso, servicoAtualizado} = await this.servicoRepository.atualizar(servico, id);
+      if(!sucesso) {
+        throw new Error("Erro ao atualizar servico");
+      }
+      return { message: "Serviço atualizado com sucesso!", servicoAtualizado };
+    } catch (error) {
+      console.log("Erro lançado pelo servicoService: ", error);
+      throw error;
+    }
+  }
+
 }
 
 module.exports = ServicosService;
