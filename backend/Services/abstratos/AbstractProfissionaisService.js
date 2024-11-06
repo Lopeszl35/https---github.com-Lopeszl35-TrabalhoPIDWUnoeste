@@ -9,9 +9,14 @@ class AbstractProfissionaisService {
         throw new Error("Metodo nao implementado");
     }
 
+    async obterPorId(id) {
+        throw new Error("Metodo não implementado");
+    }
+
+    /*
     async profissionalDoServico(servico) {
         throw new Error("Metodo nao implementado");
-    }
+    }*/
 
 }
 

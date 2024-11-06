@@ -16,6 +16,17 @@ class ProfissionaisRepository extends AbstractProfissionaisRepository {
         }
     }
 
+    async obterPorId(id) {
+        const sql = `SELECT * FROM Profissionais WHERE ID_Profissional = ?`;
+        try {
+            const profissional = await this.database.executaComando(sql, [id]);
+            return profissional[0];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /*
     async profissionalDoServico(servico) {
         const params = [servico];
         const sql = `
@@ -40,7 +51,7 @@ class ProfissionaisRepository extends AbstractProfissionaisRepository {
         } catch (error) {
             throw error;
         }
-    }
+    }*/
 
 
 }

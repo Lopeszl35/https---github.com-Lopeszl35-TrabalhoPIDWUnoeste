@@ -1,11 +1,5 @@
 const AbstractProfissionaisController = require('../abstratos/AbstractProfissionaisController');
-const ProfissionaisModel = require('../../model/Entities/profissionaisModel/ProfissionaisModel');
-const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel');
 const { validationResult } = require('express-validator');
-
-
-const profissionalModel = new ProfissionaisModel();
-const usuarioModel = new UsuariosModel();
 
 class ProfissionaisController extends AbstractProfissionaisController {
     constructor(profissionaisService) {
@@ -19,18 +13,18 @@ class ProfissionaisController extends AbstractProfissionaisController {
             const profissionais = await this.profissionaisService.obterProfissionais();
             return res.status(200).json(profissionais);
         } catch (error) {
-            console.log('Erro ao obter os Profissionais:', error);
+            console.error('Erro ao obter os Profissionais:', error);
             return res.status(500).json({ message: error.message });
         }
     }
 
-    async profissionalDoServico(req, res) {
-        const { servico } = req.params;
+    async obterProfissionalPorId(req, res) {
+        const { id } = req.params;
         try {
-            const profissionais = await this.profissionaisService.profissionalDoServico(servico);
-            return res.status(200).json(profissionais);
+            const profissional = await this.profissionaisService.obterPorId(id);
+            return res.status(200).json(profissional);
         } catch (error) {
-            console.log('Erro ao obter os Profissionais:', error);
+            console.error('Erro ao obter o profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -122,45 +116,6 @@ class ProfissionaisController extends AbstractProfissionaisController {
         }
     }
 
-    async excluirUsuario(req, res) {
-        const { id } = req.params;
-        let connection;
-        try {
-            connection = await dataBase.beginTransaction();
-            const profissional = await profissionalModel.obterPorId(id);
-            const usuario = await usuarioModel.obterPorIdProfissional(id);
-            if (!profissional || !usuario) {
-                return res.status(404).json({ message: `Profissional ou Usuario não encontrado
-                    Profissional: ${profissional} | Usuario: ${usuario}` });
-            }
-            await usuarioModel.excluirUsuarioPeloProfissional(id, connection);
-            await profissionaisServicosModel.excluir(id, connection);
-            await profissionalModel.excluirProfissional(id, connection);
-            await dataBase.commitTransaction(connection);
-            return res.status(200).json({ message: 'Profissional excluído com sucesso!' });
-        } catch (error) {
-            if (connection) {
-                await dataBase.rollbackTransaction(connection);
-            }
-            console.error('Erro ao excluir o profissional:', error.message);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
-    async obterPorId(req, res) {
-        const { id } = req.params;
-        try {
-            const profissional = await profissionalModel.obterPorId(id);
-            if (!profissional) {
-                return res.status(404).json({ message: `Profissional não encontrado` });
-            }
-            return res.status(200).json(profissional);
-        } catch (error) {
-            console.error('Erro ao obter o profissional:', error.message);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
     async obterNomeProfissionalPorId(req, res) {
         console.log('Obtendo o nome do profissional por ID...');
         const { id } = req.params;
@@ -176,7 +131,17 @@ class ProfissionaisController extends AbstractProfissionaisController {
         }
     }
 
-    
+    /*
+    async profissionalDoServico(req, res) {
+        const { servico } = req.params;
+        try {
+            const profissionais = await this.profissionaisService.profissionalDoServico(servico);
+            return res.status(200).json(profissionais);
+        } catch (error) {
+            console.log('Erro ao obter os Profissionais:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }*/
 
 
 }

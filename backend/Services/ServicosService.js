@@ -1,5 +1,5 @@
 const AbstractServicosService = require("./abstratos/AbstractServicosService");
-const Servico = require("../model/Entities/servicosModel");
+const Servico = require("../model/Entities/servicosModel/servicosModel");
 
 class ServicosService extends AbstractServicosService {
   constructor(servicoRepository, database) {

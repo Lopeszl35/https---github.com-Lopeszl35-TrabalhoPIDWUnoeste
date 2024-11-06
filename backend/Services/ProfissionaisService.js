@@ -15,11 +15,25 @@ class ProfissionaisService extends AbstractProfissionaisService {
             }
             return profissionais
         } catch (error) {
-            console.log("Erro ao obter os Profissionais:", error);
+            console.error("Erro ao obter os Profissionais:", error);
             throw error
         }
     }
 
+    async obterPorId(id) {
+        try {
+            const profissional = await this.profissionaisRepository.obterPorId(id);
+            if(profissional.length === 0) {
+                throw new Error("Profissional não encontrado");
+            }
+            return profissional
+        } catch (error) {
+            console.error("Erro ao obter o Profissional:", error);
+            throw error
+        }
+    }
+
+    /*
     async profissionalDoServico(servico) {
         try {
             const profissionais = await this.profissionaisRepository.profissionalDoServico(servico);
@@ -31,7 +45,7 @@ class ProfissionaisService extends AbstractProfissionaisService {
             console.log("Erro ao obter os Profissionais:", error);
             throw error
         }
-    }
+    }*/
 
 }
 

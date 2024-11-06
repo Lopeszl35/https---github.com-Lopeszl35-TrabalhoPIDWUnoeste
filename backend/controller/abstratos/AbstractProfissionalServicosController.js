@@ -1,6 +1,6 @@
 class AbstractProfissionalServicosController {
   constructor() {
-    if (new.target === AbstractProfissionalServicosRepository) {
+    if (new.target === AbstractProfissionalServicosController) {
       throw new Error("Classe abstrata não pode ser instanciada");
     }
   }

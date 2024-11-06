@@ -29,6 +29,7 @@ const UsuariosRepository = require("./repositories/UsuariosRepository");
 const PacientesRepository = require('./repositories/PacientesRepository');
 const ServicosRepository = require('./repositories/ServicosRepository');
 const ProfissionaisRepository = require('./repositories/ProfissionaisRepository');
+const ProfissionalServicosRepository = require('./repositories/ProfissionalServicosRepository');
 /*
 const EnderecoRepository = require('./repositories/EnderecoRepository');
 const ResponsavelRepository = require('./repositories/ResponsavelRepository');
@@ -40,6 +41,7 @@ DependencyInjector.register("UsuariosRepository",new UsuariosRepository(database
 DependencyInjector.register('PacientesRepository', new PacientesRepository(database));
 DependencyInjector.register('ServicosRepository', new ServicosRepository(database));
 DependencyInjector.register('ProfissionaisRepository', new ProfissionaisRepository(database));
+DependencyInjector.register('ProfissionalServicosRepository', new ProfissionalServicosRepository(database));
 /*
 DependencyInjector.register('EnderecoRepository', new EnderecoRepository(database));
 DependencyInjector.register('ResponsavelRepository', new ResponsavelRepository(database));
@@ -52,6 +54,7 @@ const UsuariosService = require("./Services/UsuariosService");
 const PacientesService = require('./Services/PacientesService');
 const ServicosService = require('./Services/ServicosService');
 const ProfissionaisService = require('./Services/ProfissionaisService');
+const ProfissionalServicosService = require('./Services/ProfissionalServicosService');
 /*
 const EnderecoService = require('./Services/EnderecoService');
 const ResponsavelService = require('./Services/ResponsavelService');
@@ -72,6 +75,15 @@ DependencyInjector.register(
 DependencyInjector.register('PacientesService', new PacientesService(DependencyInjector.get('PacientesRepository'), database));
 DependencyInjector.register('ServicosService', new ServicosService(DependencyInjector.get('ServicosRepository'), database));
 DependencyInjector.register('ProfissionaisService', new ProfissionaisService(DependencyInjector.get('ProfissionaisRepository'), database));
+DependencyInjector.register(
+  'ProfissionalServicosService', 
+  new ProfissionalServicosService(
+    DependencyInjector.get('ProfissionaisRepository'),
+    DependencyInjector.get('ServicosRepository'),
+    DependencyInjector.get('ProfissionalServicosRepository'),
+    database
+  )
+);
 /*
 
 DependencyInjector.register('EnderecoService', new EnderecoService(DependencyInjector.get('EnderecoRepository'), database));
@@ -85,6 +97,7 @@ const UsuariosController = require("./controller/usuariosController/UsuariosCont
 const PacientesController = require('./controller/pacientesController');
 const ServicoController = require('./controller/servicoController');
 const ProfissionaisController = require('./controller/profissionaisController/ProfissionaisController');
+const ProfissionalServicosController = require('./controller/ProfissionalServicosController');
 /*
 const EnderecoController = require('./controller/EnderecoController');
 const ResponsavelController = require('./controller/ResponsavelController');
@@ -102,6 +115,7 @@ DependencyInjector.register(
 DependencyInjector.register('PacientesController', new PacientesController(DependencyInjector.get('PacientesService')));
 DependencyInjector.register('ServicoController', new ServicoController(DependencyInjector.get('ServicosService')));
 DependencyInjector.register('ProfissionaisController', new ProfissionaisController(DependencyInjector.get('ProfissionaisService')));
+DependencyInjector.register('ProfissionalServicosController', new ProfissionalServicosController(DependencyInjector.get('ProfissionalServicosService')));
 /*
 
 DependencyInjector.register('EnderecoController', new EnderecoController(DependencyInjector.get('EnderecoService')));
@@ -138,6 +152,7 @@ const loginRoute = require("./routes/loginRoute");
 const PacientesRoutes = require('./routes/pacientesRoutes');
 const ServicosRoutes = require('./routes/servicosRoutes');
 const ProfissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisRoutes');
+const ProfissionalServicosRoutes = require('./routes/ProfissionaisServicosRoutes');
 /*
 const EnderecosRoutes = require('./routes/EnderecosRoutes');
 const ResponsaveisRoutes = require('./routes/ResponsaveisRoutes');
@@ -149,6 +164,7 @@ app.use(verifyToken, UsuariosRoutes);
 app.use(verifyToken, PacientesRoutes);
 app.use(verifyToken, ServicosRoutes);
 app.use(verifyToken, ProfissionaisRoutes);
+app.use(verifyToken, ProfissionalServicosRoutes);
 /*
 app.use(verifyToken, EnderecosRoutes);
 app.use(verifyToken, ResponsaveisRoutes);

@@ -1,15 +1,16 @@
-const AbstractProfissionalServicosService = require("./abstratos/AbstractProfissionalServicosService");
+const AbstractProfissionalServicosService = require("./abstratos/AbstractProfissionalServicosService ");
 
 class ProfissionalServicosService extends AbstractProfissionalServicosService {
-  constructor(
-    profissionalRepository,
-    servicoRepository,
-    profissionalServicosRepository
-  ) {
+  constructor(profissionaisRepository, servicoRepository, profissionalServicosRepository, database) {
     super();
-    this.profissionalRepository = profissionalRepository;
+    this.profissionaisRepository = profissionaisRepository;
     this.servicoRepository = servicoRepository;
     this.profissionalServicosRepository = profissionalServicosRepository;
+    this.database = database;
+
+    if (!this.profissionalServicosRepository) {
+      console.error("Erro: profissionalServicosRepository não foi injetado corretamente.");
+    }
   }
 
   async relacionarProfissionalAServico(idProfissional, idServico) {
@@ -66,8 +67,7 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
 
   async obterRelacoesServico(id) {
     try {
-      const relacoes =
-        await this.profissionalServicosRepository.obterRelacoesServico(id);
+      const relacoes = await this.profissionalServicosRepository.obterRelacoesServico(id);
       if (relacoes.length === 0) {
         console.warn(`Nenhuma relação encontrada para o serviço com ID: ${id}`);
         return []; // Retorna um array vazio, indicando que não há relações

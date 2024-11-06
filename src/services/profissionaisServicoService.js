@@ -3,16 +3,23 @@ const API_BASE_URL = 'http://localhost:3001';
 class ProfissionaisServicoService {
 
     async obterProfissionaisPorServico(idServico) {
-        const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/profissionalServico/servico/${idServico}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao obter os profissionais para o serviço!');
+            } else {
+                return await response.json();
             }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao obter os profissionais para o serviço!');
-        } else {
-            return await response.json();
+        } catch (error) {
+            console.log('Erro ao obter os profissionais para o serviço:', error);
+            throw error;
         }
     }
 

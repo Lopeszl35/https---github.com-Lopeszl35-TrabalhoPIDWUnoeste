@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const AbstractProfissionaisServicosController = require("./abstratos/AbstractProfissionaisServicosController");
+const AbstractProfissionaisServicosController = require("./abstratos/AbstractProfissionalServicosController");
 
 class ProfissionaisServicosController extends AbstractProfissionaisServicosController {
   constructor(profissionalServicosService) {
