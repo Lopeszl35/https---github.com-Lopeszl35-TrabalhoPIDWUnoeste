@@ -1,16 +1,11 @@
 const AbstractProfissionaisController = require('../abstratos/AbstractProfissionaisController');
 const ProfissionaisModel = require('../../model/Entities/profissionaisModel/ProfissionaisModel');
 const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel');
-const ProfissionaisServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
 const { validationResult } = require('express-validator');
-const ProfissionalServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
-const ServicosModel = require('../../model/Entities/servicosModel/servicosModel');
 
-const servicosModel = new ServicosModel();
-const profissionalServicos = new ProfissionalServicos();
+
 const profissionalModel = new ProfissionaisModel();
 const usuarioModel = new UsuariosModel();
-const profissionaisServicosModel = new ProfissionaisServicos();
 
 class ProfissionaisController extends AbstractProfissionaisController {
     constructor(profissionaisService) {
@@ -36,20 +31,6 @@ class ProfissionaisController extends AbstractProfissionaisController {
             return res.status(200).json(profissionais);
         } catch (error) {
             console.log('Erro ao obter os Profissionais:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
-    async filtrarPorEspecialidade(req, res) {
-        const { especialidade } = req.params;
-        try {
-            const profissionais = await profissionalModel.filtrarPorEspecialidade(especialidade);
-            if (!profissionais) {
-                return res.status(404).json({ message: `Profissionais da especialidade ${especialidade} não encontrados` });
-            }
-            return res.status(200).json(profissionais);
-        } catch (error) {
-            console.log('Erro ao filtrar os Profissionais por especialidade:', error);
             return res.status(500).json({ message: error.message });
         }
     }
