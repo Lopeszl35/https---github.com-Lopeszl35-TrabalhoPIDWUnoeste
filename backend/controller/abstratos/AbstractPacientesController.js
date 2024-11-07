@@ -5,6 +5,10 @@ class AbstractAgendamentoController {
         }
     }
 
+    async adicionarPaciente(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
     async obterPacientes(req, res) {
         throw new Error("Metodo não implementado");
     }

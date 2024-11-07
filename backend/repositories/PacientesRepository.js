@@ -6,6 +6,32 @@ class PacienteRepository extends AbstractPacienteRepository {
         this.database = database;
     }
 
+    async adicionarPaciente(paciente, connection) {
+        const sql = `
+            INSERT INTO Pacientes (Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const params = [
+            paciente.Prontuario,
+            paciente.Nome_Completo,
+            paciente.Data_De_Nascimento,
+            paciente.CPF,
+            paciente.RG,
+            paciente.CartaoSUS,
+            paciente.Escola,
+            paciente.Ano_Escolar,
+            paciente.Periodo,
+            paciente.Email,
+        ];
+        try {
+            const resultado = await connection.query(sql, params);
+            return resultado[0].affectedRows > 0;
+        } catch (error) {
+            console.error("Erro ao adicionar paciente:", error);
+            throw error;
+        }
+    }
+
     async obterPacientes() {
         const sql = `SELECT * FROM Pacientes`;
         try {

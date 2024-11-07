@@ -5,6 +5,10 @@ class AbstractPacienteService {
         }
     }
 
+    async adicionarPaciente(paciente, endereco, responsavel) {
+        throw new Error("Metodo não implementado");
+    }
+
     async obterPacientes() {
         throw new Error("Metodo não implementado");
     }

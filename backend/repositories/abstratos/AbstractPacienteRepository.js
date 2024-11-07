@@ -5,6 +5,10 @@ class AbstractPacienteRepository {
         }
     }
 
+    async adicionarPaciente(paciente, connection) {
+        throw new Error("Metodo não implementado");
+    }
+
     async obterPacientes() {
         throw new Error("Metodo não implementado");
     }
