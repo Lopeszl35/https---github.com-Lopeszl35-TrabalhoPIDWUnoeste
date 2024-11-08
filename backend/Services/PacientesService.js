@@ -9,31 +9,33 @@ class PacientesService extends AbstractPacienteService {
         this.database = database;
     }
 
-    async adicionarPaciente(paciente, endereco, responsavel) {
+    async adicionarPaciente(pacienteData, enderecoData, responsavelData) {
         let connection;
         try {
             connection = await this.database.beginTransaction();
 
-            const pacienteAdicionado = await this.pacientesRepository.adicionarPaciente(
-            paciente,
-            connection
-            );
-            if(!pacienteAdicionado) {
-                throw new Error("Erro ao adicionar paciente");
+            const prontuario = await this.pacientesRepository.adicionarPaciente(pacienteData, connection);
+            console.log('prontuario: ', prontuario)
+            if(!prontuario) {
+                throw new Error("Erro ao adicionar paciente na chamada ao repository");
             }
+            // Atualiza prontuario nos dados de endereço e responsável
+            enderecoData.Prontuario = prontuario;
+            responsavelData.Prontuario = prontuario;
 
-            const endereco = await this.enderecosRepository.adicionarEndereco(endereco, connection);
-            if(!endereco) {
+            const enderecoAdicionado = await this.enderecosRepository.adicionarEndereco(enderecoData, connection);
+            if(!enderecoAdicionado) {
                 throw new Error("Erro ao adicionar endereço");
             }
 
-            const responsavel = await this.responsaveisRepository.adicionarResponsavel(responsavel, connection);
-            if(!responsavel) {
+            const responsavelAdicionado = await this.responsaveisRepository.adicionarResponsavel(responsavelData, connection);
+            if(!responsavelAdicionado) {
                 throw new Error("Erro ao adicionar responsável");
             }
 
             await this.database.commitTransaction(connection);
-            return {message: "Paciente adicionado com sucesso!"}
+            return {message: 'Paciente adicionado com sucesso'};
+
         } catch (error) {
             if (connection) {
                 await this.database.rollbackTransaction(connection);

@@ -8,11 +8,10 @@ class PacienteRepository extends AbstractPacienteRepository {
 
     async adicionarPaciente(paciente, connection) {
         const sql = `
-            INSERT INTO Pacientes (Prontuario, Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Pacientes (Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email)
+            VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const params = [
-            paciente.Prontuario,
             paciente.Nome_Completo,
             paciente.Data_De_Nascimento,
             paciente.CPF,
@@ -24,10 +23,10 @@ class PacienteRepository extends AbstractPacienteRepository {
             paciente.Email,
         ];
         try {
-            const resultado = await connection.query(sql, params);
-            return resultado[0].affectedRows > 0;
+            const [resultado] = await connection.query(sql, params);
+            return resultado.insertId;
         } catch (error) {
-            console.error("Erro ao adicionar paciente:", error);
+            console.error("Erro ao adicionar paciente no repository:", error);
             throw error;
         }
     }

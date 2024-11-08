@@ -10,7 +10,10 @@ const PacientesController = DependencyInjector.get('PacientesController');
 const router = express.Router();
 router.use(cors());
 
-
+// Rota para adicionar paciente
+router.post('/pacientes/adicionar', (req, res) => 
+    PacientesController.adicionarPaciente(req, res)
+);
 
 // Rota para obter todos os pacientes
 router.get('/pacientes', (req, res) => 

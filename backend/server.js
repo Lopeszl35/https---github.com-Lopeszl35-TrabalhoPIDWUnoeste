@@ -27,26 +27,22 @@ DependencyInjector.register("Database", database);
 const AgendamentoRepository = require("./repositories/AgendamentoRepository");
 const UsuariosRepository = require("./repositories/UsuariosRepository");
 const PacientesRepository = require('./repositories/PacientesRepository');
+const ResponsaveisRepository = require('./repositories/ResponsaveisRepository');
+const EnderecosRespository = require('./repositories/EnderecosRepository');
 const ServicosRepository = require('./repositories/ServicosRepository');
 const ProfissionaisRepository = require('./repositories/ProfissionaisRepository');
 const ProfissionalServicosRepository = require('./repositories/ProfissionalServicosRepository');
-/*
-const EnderecoRepository = require('./repositories/EnderecoRepository');
-const ResponsavelRepository = require('./repositories/ResponsavelRepository');
-FALTA IMPLEMENTAR OS REPOSITÓRIOS
-*/
+
 
 DependencyInjector.register("AgendamentoRepository",new AgendamentoRepository(database));
 DependencyInjector.register("UsuariosRepository",new UsuariosRepository(database));
 DependencyInjector.register('PacientesRepository', new PacientesRepository(database));
+DependencyInjector.register('ResponsaveisRepository', new ResponsaveisRepository(database));
+DependencyInjector.register('EnderecosRepository', new EnderecosRespository(database));
 DependencyInjector.register('ServicosRepository', new ServicosRepository(database));
 DependencyInjector.register('ProfissionaisRepository', new ProfissionaisRepository(database));
 DependencyInjector.register('ProfissionalServicosRepository', new ProfissionalServicosRepository(database));
-/*
-DependencyInjector.register('EnderecoRepository', new EnderecoRepository(database));
-DependencyInjector.register('ResponsavelRepository', new ResponsavelRepository(database));
-FALTA IMPLEMENTAR OS REPOSITÓRIOS
-*/
+
 
 // Registro de Serviços
 const AgendamentoService = require("./Services/AgendamentoService");
@@ -55,41 +51,43 @@ const PacientesService = require('./Services/PacientesService');
 const ServicosService = require('./Services/ServicosService');
 const ProfissionaisService = require('./Services/ProfissionaisService');
 const ProfissionalServicosService = require('./Services/ProfissionalServicosService');
-/*
-const EnderecoService = require('./Services/EnderecoService');
-const ResponsavelService = require('./Services/ResponsavelService');
-FALTA IMPLEMENTAR OS SERVIÇOS
-*/
 
-DependencyInjector.register(
-  "AgendamentoService",
-  new AgendamentoService(
+
+DependencyInjector.register("AgendamentoService",new AgendamentoService(
     DependencyInjector.get("AgendamentoRepository"),
     database
-  )
-);
-DependencyInjector.register(
-  "UsuariosService",
-  new UsuariosService(DependencyInjector.get("UsuariosRepository"), database)
-);
-DependencyInjector.register('PacientesService', new PacientesService(DependencyInjector.get('PacientesRepository'), database));
-DependencyInjector.register('ServicosService', new ServicosService(DependencyInjector.get('ServicosRepository'), database));
-DependencyInjector.register('ProfissionaisService', new ProfissionaisService(DependencyInjector.get('ProfissionaisRepository'), database));
-DependencyInjector.register(
-  'ProfissionalServicosService', 
-  new ProfissionalServicosService(
+  ));
+
+DependencyInjector.register("UsuariosService", new UsuariosService(
+    DependencyInjector.get("UsuariosRepository"), 
+    database
+  ));
+
+DependencyInjector.register('PacientesService', new PacientesService(
+  DependencyInjector.get('PacientesRepository'), 
+  DependencyInjector.get('EnderecosRepository'),
+  DependencyInjector.get('ResponsaveisRepository'),
+  database
+));
+
+DependencyInjector.register('ServicosService', new ServicosService(
+  DependencyInjector.get('ServicosRepository'), 
+  database
+));
+
+DependencyInjector.register('ProfissionaisService', new ProfissionaisService(
+  DependencyInjector.get('ProfissionaisRepository'), 
+  database
+));
+
+DependencyInjector.register('ProfissionalServicosService', new ProfissionalServicosService(
     DependencyInjector.get('ProfissionaisRepository'),
     DependencyInjector.get('ServicosRepository'),
     DependencyInjector.get('ProfissionalServicosRepository'),
     database
   )
 );
-/*
 
-DependencyInjector.register('EnderecoService', new EnderecoService(DependencyInjector.get('EnderecoRepository'), database));
-DependencyInjector.register('ResponsavelService', new ResponsavelService(DependencyInjector.get('ResponsavelRepository'), database));
-FALTA IMPLEMENTAR OS SERVIÇOS
-*/
 
 // Registro de Controladores
 const AgendamentoController = require("./controller/AgendamentosController");
@@ -98,11 +96,7 @@ const PacientesController = require('./controller/pacientesController');
 const ServicoController = require('./controller/servicoController');
 const ProfissionaisController = require('./controller/profissionaisController/ProfissionaisController');
 const ProfissionalServicosController = require('./controller/ProfissionalServicosController');
-/*
-const EnderecoController = require('./controller/EnderecoController');
-const ResponsavelController = require('./controller/ResponsavelController');
-FALTA IMPLEMENTAR OS CONTROLADORES
-*/
+
 
 DependencyInjector.register(
   "AgendamentoController",
@@ -116,12 +110,7 @@ DependencyInjector.register('PacientesController', new PacientesController(Depen
 DependencyInjector.register('ServicoController', new ServicoController(DependencyInjector.get('ServicosService')));
 DependencyInjector.register('ProfissionaisController', new ProfissionaisController(DependencyInjector.get('ProfissionaisService')));
 DependencyInjector.register('ProfissionalServicosController', new ProfissionalServicosController(DependencyInjector.get('ProfissionalServicosService')));
-/*
 
-DependencyInjector.register('EnderecoController', new EnderecoController(DependencyInjector.get('EnderecoService')));
-DependencyInjector.register('ResponsavelController', new ResponsavelController(DependencyInjector.get('ResponsavelService')));
-FALTA IMPLEMENTAR OS CONTROLADORES
-*/
 
 // Configuração do CORS
 app.use(
@@ -153,10 +142,7 @@ const PacientesRoutes = require('./routes/pacientesRoutes');
 const ServicosRoutes = require('./routes/servicosRoutes');
 const ProfissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisRoutes');
 const ProfissionalServicosRoutes = require('./routes/ProfissionaisServicosRoutes');
-/*
-const EnderecosRoutes = require('./routes/EnderecosRoutes');
-const ResponsaveisRoutes = require('./routes/ResponsaveisRoutes');
-*/
+
 
 app.use(loginRoute);
 app.use(verifyToken, AgendamentoRoutes);
@@ -165,10 +151,7 @@ app.use(verifyToken, PacientesRoutes);
 app.use(verifyToken, ServicosRoutes);
 app.use(verifyToken, ProfissionaisRoutes);
 app.use(verifyToken, ProfissionalServicosRoutes);
-/*
-app.use(verifyToken, EnderecosRoutes);
-app.use(verifyToken, ResponsaveisRoutes);
-*/
+
 
 // Inicialização do Servidor
 app.listen(port, () => console.log(`Servidor ouvindo na porta ${port}`));
