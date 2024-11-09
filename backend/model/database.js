@@ -4,7 +4,9 @@ dotenv.config();
 
 class DataBase {
     constructor() {
-       
+        if(DataBase.instance) {
+            throw new Error('A classe Database deve ser instanciada apenas uma vez.');
+        }
 
         this.pool = mysql.createPool({
             host: 'localhost',
@@ -12,6 +14,13 @@ class DataBase {
             database: 'careconnectdb',
             port: 3306,
         });
+    }
+
+    static getInstance() {
+        if (!DataBase.instance) {
+            DataBase.instance = new DataBase();
+        }
+        return DataBase.instance;
     }
 
     async executaComando(sql, params = []) {
@@ -34,7 +43,7 @@ class DataBase {
             return results.affectedRows; 
         } catch (error) {
             console.error(`Erro ao executar comando non-query SQL: ${sql}`, error);
-            throw new Error('Erro ao executar comando non-query SQL');
+            throw error;  // Lança o erro original para captura detalhada
         } finally {
             connection.release();
         }

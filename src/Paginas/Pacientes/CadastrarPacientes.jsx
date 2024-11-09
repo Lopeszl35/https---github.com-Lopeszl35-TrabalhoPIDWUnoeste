@@ -15,8 +15,7 @@ function CadastrarPacientes() {
     "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
   ];
   const [pacienteInfo, setPacienteInfo] = useState({
-    Prontuario: '1',
-    Nome_Completo: '', 
+    Nome_Completo: '',
     Data_De_Nascimento: '', 
     CPF: '', 
     RG: '',
@@ -40,24 +39,6 @@ function CadastrarPacientes() {
     Complemento: ''
   });
 
-  useEffect(() => {
-    const fetchUltimoProntuario = async () => {
-      try {
-        const ultimoProntuario = await pacientesService.buscarUltimoPaciente();
-        console.log('Último prontuário recebido:', ultimoProntuario);
-        
-        // Atualiza o estado do componente com o último prontuário
-        setPacienteInfo(prevState => ({
-          ...prevState,
-          Prontuario: ultimoProntuario.ultimo + 1  // Define o próximo prontuário disponível
-        }));
-      } catch (error) {
-        console.error('Erro ao buscar o último paciente:', error);
-      }
-    };
-
-    fetchUltimoProntuario();
-  }, []);
 
   const handleInputChange = (e) => {
     setPacienteInfo({
@@ -127,7 +108,6 @@ function CadastrarPacientes() {
     if (validate()) {
       try {
         await pacientesService.adicionar(pacienteInfo);
-        console.log('Paciente cadastrado com sucesso');
         navigate('/pacientes');
       } catch (error) {
         console.error('Erro ao cadastrar paciente:', error);

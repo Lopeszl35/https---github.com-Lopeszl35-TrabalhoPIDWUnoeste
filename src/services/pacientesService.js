@@ -1,56 +1,62 @@
 const API_BASE_URL ='http://localhost:3001';
 
 class PacientesService {
-    async buscarUltimoPaciente() {
-        const response = await fetch(`${API_BASE_URL}/pacientes/ultimo`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Erro ao obter ultimo prontuario!');
-        } else {
-            const dados = await response.json();
-            return dados;
-        }
-      }
     async obterTodos() {
-        const response = await fetch(`${API_BASE_URL}/pacientes`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/pacientes`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+    
+                }
+            });
 
-        if (!response.ok) {
-            throw new Error('Erro ao obter os Pacientes!');
-        } else {
-            const dados = await response.json();
-            return dados;
+            if (response.status === 403) {
+                throw new Error('Acesso negado. Você não tem permissão para acessar esta página.');
+              }
+    
+            if (!response.ok) {
+                throw new Error('Erro ao obter os Pacientes!');
+            } else {
+                const dados = await response.json();
+                return dados;
+            }
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
     }    
 
-    async obterPorProntuario(id) {
-        const response = await fetch(`${API_BASE_URL}/pacientes/${id}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+    async obterDadosCompletosDoPaciente(prontuario) {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/pacientes/${prontuario}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao obter o Paciente!');  
+            } else {
+                const dados = await response.json();
+                return dados;
             }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao obter o Paciente!');  
-        } else {
-            const dados = await response.json();
-            return dados;
+        } catch (error) {
+            console.error("Erro ao obter dados do paciente:", error);
+            throw error;
         }
     }
 
     async adicionar(paciente) {
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE_URL}/pacientes`, {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(paciente)
@@ -58,9 +64,7 @@ class PacientesService {
 
         if (response.status === 400) {
             const errorData = await response.json();
-            if (errorData.message.includes("Prontuario ja existe")) {
-                throw new Error('Prontuario ja existe');
-            }
+            throw new Error(errorData.message);
         }  
 
         if (!response.ok) {
@@ -72,9 +76,11 @@ class PacientesService {
     }
 
     async atualizar(prontuario, pacienteInfo) {
-        const response = await fetch(`${API_BASE_URL}/pacientes/${prontuario}`, {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/pacientes/editar/${prontuario}`, {
           method: 'PUT',
           headers: {
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(pacienteInfo),
@@ -87,13 +93,20 @@ class PacientesService {
       }
 
     async excluirPaciente(prontuario) {
-        const response = await fetch(`${API_BASE_URL}/pacientes/${prontuario}`, {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/pacientes/excluir/${prontuario}`, {
             method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
             }); 
             if (!response.ok) {
                 throw new Error('Erro ao excluir o paciente');
             }
-        }
+            const data = await response.json();
+            return data;
+    }
     
     
 }  

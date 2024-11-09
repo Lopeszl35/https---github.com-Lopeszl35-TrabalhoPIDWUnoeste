@@ -1,0 +1,8 @@
+.agendamento-container {
+    margin: 4em 0 0 6em;
+}
+
+.agendamento-container-active {
+    margin-left: 16em;
+    transition: 0.5s;
+}

@@ -1,44 +1,30 @@
-const ProfissionaisModel = require('../../model/Entities/profissionaisModel/ProfissionaisModel');
-const UsuariosModel = require('../../model/Entities/usuariosModel/UsuariosModel');
-const ProfissionaisServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
+const AbstractProfissionaisController = require('../abstratos/AbstractProfissionaisController');
 const { validationResult } = require('express-validator');
-const DataBase = require('../../model/database');
-const ProfissionalServicos = require('../../model/Entities/profissionaisServicosModel/profissionaisServicosModel');
-const ServicosModel = require('../../model/Entities/servicosModel/servicosModel');
 
-const servicosModel = new ServicosModel();
-const profissionalServicos = new ProfissionalServicos();
-const profissionalModel = new ProfissionaisModel();
-const usuarioModel = new UsuariosModel();
-const profissionaisServicosModel = new ProfissionaisServicos();
-const dataBase = new DataBase();
+class ProfissionaisController extends AbstractProfissionaisController {
+    constructor(profissionaisService) {
+        super();
+        this.profissionaisService = profissionaisService;
+    }
 
-class ProfissionaisController {
-
-    async obterTodos(req, res) {
+    async obterProfissionais(req, res) {
         console.log('Obtendo todos os Profissionais...');
         try {
-            const profissionais = await profissionalModel.obterTodos();
-            if (!profissionais) {
-                return res.status(404).json({ message: 'Profissionais não encontrados' });
-            }
+            const profissionais = await this.profissionaisService.obterProfissionais();
             return res.status(200).json(profissionais);
         } catch (error) {
-            console.log('Erro ao obter os Profissionais:', error);
+            console.error('Erro ao obter os Profissionais:', error);
             return res.status(500).json({ message: error.message });
         }
     }
 
-    async filtrarPorEspecialidade(req, res) {
-        const { especialidade } = req.params;
+    async obterProfissionalPorId(req, res) {
+        const { id } = req.params;
         try {
-            const profissionais = await profissionalModel.filtrarPorEspecialidade(especialidade);
-            if (!profissionais) {
-                return res.status(404).json({ message: `Profissionais da especialidade ${especialidade} não encontrados` });
-            }
-            return res.status(200).json(profissionais);
+            const profissional = await this.profissionaisService.obterPorId(id);
+            return res.status(200).json(profissional);
         } catch (error) {
-            console.log('Erro ao filtrar os Profissionais por especialidade:', error);
+            console.error('Erro ao obter o profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -130,45 +116,6 @@ class ProfissionaisController {
         }
     }
 
-    async excluirUsuario(req, res) {
-        const { id } = req.params;
-        let connection;
-        try {
-            connection = await dataBase.beginTransaction();
-            const profissional = await profissionalModel.obterPorId(id);
-            const usuario = await usuarioModel.obterPorIdProfissional(id);
-            if (!profissional || !usuario) {
-                return res.status(404).json({ message: `Profissional ou Usuario não encontrado
-                    Profissional: ${profissional} | Usuario: ${usuario}` });
-            }
-            await usuarioModel.excluirUsuarioPeloProfissional(id, connection);
-            await profissionaisServicosModel.excluir(id, connection);
-            await profissionalModel.excluirProfissional(id, connection);
-            await dataBase.commitTransaction(connection);
-            return res.status(200).json({ message: 'Profissional excluído com sucesso!' });
-        } catch (error) {
-            if (connection) {
-                await dataBase.rollbackTransaction(connection);
-            }
-            console.error('Erro ao excluir o profissional:', error.message);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
-    async obterPorId(req, res) {
-        const { id } = req.params;
-        try {
-            const profissional = await profissionalModel.obterPorId(id);
-            if (!profissional) {
-                return res.status(404).json({ message: `Profissional não encontrado` });
-            }
-            return res.status(200).json(profissional);
-        } catch (error) {
-            console.error('Erro ao obter o profissional:', error.message);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
     async obterNomeProfissionalPorId(req, res) {
         console.log('Obtendo o nome do profissional por ID...');
         const { id } = req.params;
@@ -183,6 +130,18 @@ class ProfissionaisController {
             return res.status(500).json({ message: error.message });
         }
     }
+
+    /*
+    async profissionalDoServico(req, res) {
+        const { servico } = req.params;
+        try {
+            const profissionais = await this.profissionaisService.profissionalDoServico(servico);
+            return res.status(200).json(profissionais);
+        } catch (error) {
+            console.log('Erro ao obter os Profissionais:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }*/
 
 
 }
