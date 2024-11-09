@@ -8,6 +8,10 @@ class AbstractEnderecosRepository {
     async adicionarEndereco(endereco, connection) {
         throw new Error("Metodo nao implementado");
     }
+
+    async atualizarEndereco(endereco, connection) {
+        throw new Error("Metodo nao implementado");
+    }
 }
 
 module.exports = AbstractEnderecosRepository;

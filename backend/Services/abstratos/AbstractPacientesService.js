@@ -9,6 +9,14 @@ class AbstractPacienteService {
         throw new Error("Metodo não implementado");
     }
 
+    async atualizarPaciente(paciente, endereco, responsavel) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async deletarPaciente(prontuario) {
+        throw new Error("Metodo não implementado");
+    }
+
     async obterPacientes() {
         throw new Error("Metodo não implementado");
     }

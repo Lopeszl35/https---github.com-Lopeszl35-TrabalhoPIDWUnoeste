@@ -16,7 +16,7 @@ dotenv.config();
 
 // Configuração do Servidor
 const app = express();
-const port = process.env.PORT || 3005;
+const port = process.env.PORT;
 
 // Configuração do Banco de Dados
 const Database = require("./model/database");

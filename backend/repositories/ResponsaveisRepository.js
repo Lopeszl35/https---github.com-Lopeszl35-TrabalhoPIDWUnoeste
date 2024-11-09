@@ -26,6 +26,28 @@ class ResponsaveisRepository extends AbstractResponsaveisRepository {
             throw error;
         }
     }
+
+    async atualizarResponsavel(responsavel, connection) {
+        const sql = `
+            UPDATE Responsaveis
+            SET Nome_Mae = ?, Telefone_Mae = ?, Nome_Pai = ?, Telefone_Pai = ?
+            WHERE Prontuario = ?
+        `;
+        const params = [
+            responsavel.Nome_Mae,
+            responsavel.Telefone_Mae,
+            responsavel.Nome_Pai,
+            responsavel.Telefone_Pai,
+            responsavel.Prontuario
+        ];
+        try {
+            const [resultado] = await connection.query(sql, params);
+            return resultado.affectedRows > 0;
+        } catch (error) {
+            console.error("Erro ao atualizar responsável:", error);
+            throw error;
+        }
+    }
 }
 
 module.exports = ResponsaveisRepository;

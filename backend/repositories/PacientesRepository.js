@@ -31,6 +31,47 @@ class PacienteRepository extends AbstractPacienteRepository {
         }
     }
 
+    async atualizarPaciente(paciente, connection) {
+        const sql = `
+            UPDATE Pacientes
+            SET Nome_Completo = ?, Data_De_Nascimento = ?, CPF = ?, RG = ?, CartaoSUS = ?, Escola = ?, Ano_Escolar = ?, Periodo = ?, Email = ?
+            WHERE Prontuario = ?
+        `;
+        const params = [
+            paciente.Nome_Completo,
+            paciente.Data_De_Nascimento,
+            paciente.CPF,
+            paciente.RG,
+            paciente.CartaoSUS,
+            paciente.Escola,
+            paciente.Ano_Escolar,
+            paciente.Periodo,
+            paciente.Email,
+            paciente.Prontuario
+        ];
+        try {
+            const [resultado] = await connection.query(sql, params);
+            return resultado.affectedRows > 0;
+        } catch (error) {
+            console.error("Erro ao atualizar paciente no repository:", error);
+            throw error;
+        }
+    }
+
+    async deletarPaciente(prontuario) {
+        const sql = `
+            DELETE FROM Pacientes
+            WHERE Prontuario = ?
+        `
+        try {
+            const resultado = await this.database.executaComando(sql, [prontuario]);
+            return resultado.affectedRows > 0;
+        } catch (error) {
+            console.error("Erro ao deletar paciente no repository:", error);
+            throw error;
+        }
+    } 
+
     async obterPacientes() {
         const sql = `SELECT * FROM Pacientes`;
         try {

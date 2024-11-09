@@ -1,11 +1,19 @@
-class AbstractAgendamentoController {
+class AbstractPacientesController {
     constructor() {
-        if (new.target === AbstractAgendamentoController) {
+        if (new.target === AbstractPacientesController) {
             throw new Error("Classe abstrata não pode ser instanciada");
         }
     }
 
     async adicionarPaciente(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async atualizarPaciente(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async deletarPaciente(req, res) {
         throw new Error("Metodo não implementado");
     }
 
@@ -19,4 +27,4 @@ class AbstractAgendamentoController {
 
 }
 
-module.exports = AbstractAgendamentoController
+module.exports = AbstractPacientesController

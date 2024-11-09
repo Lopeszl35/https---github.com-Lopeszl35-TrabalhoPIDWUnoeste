@@ -30,6 +30,31 @@ class EnderecosRepository extends AbstractEnderecosRepository {
         }
     }
 
+    async atualizarEndereco(endereco, connection) {
+        const sql = `
+            UPDATE Enderecos
+            SET  Logradouro = ?, Numero = ?, Complemento = ?, Bairro = ?, Cidade = ?, Estado = ?, CEP = ?
+            WHERE Prontuario = ?
+        `;
+        const params = [
+            endereco.Logradouro,
+            endereco.Numero,
+            endereco.Complemento,
+            endereco.Bairro,
+            endereco.Cidade,
+            endereco.Estado,
+            endereco.CEP,
+            endereco.Prontuario
+          ];
+        try {
+            const [result] = await connection.query(sql, params);
+            return result.affectedRows > 0;
+        } catch (error) {
+            console.error("Erro ao atualizar o endereço:", error);
+            throw error; 
+        }
+    }
+
 }
 
 module.exports = EnderecosRepository;

@@ -8,6 +8,10 @@ class AbstractResponsaveisRepository {
     async adicionarResponsavel(responsavel, connection) {
         throw new Error("Metodo não implementado");
     }
+
+    async atualizarResponsavel(responsavel, connection) {
+        throw new Error("Metodo não implementado");
+    }
 }
 
 module.exports = AbstractResponsaveisRepository
