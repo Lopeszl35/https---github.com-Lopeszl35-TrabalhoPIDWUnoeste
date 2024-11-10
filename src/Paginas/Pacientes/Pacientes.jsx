@@ -25,24 +25,14 @@ function Pacientes() {
 
   const obterTodos = async () => {
     try {
-      const dados = await pacientesService.obterTodos();
-      if (dados.paciente && dados.endereco && dados.responsavel) {
-        const pacientesCompletos = dados.paciente.map(paciente => {
-          const endereco = dados.endereco.find(end => end.Prontuario === paciente.Prontuario);
-          const responsavel = dados.responsavel.find(resp => resp.Prontuario === paciente.Prontuario);
-          return {
-            ...paciente,
-            endereco,
-            responsavel
-          };
-        });
-        setPacientes(pacientesCompletos);
-        setPacientesFiltrados(pacientesCompletos);
-      }
+      const dadosPacientes = await pacientesService.obterTodos();
+      setPacientes(dadosPacientes);
+      setPacientesFiltrados(dadosPacientes);
     } catch (error) {
       console.error("Erro ao obter pacientes:", error);
     }
   };
+
   const showDelete = (prontuario) => {
     setShowModalDelete(true);
     setPacienteToDelete(prontuario);
@@ -53,28 +43,11 @@ function Pacientes() {
   }
 
   const atualizarPacientes = async () => {
-    try {
-      const dados = await pacientesService.obterTodos();
-      if (dados.paciente && dados.endereco && dados.responsavel) {
-        const pacientesCompletos = dados.paciente.map(paciente => {
-          const endereco = dados.endereco.find(end => end.Prontuario === paciente.Prontuario);
-          const responsavel = dados.responsavel.find(resp => resp.Prontuario === paciente.Prontuario);
-          return {
-            ...paciente,
-            endereco,
-            responsavel
-          };
-        });
-        setPacientes(pacientesCompletos);
-        setPacientesFiltrados(pacientesCompletos);
-      }
-    } catch (error) {
-      console.error("Erro ao obter pacientes:", error);
-    }
+    await obterTodos();
   };
 
   const excluirPaciente = async (prontuario) => {
-    try{
+    try {
       await pacientesService.excluirPaciente(prontuario);
       const filtrarPacientes = pacientes.filter((paciente) => paciente.Prontuario !== prontuario);
       setPacientes(filtrarPacientes);
@@ -84,7 +57,7 @@ function Pacientes() {
       atualizarPacientes();
     } catch (error) {
       console.error("Erro ao excluir paciente:", error);
-      setErroExclusao(true)
+      setErroExclusao(true);
     }
   };
 
@@ -154,7 +127,7 @@ function Pacientes() {
                   currentPacientes.map((paciente) => (
                     <Accordion.Item eventKey={paciente.Prontuario} key={paciente.Prontuario}>
                       <Accordion.Header>
-                      {paciente.Prontuario} - {paciente.Nome_Completo} 
+                        {paciente.Prontuario} - {paciente.Nome_Completo} 
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>
@@ -169,8 +142,9 @@ function Pacientes() {
                             <p><strong>Email:</strong> {paciente.Email}</p>
                           </Col>
                           <Col md={4}>
-                            <p><strong>Telefone:</strong> {paciente.responsavel.Telefone_Mae}</p>
-                            <p><strong>Endereço:</strong> {paciente.endereco.Logradouro}</p>
+                            <p><strong>Telefone da Mãe:</strong> {paciente.Telefone_Mae}</p>
+                            <p><strong>Endereço:</strong> {paciente.Logradouro}, {paciente.Numero}</p>
+                            <p><strong>Cidade:</strong> {paciente.Cidade}</p>
                           </Col>
                         </Row>
                         <div className="d-flex flex-row gap-2">
@@ -202,10 +176,9 @@ function Pacientes() {
           {confirmacaoExclusao && !erroExclusao && (
           <>
             <Modal.Header closeButton>
-            <Modal.Title>Excluir Paciente</Modal.Title>
+              <Modal.Title>Excluir Paciente</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Tem certeza que deseja excluir este paciente?
-            </Modal.Body>
+            <Modal.Body>Tem certeza que deseja excluir este paciente?</Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={() => setShowModalDelete(false)}>
                 Cancelar
@@ -215,19 +188,17 @@ function Pacientes() {
               </Button>
             </Modal.Footer>
           </>
-        )} 
-            {erroExclusao && (
+          )} 
+          {erroExclusao && (
             <div className="alert alert-danger" role="alert">
-              {erroExclusao}
-              <Modal.Body>Não foi possivel realizar a exclusão</Modal.Body>
+              Erro ao excluir paciente. Tente novamente.
               <button className="btn-ok" onClick={() => setErroExclusao(null)}>OK</button>
             </div>
           )}
           {sucessoExclusao && (
             <div className="alert alert-success" role="alert">
-                {sucessoExclusao}
-                <Modal.Body>Paciente excluido com sucesso !!!</Modal.Body>
-                <button className="btn-ok" onClick={() => setSucessoExclusao(null)}>OK</button>
+              Paciente excluído com sucesso.
+              <button className="btn-ok" onClick={() => setSucessoExclusao(null)}>OK</button>
             </div>
           )}
         </ModalBody>

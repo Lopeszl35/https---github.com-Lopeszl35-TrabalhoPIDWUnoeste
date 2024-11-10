@@ -1,3 +1,5 @@
+import { json } from "react-router-dom";
+
 const API_BASE_URL ='http://localhost:3001';
 
 class PacientesService {
@@ -51,15 +53,15 @@ class PacientesService {
         }
     }
 
-    async adicionar(paciente) {
+    async adicionar(dadosPaciente) {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}/pacientes`, {
+        const response = await fetch(`${API_BASE_URL}/pacientes/adicionar`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(paciente)
+            body: JSON.stringify(dadosPaciente),
         });
 
         if (response.status === 400) {
@@ -76,8 +78,9 @@ class PacientesService {
     }
 
     async atualizar(prontuario, pacienteInfo) {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}/pacientes/editar/${prontuario}`, {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE_URL}/pacientes/editar/${prontuario}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -86,10 +89,15 @@ class PacientesService {
           body: JSON.stringify(pacienteInfo),
         });
         if (!response.ok) {
-          throw new Error('Erro ao atualizar o paciente');
+            const errorData = await response.json();
+            throw new Error(`Erro ao atualizar o paciente: ${JSON.stringify(errorData)}`);
         }
         const data = await response.json();
         return data;
+        } catch (error) {
+            console.error("Erro ao atualizar paciente:", error.message);
+            throw error;
+        }
       }
 
     async excluirPaciente(prontuario) {
