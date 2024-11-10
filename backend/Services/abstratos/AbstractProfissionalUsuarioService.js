@@ -9,6 +9,10 @@ class AbstractProfissionalUsuarioService {
         throw new Error("Metodo nao implementado");
     }
 
+    async deletarProfissionalUsuario(id) {
+        throw new Error("Metodo nao implementado");
+    }
+
 }
 
 module.exports = AbstractProfissionalUsuarioService

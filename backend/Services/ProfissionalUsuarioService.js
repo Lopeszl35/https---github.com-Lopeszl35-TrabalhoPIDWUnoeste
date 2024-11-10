@@ -17,7 +17,7 @@ class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
 
             const profissionalAdicionado = await this.profissionalUsuarioRepository.adicionarProfissional(profissional, connection);
             if(!profissionalAdicionado) {
-                throw new Error("Erro ao adicionar profissional na chamada ao repository");
+                throw new Error("Erro ao adicionar profissional");
             }
 
             usuario.Tipo_Permissao = "profissionalSaude";
@@ -43,6 +43,31 @@ class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
             ErroSqlHandler.tratarErroSql(error, "profissional");
         }
     }
+
+    async deletarProfissionalUsuario(id) {
+        let connection;
+        try {
+            connection = await this.database.beginTransaction();
+
+            const profissionalDeletado = await this.profissionalUsuarioRepository.deletarProfissional(id, connection);
+            if(!profissionalDeletado.affectedRows) {
+                throw new Error("Erro ao deletar profissional");
+            }
+            const emailUsuario = profissionalDeletado.email;
+            const usuarioDeletado = await this.profissionalUsuarioRepository.deletarProfissionalUsuario(emailUsuario, connection);
+            if(!usuarioDeletado) {
+                throw new Error("Erro ao deletar usuario");
+            }
+
+            await this.database.commitTransaction(connection);
+            return {message: "Profissional e usuario deletados com sucesso"}
+
+        } catch (error) {
+            console.error("Erro ao deletar o Profissional:", error);
+            throw error;
+        }
+    }
+    
 }
 
 module.exports = ProfissionalUsuarioService

@@ -17,6 +17,14 @@ class AbstractProfissionaisController {
         throw new Error("Metodo nao implementado");
     }
 
+    async editarProfissional(req, res) {
+        throw new Error("Metodo nao implementado");
+    }
+
+    async deletarProfissional(req, res) {
+        throw new Error("Metodo nao implementado");
+    }
+
     /*
     async profissionalDoServico(req, res) {
         throw new Error("Metodo nao implementado");

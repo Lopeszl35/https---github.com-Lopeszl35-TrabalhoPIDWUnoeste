@@ -13,6 +13,11 @@ router.post('/profissionais/adicionar', (req, res) =>
     ProfissionaisController.adicionarProfissional(req, res)
 );
 
+// Rota para editar profissional
+router.patch('/profissionais/editar/:id', (req, res) => 
+    ProfissionaisController.editarProfissional(req, res)
+);
+
 // Rota para obter todos os profissionais
 router.get('/profissionais', (req, res) => 
     ProfissionaisController.obterProfissionais(req, res)
@@ -23,11 +28,10 @@ router.get('/profissionais/:id', (req, res) =>
     ProfissionaisController.obterProfissionalPorId(req, res)
 );
 
-/* Rota para obter profissional do Servico
-router.get('/profissionais/servico/:servico', (req, res) => 
-    ProfissionaisController.profissionalDoServico(req, res)
-); */
-
+// Rota para deletar profissional
+router.delete('/profissionais/excluir/:id', (req, res) => 
+    ProfissionaisController.deletarProfissional(req, res)
+);
 
 
 

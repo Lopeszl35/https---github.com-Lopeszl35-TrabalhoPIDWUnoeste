@@ -17,11 +17,6 @@ class AbstractProfissionaisRepository {
         throw new Error("Metodo nao implementado");
     }
 
-    /*
-    async profissionalDoServico(id) {
-        throw new Error("Metodo nao implementado");
-    }*/
-
 }
 
 module.exports = AbstractProfissionaisRepository

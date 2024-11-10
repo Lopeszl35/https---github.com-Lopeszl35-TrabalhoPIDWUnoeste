@@ -21,7 +21,6 @@ function CadastrarProfissionais() {
         rg: '',
         email: '',
         telefone: '',
-        especialidade: '',
         registroProfissional: '',
         senha: '',
     });
@@ -37,7 +36,6 @@ function CadastrarProfissionais() {
                 rg: '',
                 email: '',
                 telefone: '',
-                especialidade: '',
                 registroProfissional: '',
                 senha: '',
             });
@@ -54,18 +52,6 @@ function CadastrarProfissionais() {
             }
         }
     };
-
-    useEffect(() => {
-        const fetchServicos = async () => {
-            try {
-                const servicosData = await servicosService.obterTodos();
-                setServicos(servicosData);
-            } catch (error) {
-                console.error("Erro ao buscar serviços:", error);
-            }
-        };
-        fetchServicos();
-    }, []);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -84,7 +70,6 @@ function CadastrarProfissionais() {
         if (!usuarioInfo.email) newErros.email = 'Email é obrigatório';
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(usuarioInfo.email)) newErros.email = 'Email inválido';
         if (usuarioInfo.telefone && !/^\d{10,11}$/.test(usuarioInfo.telefone)) newErros.telefone = 'Telefone inválido. Deve conter 10 ou 11 dígitos';
-        if (!usuarioInfo.especialidade) newErros.especialidade = 'Especialidade é obrigatória';
         if (!usuarioInfo.registroProfissional) newErros.registroProfissional = 'Registro profissional é obrigatório';
         if (!usuarioInfo.senha) newErros.senha = 'Senha é obrigatória';
         else if (usuarioInfo.senha.length < 6) newErros.senha = 'A senha deve ter pelo menos 6 caracteres';
@@ -114,11 +99,6 @@ function CadastrarProfissionais() {
                 <input type="date" id="dataNasc" name="dataNasc" value={usuarioInfo.dataNasc} onChange={handleInputChange} />
                 {erros.dataNasc && <p className="erros">{erros.dataNasc}</p>}
             </div>
-            <div className="form-group col-md-6">
-                <label htmlFor="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" value={usuarioInfo.cpf} onChange={handleInputChange} />
-                {erros.cpf && <p className="erros">{erros.cpf}</p>}
-            </div>
         </div>
 
         <div className="row">
@@ -126,6 +106,14 @@ function CadastrarProfissionais() {
                 <label htmlFor="rg">RG:</label>
                 <input type="text" id="rg" name="rg" value={usuarioInfo.rg} onChange={handleInputChange} />
                 {erros.rg && <p className="erros">{erros.rg}</p>}
+            </div>
+        </div>
+
+        <div className="row">
+            <div className="form-group col-md-6">
+                <label htmlFor="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" value={usuarioInfo.cpf} onChange={handleInputChange} />
+                {erros.cpf && <p className="erros">{erros.cpf}</p>}
             </div>
         </div>
 
@@ -137,16 +125,6 @@ function CadastrarProfissionais() {
         <label htmlFor="telefone">Telefone:</label>
         <input type="text" id="telefone" name="telefone" value={usuarioInfo.telefone} onChange={handleInputChange} />
         {erros.telefone && <p className="erros">{erros.telefone}</p>}
-
-        <h2>Informações Profissionais</h2>
-        <label htmlFor="especialidade">Especialidade:</label>
-        <select id="especialidade" name="especialidade" value={usuarioInfo.especialidade} onChange={handleInputChange}>
-            <option value="">Selecione</option>
-            {servicos.map((servico) => (
-                <option key={servico.ID_Servico} value={servico.Nome_Servico}>{servico.Nome_Servico}</option>
-            ))}
-        </select>
-        {erros.especialidade && <p className="erros">{erros.especialidade}</p>}
 
         <label htmlFor="registroProfissional">Registro Profissional:</label>
         <input type="text" id="registroProfissional" name="registroProfissional" value={usuarioInfo.registroProfissional} onChange={handleInputChange} />

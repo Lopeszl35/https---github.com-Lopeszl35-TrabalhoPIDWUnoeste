@@ -50,48 +50,36 @@ class ProfissionaisController extends AbstractProfissionaisController {
 
     async editarProfissional(req, res) {
         const { id } = req.params;
-        const { Nome_Completo, Email, Telefone, registroProfissional } = req.body;
-        let connection;
+        const { profissional } = req.body;
         try {
-            connection = await dataBase.beginTransaction();
-            const profissional = await profissionalModel.obterPorId(id);
-            const usuario = await usuarioModel.obterPorIdProfissional(id);
-            if (!profissional || !usuario) {
-                return res.status(404).json({ message: `Profissional ou Usuario não encontrado
-                    Profissional: ${profissional} | Usuario: ${usuario}` });
-            } else {
-                const novoProfissional = { ...profissional, Nome_Completo, Email, Telefone, registroProfissional };
-                await profissionalModel.editarProfissional(novoProfissional, id, connection);
-
-                const novoUsuario = { ...usuario, Email };
-                await usuarioModel.editarUsuarioPeloProfissional(novoUsuario, connection);
-
-                await dataBase.commitTransaction(connection);
-                return res.status(200).json({ message: 'Profissional editado com sucesso!' });
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
             }
+            const resultado = await this.profissionaisService.editarProfissional(id, profissional);
+            return res.status(200).json(resultado);
         } catch (error) {
-            if (connection) {
-                await dataBase.rollbackTransaction(connection);
-            }
-            console.error('Erro ao editar o profissional:', error.message);
+            console.error('Erro ao editar profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
 
-    async obterNomeProfissionalPorId(req, res) {
-        console.log('Obtendo o nome do profissional por ID...');
+    async deletarProfissional(req, res) {
         const { id } = req.params;
         try {
-            const nomeProfissional = await profissionalModel.obterNomeProfissionalPorId(id);
-            if (!nomeProfissional) {
-                return res.status(404).json({ message: 'Profissional não encontrado' });
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
             }
-            return res.status(200).json({ nomeProfissional });
+            const resultado = await this.profissionalUsuarioService.deletarProfissionalUsuario(id);
+            return res.status(200).json({ message: 'Profissional excluído com sucesso!' });
         } catch (error) {
-            console.log('Erro ao obter o nome do profissional:', error);
+            console.error('Erro ao deletar profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
+
+
 
     /*
     async profissionalDoServico(req, res) {

@@ -11,6 +11,14 @@ class AbstractProfissionalUsuarioRepository {
     async adicionarUsuarioProfissional(usuario, connection) {
         throw new Error("Metodo abstrato nao implementado");
     }
+
+    async deletarProfissional(id, connection) {
+        throw new Error("Metodo abstrato nao implementado");
+    }
+
+    async deletarProfissionalUsuario(email, connection) {
+        throw new Error("Metodo abstrato nao implementado");
+    }
 }
 
 module.exports = AbstractProfissionalUsuarioRepository;

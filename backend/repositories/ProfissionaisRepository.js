@@ -26,33 +26,32 @@ class ProfissionaisRepository extends AbstractProfissionaisRepository {
         }
     }
 
-    /*
-    async profissionalDoServico(servico) {
-        const params = [servico];
-        const sql = `
-            SELECT 
-                p.ID_Profissional,
-                p.Nome_Completo,
-                p.CPF,
-                p.Email,
-                p.Especialidade
-            FROM 
-                Profissionais p
-            JOIN 
-                ProfissionalServicos ps ON p.ID_Profissional = ps.ID_Profissional
-            JOIN 
-                Servicos s ON ps.ID_Servico = s.ID_Servico
-            WHERE 
-                s.ID_Servico = ?;
-        `;
+    async editarProfissional(id, profissional) {
+        // Obter as chaves do objeto `profissional` para construir a query
+        const campos = Object.keys(profissional);
+        const params = Object.values(profissional);
+        
+    
+        // Se não houver campos no objeto `profissional`, retornar sem realizar atualização
+        if (campos.length === 0) {
+            return { message: "Nenhuma alteração necessária" };
+        }
+    
+        // Construir a query dinamicamente com base nos campos presentes
+        const setClause = campos.map(campo => `${campo} = ?`).join(", ");
+        console.log("setClause", setClause);
+        const sql = `UPDATE Profissionais SET ${setClause} WHERE ID_Profissional = ?`;
+        
+        // Adicionar o `id` ao final dos parâmetros para a cláusula WHERE
+        params.push(id);
+    
         try {
-            const profissionais = await this.database.executaComando(sql, params);
-            return profissionais;
+            await this.database.executaComandoNonQuery(sql, params);
+            return { message: "Profissional atualizado com sucesso" };
         } catch (error) {
             throw error;
         }
-    }*/
-
+    }
 
 }
 
