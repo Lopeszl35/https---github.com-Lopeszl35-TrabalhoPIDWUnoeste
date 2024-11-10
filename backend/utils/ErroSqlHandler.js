@@ -27,6 +27,8 @@ class ErroSqlHandler {
                     throw new Error('Registro profissional já cadastrado');
                 } else if (error.message.includes('Email')) {
                     throw new Error('Email já cadastrado para Profissional');
+                } else if (error.message.includes('RG')) {
+                    throw new Error('RG já cadastrado para Profissional');
                 }
                 break;
 
@@ -40,7 +42,7 @@ class ErroSqlHandler {
             default:
                 throw new Error(`Erro de duplicação em ${entidade}: ${error.message}`);
         }
-        throw error; // Caso não seja um erro específico
+        throw error;
     }
 }
 

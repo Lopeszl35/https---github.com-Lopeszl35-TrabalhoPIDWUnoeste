@@ -1,9 +1,10 @@
 const AbstractProfissionaisService = require("./abstratos/AbstractProfissionaisService");
 
 class ProfissionaisService extends AbstractProfissionaisService {
-    constructor(profissionaisRepository, database) {
+    constructor(profissionaisRepository, usuariosService, database) {
         super();
         this.profissionaisRepository = profissionaisRepository;
+        this.usuariosService = usuariosService;
         this.database = database;
     }
 

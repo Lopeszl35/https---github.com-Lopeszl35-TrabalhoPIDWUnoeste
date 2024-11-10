@@ -2,13 +2,17 @@ const AbstractProfissionaisController = require('../abstratos/AbstractProfission
 const { validationResult } = require('express-validator');
 
 class ProfissionaisController extends AbstractProfissionaisController {
-    constructor(profissionaisService) {
+    constructor(profissionaisService, profissionalUsuarioService) {
         super();
         this.profissionaisService = profissionaisService;
+        this.profissionalUsuarioService = profissionalUsuarioService;
     }
 
     async obterProfissionais(req, res) {
-        console.log('Obtendo todos os Profissionais...');
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         try {
             const profissionais = await this.profissionaisService.obterProfissionais();
             return res.status(200).json(profissionais);
@@ -29,58 +33,16 @@ class ProfissionaisController extends AbstractProfissionaisController {
         }
     }
 
-    async adicionar(req, res) {
-        console.log('Adicionando Profissional...');
+    async adicionarProfissional(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
-        const { nomeCompleto, dataNasc, cpf, rg, email, telefone, especialidade, registroProfissional, senha } = req.body;
-        let connection;
+        const { profissional, usuario } = req.body;
         try {
-            connection = await dataBase.beginTransaction();
-
-            // Adiciona o profissional
-            const profissional = new ProfissionaisModel(nomeCompleto, cpf, rg, dataNasc, telefone, email, especialidade, registroProfissional);
-            const profissionalId = await profissionalModel.adicionar(profissional, connection);
-
-            // Filtra o serviço por nome da especialidade
-            const servicoEspecialidade = await servicosModel.filtrarPorNome(especialidade, connection);
-            if (servicoEspecialidade.length === 0) {
-                throw new Error('Serviço de especialidade não encontrado');
-            }
-            const especialidadeId = servicoEspecialidade[0].ID_Servico;
-
-            // Adiciona o usuário
-            const usuario = new UsuariosModel(profissionalId, email, senha, 'profissionalSaude');
-            await usuarioModel.adicionar(usuario, connection);
-
-            // Relaciona o profissional com a especialidade (serviço)
-            await profissionalServicos.inserir(profissionalId, especialidadeId ,connection);
-
-            await dataBase.commitTransaction(connection);
-            return res.status(201).json({ message: 'Profissional adicionado com sucesso!' });
+            const resultado = await this.profissionalUsuarioService.adicionarProfissionalComUsuario(profissional, usuario);
+            return res.status(201).json(resultado);
         } catch (error) {
-            if (connection) {
-                await dataBase.rollbackTransaction(connection);
-            }
-            if (error.sqlMessage && error.sqlMessage.includes('Duplicate entry')) {
-                const errorMessages = {};
-                if (error.sqlMessage.includes('CPF')) {
-                    errorMessages.cpf = 'Este CPF já está cadastrado.';
-                } 
-                if (error.sqlMessage.includes('Email')) {
-                    errorMessages.email = 'Este email já está cadastrado.';
-                }
-                if (error.sqlMessage.includes('RG')) {
-                    errorMessages.rg = 'Este RG já está cadastrado.';
-                }
-                if (error.sqlMessage.includes('Registro_Profissional')) {
-                    errorMessages.registroProfissional = 'Este Registro Profissional já está cadastrado.';
-                }
-                return res.status(409).json({ errors: errorMessages });
-            }
             console.error('Erro ao adicionar profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }

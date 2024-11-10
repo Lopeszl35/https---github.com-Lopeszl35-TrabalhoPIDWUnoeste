@@ -36,11 +36,11 @@ function Pacientes() {
   const showDelete = (prontuario) => {
     setShowModalDelete(true);
     setPacienteToDelete(prontuario);
-  }
+  };
 
   const handleEdit = (prontuario) => {
     navigate(`/pacientes/EditarPacientes/${prontuario}`);
-  }
+  };
 
   const atualizarPacientes = async () => {
     await obterTodos();
@@ -67,10 +67,22 @@ function Pacientes() {
  
   useEffect(() => {
     const filteredPacientes = pacientes.filter((paciente) => {
-      if (searchType === "2") {
-        return paciente.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
+      switch (searchType) {
+        case "prontuario":
+          return paciente.Prontuario.toString().includes(searchQuery);
+        case "nome":
+          return paciente.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
+        case "cpf":
+          return paciente.CPF.toString().includes(searchQuery);
+        case "data_nascimento":
+          return paciente.Data_De_Nascimento && 
+                 paciente.Data_De_Nascimento.includes(searchQuery);
+        case "nome_mae":
+          return paciente.Nome_Mae && 
+                 paciente.Nome_Mae.toLowerCase().includes(searchQuery.toLowerCase());
+        default:
+          return true;
       }
-      return true;
     });
     setPacientesFiltrados(filteredPacientes);
     setCurrentPage(1); 
@@ -95,14 +107,18 @@ function Pacientes() {
                 <Card.Text>Pesquise Por:</Card.Text>
                 <Form className="busca d-flex">
                   <Form.Select 
-                    aria-label="Default select example" 
+                    aria-label="Tipo de busca" 
                     size="sm" 
                     className="me-2"
                     value={searchType}
                     onChange={(e) => setSearchType(e.target.value)}
                   >
                     <option value="">Selecione</option>
-                    <option value="2">Nome</option>
+                    <option value="prontuario">Prontuário</option>
+                    <option value="nome">Nome</option>
+                    <option value="cpf">CPF</option>
+                    <option value="data_nascimento">Data de Nascimento</option>
+                    <option value="nome_mae">Nome da Mãe</option>
                   </Form.Select>
                   <Form.Control 
                     type="text" 

@@ -8,6 +8,11 @@ router.use(cors());
 // Importa o ProfissionaisController e injeta o ProfissionaisService
 const ProfissionaisController = DependencyInjector.get('ProfissionaisController');
 
+// Rota para adicionar profissional
+router.post('/profissionais/adicionar', (req, res) => 
+    ProfissionaisController.adicionarProfissional(req, res)
+);
+
 // Rota para obter todos os profissionais
 router.get('/profissionais', (req, res) => 
     ProfissionaisController.obterProfissionais(req, res)

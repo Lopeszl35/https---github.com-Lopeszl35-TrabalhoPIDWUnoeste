@@ -2,6 +2,7 @@ const AbstractUsuariosService = require("./abstratos/AbstractUsuariosService");
 const Usuario = require("../model/Entities/usuariosModel/UsuariosModel");
 const bycrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const ErroSqlHandler = require("../utils/ErroSqlHandler");
 
 class UsuariosService extends AbstractUsuariosService {
   constructor(UsuarioRepository, database) {
@@ -19,15 +20,9 @@ class UsuariosService extends AbstractUsuariosService {
       const novoUsuairo = await this.UsuarioRepository.adicionarUsuario(
         novoUsuarioModel
       );
-
       return novoUsuairo;
     } catch (error) {
-      if (error.code === "ER_DUP_ENTRY") {
-        throw new Error(
-          `O email '${email}' já está cadastrado. Escolha outro.`
-        );
-      }
-      throw new Error("Erro ao cadastrar usuário: " + error.message);
+     ErroSqlHandler.tratarErroSql(error, "usuario");
     }
   }
 
