@@ -80,8 +80,8 @@ function Profissionais() {
   const editarProfissional = async (id) => {
     try {
       const profissionalEditado = await profissionaisService.obterPorId(id);
-      setProfissionalEditando(profissionalEditado);
-      setProfissionalOriginal(profissionalEditado); // Armazena o estado original
+      setProfissionalEditando({ ...profissionalEditado }); // Cópia para edição
+      setProfissionalOriginal({ ...profissionalEditado }); // Cópia original para comparação
       setModalEditarShow(true);
     } catch (error) {
       console.error('Erro ao editar profissional:', error);
@@ -90,11 +90,16 @@ function Profissionais() {
 
   const salvarEdicaoProfissional = async () => {
     const camposAlterados = {};
+    
     for (const [campo, valor] of Object.entries(profissionalEditando)) {
+      console.log('Campo:', campo, 'Valor:', valor);
       if (profissionalOriginal[campo] !== valor) {
         camposAlterados[campo] = valor;
       }
     }
+    console.log('Campos alterados:', camposAlterados);
+    console.log('Profissional original:', profissionalOriginal);
+    console.log('Profissional editado:', profissionalEditando);
 
     if (Object.keys(camposAlterados).length === 0) {
       alert("Nenhuma alteração detectada.");
@@ -117,7 +122,6 @@ function Profissionais() {
       obterProfissionais();
       fecharModalDelete();
       alert('Profissional excluído com sucesso!');
-      window.location.reload();
     } catch (error) {
       console.error('Erro ao excluir profissional:', error);
     }
