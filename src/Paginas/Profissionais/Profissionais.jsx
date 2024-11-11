@@ -92,7 +92,6 @@ function Profissionais() {
     const camposAlterados = {};
     
     for (const [campo, valor] of Object.entries(profissionalEditando)) {
-      console.log('Campo:', campo, 'Valor:', valor);
       if (profissionalOriginal[campo] !== valor) {
         camposAlterados[campo] = valor;
       }
