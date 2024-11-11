@@ -21,6 +21,7 @@ function Profissionais() {
   const [modalDelete, setModalDelete] = useState(false);
   const [modalEditarShow, setModalEditarShow] = useState(false);
   const [profissionalEditando, setProfissionalEditando] = useState(null);
+  const [profissionalOriginal, setProfissionalOriginal] = useState(null);
   const [profissionalADeletar, setProfissionalADeletar] = useState(null);
   const profissionaisPerPage = 10;
 
@@ -45,7 +46,7 @@ function Profissionais() {
         return profissional.registroProfissional.toLowerCase().includes(searchQuery.toLowerCase());
       } else if (searchType === "2") {
         return profissional.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
-      } else if(searchType === "3") {
+      } else if (searchType === "3") {
         return profissional.Especialidade.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
@@ -68,6 +69,7 @@ function Profissionais() {
   const fecharModalEditar = () => {
     setModalEditarShow(false);
     setProfissionalEditando(null);
+    setProfissionalOriginal(null);
   };
 
   const abrirModalExcluir = (id) => {
@@ -79,15 +81,28 @@ function Profissionais() {
     try {
       const profissionalEditado = await profissionaisService.obterPorId(id);
       setProfissionalEditando(profissionalEditado);
+      setProfissionalOriginal(profissionalEditado); // Armazena o estado original
       setModalEditarShow(true);
     } catch (error) {
       console.error('Erro ao editar profissional:', error);
     }
   };
 
-  const salvarEdicaoProfissional = async (profissionalEditado) => {
+  const salvarEdicaoProfissional = async () => {
+    const camposAlterados = {};
+    for (const [campo, valor] of Object.entries(profissionalEditando)) {
+      if (profissionalOriginal[campo] !== valor) {
+        camposAlterados[campo] = valor;
+      }
+    }
+
+    if (Object.keys(camposAlterados).length === 0) {
+      alert("Nenhuma alteração detectada.");
+      return;
+    }
+
     try {
-      await profissionaisService.editarProfissional(profissionalEditado.ID_Profissional, profissionalEditado);
+      await profissionaisService.editarProfissional(profissionalEditando.ID_Profissional, camposAlterados);
       obterProfissionais();
       fecharModalEditar();
       alert('Profissional editado com sucesso!');
@@ -102,6 +117,7 @@ function Profissionais() {
       obterProfissionais();
       fecharModalDelete();
       alert('Profissional excluído com sucesso!');
+      window.location.reload();
     } catch (error) {
       console.error('Erro ao excluir profissional:', error);
     }
@@ -154,7 +170,7 @@ function Profissionais() {
                   currentProfissionais.map((profissional) => (
                     <Accordion.Item eventKey={profissional.ID_Profissional} key={profissional.ID_Profissional}>
                       <Accordion.Header>
-                      <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p> - {profissional.Especialidade}
+                        <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p> - {profissional.Especialidade}
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>
@@ -170,7 +186,6 @@ function Profissionais() {
                             <p><strong>Telefone:</strong> {profissional.Telefone}</p>
                           </Col>
                           <Col md={4}>
-                            <p><strong>Especialidade:</strong> {profissional.Especialidade}</p>
                             <p><strong>Registro Profissional:</strong> {profissional.registroProfissional}</p>
                           </Col>
                         </Row>
