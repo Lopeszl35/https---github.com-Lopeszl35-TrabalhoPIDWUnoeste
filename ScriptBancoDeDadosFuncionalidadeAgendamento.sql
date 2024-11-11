@@ -8,8 +8,8 @@ CREATE TABLE Pacientes (
     Nome_Completo VARCHAR(255) NOT NULL,
     Data_De_Nascimento DATE NOT NULL,
     CPF VARCHAR(11) NOT NULL UNIQUE,
-    RG VARCHAR(20),
-    CartaoSUS VARCHAR(15),
+    RG VARCHAR(20) UNIQUE,
+    CartaoSUS VARCHAR(15) UNIQUE,
     Escola VARCHAR(255),
     Ano_Escolar VARCHAR(20),
     Periodo VARCHAR(20),
@@ -54,8 +54,7 @@ CREATE TABLE Profissionais (
     Data_Nascimento DATE NOT NULL,
     registroProfissional INT UNIQUE,
     Telefone VARCHAR(15),
-    Email VARCHAR(255) UNIQUE,
-    Especialidade VARCHAR(255)
+    Email VARCHAR(255) UNIQUE
 );
 
 -- Criação da tabela de Serviços
