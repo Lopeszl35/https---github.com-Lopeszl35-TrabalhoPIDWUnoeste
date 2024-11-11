@@ -119,6 +119,7 @@ function CadastrarPacientes() {
         navigate('/pacientes');
       } catch (error) {
         console.error('Erro ao cadastrar paciente:', error);
+        setErros({ form: error.message });
       }
     }
   };
@@ -306,6 +307,7 @@ function CadastrarPacientes() {
               <FaRegSave className="me-2 mt-1" /> Cadastrar
             </button>
           </div>
+          {erros.form && <p className="erros text-danger mt-3">{erros.form}</p>}
         </form>
       </Container>
     </div>

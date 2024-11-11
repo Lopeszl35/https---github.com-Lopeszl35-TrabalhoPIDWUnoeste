@@ -13,7 +13,7 @@ CREATE TABLE Pacientes (
     Escola VARCHAR(255),
     Ano_Escolar VARCHAR(20),
     Periodo VARCHAR(20),
-    Email VARCHAR(255) UNIQUE
+    Email VARCHAR(255)
 );
 
 -- Criação da tabela de Endereços

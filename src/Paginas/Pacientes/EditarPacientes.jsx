@@ -1,5 +1,7 @@
 import { Container } from "react-bootstrap";
-import { useOutletContext, useParams, useNavigate } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import { useOutletContext, useParams, useNavigate, Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 import React, { useEffect, useState } from 'react';
 import "./CadastrarPacientes.css";
 import PacientesService from "../../services/pacientesService";
@@ -330,6 +332,12 @@ function EditarPacientes() {
               <input type="text" id="Periodo" name="Periodo" value={pacienteInfo.Periodo} onChange={handleInputChange} />
             </div>
           </div>
+          <Link to={"/pacientes"}>
+              <Button variant="secondary" className="me-2">
+                <FaArrowLeft className="me-2" />
+                Voltar
+              </Button>
+          </Link>
           <div className="botao">
             <button type="submit">Salvar</button>
           </div>
