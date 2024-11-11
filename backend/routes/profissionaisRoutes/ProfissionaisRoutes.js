@@ -14,7 +14,7 @@ router.post('/profissionais/adicionar', (req, res) =>
 );
 
 // Rota para editar profissional
-router.patch('/profissionais/editar/:id', (req, res) => 
+router.put('/profissionais/editar/:id', (req, res) => 
     ProfissionaisController.editarProfissional(req, res)
 );
 

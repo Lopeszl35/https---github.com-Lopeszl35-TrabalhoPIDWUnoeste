@@ -88,25 +88,30 @@ function Profissionais() {
     }
   };
 
-  const salvarEdicaoProfissional = async () => {
+  const salvarEdicaoProfissional = async (profissionalAtualizado) => {
     const camposAlterados = {};
     
-    for (const [campo, valor] of Object.entries(profissionalEditando)) {
+    for (const [campo, valor] of Object.entries(profissionalAtualizado)) {
+      console.log('Campo:', campo, 'Valor:', valor);
       if (profissionalOriginal[campo] !== valor) {
         camposAlterados[campo] = valor;
       }
-    }
+    } 
+
+    delete camposAlterados.ID_Profissional;
     console.log('Campos alterados:', camposAlterados);
     console.log('Profissional original:', profissionalOriginal);
-    console.log('Profissional editado:', profissionalEditando);
+    console.log('Profissional editado:', profissionalAtualizado);
 
     if (Object.keys(camposAlterados).length === 0) {
       alert("Nenhuma alteração detectada.");
       return;
     }
 
+    const payload = { profissional: camposAlterados };
+
     try {
-      await profissionaisService.editarProfissional(profissionalEditando.ID_Profissional, camposAlterados);
+      await profissionaisService.editarProfissional(profissionalAtualizado.ID_Profissional, payload);
       obterProfissionais();
       fecharModalEditar();
       alert('Profissional editado com sucesso!');
