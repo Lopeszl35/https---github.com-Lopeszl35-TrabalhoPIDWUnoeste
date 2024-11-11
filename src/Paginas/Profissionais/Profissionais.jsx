@@ -21,6 +21,7 @@ function Profissionais() {
   const [modalDelete, setModalDelete] = useState(false);
   const [modalEditarShow, setModalEditarShow] = useState(false);
   const [profissionalEditando, setProfissionalEditando] = useState(null);
+  const [profissionalOriginal, setProfissionalOriginal] = useState(null);
   const [profissionalADeletar, setProfissionalADeletar] = useState(null);
   const profissionaisPerPage = 10;
 
@@ -45,7 +46,7 @@ function Profissionais() {
         return profissional.registroProfissional.toLowerCase().includes(searchQuery.toLowerCase());
       } else if (searchType === "2") {
         return profissional.Nome_Completo.toLowerCase().includes(searchQuery.toLowerCase());
-      } else if(searchType === "3") {
+      } else if (searchType === "3") {
         return profissional.Especialidade.toLowerCase().includes(searchQuery.toLowerCase());
       }
       return true;
@@ -68,6 +69,7 @@ function Profissionais() {
   const fecharModalEditar = () => {
     setModalEditarShow(false);
     setProfissionalEditando(null);
+    setProfissionalOriginal(null);
   };
 
   const abrirModalExcluir = (id) => {
@@ -78,16 +80,38 @@ function Profissionais() {
   const editarProfissional = async (id) => {
     try {
       const profissionalEditado = await profissionaisService.obterPorId(id);
-      setProfissionalEditando(profissionalEditado);
+      setProfissionalEditando({ ...profissionalEditado }); // Cópia para edição
+      setProfissionalOriginal({ ...profissionalEditado }); // Cópia original para comparação
       setModalEditarShow(true);
     } catch (error) {
       console.error('Erro ao editar profissional:', error);
     }
   };
 
-  const salvarEdicaoProfissional = async (profissionalEditado) => {
+  const salvarEdicaoProfissional = async (profissionalAtualizado) => {
+    const camposAlterados = {};
+    
+    for (const [campo, valor] of Object.entries(profissionalAtualizado)) {
+      console.log('Campo:', campo, 'Valor:', valor);
+      if (profissionalOriginal[campo] !== valor) {
+        camposAlterados[campo] = valor;
+      }
+    } 
+
+    delete camposAlterados.ID_Profissional;
+    console.log('Campos alterados:', camposAlterados);
+    console.log('Profissional original:', profissionalOriginal);
+    console.log('Profissional editado:', profissionalAtualizado);
+
+    if (Object.keys(camposAlterados).length === 0) {
+      alert("Nenhuma alteração detectada.");
+      return;
+    }
+
+    const payload = { profissional: camposAlterados };
+
     try {
-      await profissionaisService.editarProfissional(profissionalEditado.ID_Profissional, profissionalEditado);
+      await profissionaisService.editarProfissional(profissionalAtualizado.ID_Profissional, payload);
       obterProfissionais();
       fecharModalEditar();
       alert('Profissional editado com sucesso!');
@@ -154,7 +178,7 @@ function Profissionais() {
                   currentProfissionais.map((profissional) => (
                     <Accordion.Item eventKey={profissional.ID_Profissional} key={profissional.ID_Profissional}>
                       <Accordion.Header>
-                      <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p> - {profissional.Especialidade}
+                        <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p> - {profissional.Especialidade}
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>
@@ -170,7 +194,6 @@ function Profissionais() {
                             <p><strong>Telefone:</strong> {profissional.Telefone}</p>
                           </Col>
                           <Col md={4}>
-                            <p><strong>Especialidade:</strong> {profissional.Especialidade}</p>
                             <p><strong>Registro Profissional:</strong> {profissional.registroProfissional}</p>
                           </Col>
                         </Row>

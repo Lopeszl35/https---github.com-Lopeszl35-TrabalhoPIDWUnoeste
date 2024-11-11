@@ -54,8 +54,8 @@ class PacientesService extends AbstractPacienteService {
             }
 
             // Atualiza prontuario nos dados de endereço e responsável
-            enderecoData.Prontuario = prontuario;
-            responsavelData.Prontuario = prontuario;
+            enderecoData.Prontuario = pacienteData.Prontuario;
+            responsavelData.Prontuario = pacienteData.Prontuario;
 
             const enderecoAtualizado = await this.enderecosRepository.atualizarEndereco(enderecoData, connection);
             if(!enderecoAtualizado) {

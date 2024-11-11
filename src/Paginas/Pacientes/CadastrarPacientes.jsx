@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Button } from "react-bootstrap";
 import { FaRegSave, FaArrowLeft } from "react-icons/fa";
 import { useOutletContext, Link, useNavigate } from "react-router-dom";
@@ -39,7 +39,6 @@ function CadastrarPacientes() {
     Complemento: ''
   });
 
-
   const handleInputChange = (e) => {
     setPacienteInfo({
       ...pacienteInfo,
@@ -53,8 +52,6 @@ function CadastrarPacientes() {
       autorizacaoImagem: e.target.checked,
     });
   };
- 
-  //-------------------------------------------
 
   const validate = () => {
     const newErros = {};
@@ -106,8 +103,19 @@ function CadastrarPacientes() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
+      const { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email } = pacienteInfo;
+      const paciente = { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email };
+
+      const { Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai } = pacienteInfo;
+      const responsavel = { Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai };
+
+      const { Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP } = pacienteInfo;
+      const endereco = { Logradouro, Numero, Complemento, Bairro, Cidade, Estado, CEP };
+
+      const pacienteDados = { paciente, endereco, responsavel };
+
       try {
-        await pacientesService.adicionar(pacienteInfo);
+        await pacientesService.adicionar(pacienteDados);
         navigate('/pacientes');
       } catch (error) {
         console.error('Erro ao cadastrar paciente:', error);

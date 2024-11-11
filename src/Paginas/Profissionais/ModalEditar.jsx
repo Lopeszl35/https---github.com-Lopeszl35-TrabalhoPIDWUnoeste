@@ -2,18 +2,20 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
 
 function ModalEditar({ modalEditarShow, fecharModalEditar, profissionalEditando, salvarEdicaoProfissional }) {
-    const [editandoProfissional, setEditandoProfissional] = useState(profissionalEditando);
+    const [editandoProfissional, setEditandoProfissional] = useState({});
 
     useEffect(() => {
-        setEditandoProfissional(profissionalEditando);
+        // Criar uma cópia do objeto ao abrir o modal
+        setEditandoProfissional({ ...profissionalEditando });
     }, [profissionalEditando]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setEditandoProfissional({ ...editandoProfissional, [name]: value });
+        setEditandoProfissional(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSalvar = () => {
+        console.log("editandoProfissional:", editandoProfissional);
         salvarEdicaoProfissional(editandoProfissional);
     };
 

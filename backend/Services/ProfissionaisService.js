@@ -1,4 +1,5 @@
 const AbstractProfissionaisService = require("./abstratos/AbstractProfissionaisService");
+const ErroSqlHandler = require("../utils/ErroSqlHandler");
 
 class ProfissionaisService extends AbstractProfissionaisService {
     constructor(profissionaisRepository, database) {
@@ -33,19 +34,17 @@ class ProfissionaisService extends AbstractProfissionaisService {
         }
     }
 
-    /*
-    async profissionalDoServico(servico) {
+    async editarProfissional(id, profissional) {
         try {
-            const profissionais = await this.profissionaisRepository.profissionalDoServico(servico);
-            if(profissionais.length === 0) {
-                throw new Error("Nenhum profissional encontrado para este serviço");
-            }
-            return profissionais
+            const profissionalEditado = await this.profissionaisRepository.editarProfissional(id, profissional);
+            return profissionalEditado
         } catch (error) {
-            console.log("Erro ao obter os Profissionais:", error);
-            throw error
+            console.error("Erro ao editar o Profissional:", error);
+            ErroSqlHandler.tratarErroSql(error, "profissional");
         }
-    }*/
+    }
+
+   
 
 }
 

@@ -73,7 +73,22 @@ class PacienteRepository extends AbstractPacienteRepository {
     } 
 
     async obterPacientes() {
-        const sql = `SELECT * FROM Pacientes`;
+        const sql = `
+            SELECT 
+                p.Prontuario,
+                p.Nome_Completo,
+                p.Data_De_Nascimento,
+                p.CPF,
+                p.RG,
+                p.Email,
+                r.Telefone_Mae,
+                e.Logradouro,
+                e.Numero,
+                e.Cidade
+            FROM Pacientes p
+            LEFT JOIN Responsaveis r ON p.Prontuario = r.Prontuario
+            LEFT JOIN Enderecos e ON p.Prontuario = e.Prontuario
+        `;
         try {
             const result = await this.database.executaComando(sql);
             return result;
@@ -81,12 +96,14 @@ class PacienteRepository extends AbstractPacienteRepository {
             throw error;
         }
     }
+    
 
     async obterDadosCompletosDoPaciente(prontuario) {
         const sql = `
             SELECT 
                 p.Prontuario,
                 p.Nome_Completo,
+                p.Email,
                 p.Data_De_Nascimento,
                 p.CPF,
                 p.RG,

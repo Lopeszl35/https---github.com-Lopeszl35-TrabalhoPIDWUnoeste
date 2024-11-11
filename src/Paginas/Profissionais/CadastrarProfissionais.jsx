@@ -1,52 +1,55 @@
 import { Container, Alert, Button } from "react-bootstrap";
 import { useOutletContext, Link } from "react-router-dom";
 import { FaCheckCircle, FaArrowLeft, FaRegSave } from "react-icons/fa";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import "./CadastrarProfissional.css";
 import ProfissionaisService from "../../services/profissionaisService";
-import ServicosService from "../../services/servicosService";
 
 const profissionaisService = new ProfissionaisService();
-const servicosService = new ServicosService();
 
 function CadastrarProfissionais() {
     const { show } = useOutletContext();
     const [showMensagem, setShowMensagem] = useState(false);
     const [erros, setErros] = useState({});
-    const [servicos, setServicos] = useState([]);
-    const [usuarioInfo, setUsuarioInfo] = useState({
-        nomeCompleto: '', 
-        dataNasc: '', 
-        cpf: '', 
-        rg: '',
-        email: '',
-        telefone: '',
-        especialidade: '',
+    const [profissional, setProfissional] = useState({
+        Nome_Completo: '', 
+        Data_Nascimento: '', 
+        CPF: '', 
+        RG: '',
+        Email: '',
+        Telefone: '',
         registroProfissional: '',
-        senha: '',
+        Especialidade: '',
+    });
+    const [usuario, setUsuario] = useState({
+        Email: '',
+        Senha: '',
     });
 
-    // Método para cadastrar profissional no backend
     const cadastrarProfissional = async () => {
         try {
-            await profissionaisService.cadastrarProfissional(usuarioInfo);
-            setUsuarioInfo({
-                nomeCompleto: '',
-                dataNasc: '',
-                cpf: '',
-                rg: '',
-                email: '',
-                telefone: '',
-                especialidade: '',
+            const dadosCadastro = { profissional, usuario }; // Cria o objeto para envio
+            await profissionaisService.cadastrarProfissional(dadosCadastro); // Envia o objeto ao backend
+
+            setProfissional({
+                Nome_Completo: '',
+                Data_Nascimento: '',
+                CPF: '',
+                RG: '',
+                Email: '',
+                Telefone: '',
                 registroProfissional: '',
-                senha: '',
+                Especialidade: '',
+            });
+            setUsuario({
+                Email: '',
+                Senha: '',
             });
             setErros({});
-            setShowMensagem(true); 
+            setShowMensagem(true);
         } catch (error) {
             console.error("Erro ao cadastrar profissional:", error);
-    
-            // Verifica se o erro contém mensagens de duplicidade específicas para os campos
+
             if (error.response && error.response.data.errors) {
                 setErros(error.response.data.errors);
             } else {
@@ -55,39 +58,36 @@ function CadastrarProfissionais() {
         }
     };
 
-    useEffect(() => {
-        const fetchServicos = async () => {
-            try {
-                const servicosData = await servicosService.obterTodos();
-                setServicos(servicosData);
-            } catch (error) {
-                console.error("Erro ao buscar serviços:", error);
-            }
-        };
-        fetchServicos();
-    }, []);
+    const handleProfissionalChange = (e) => {
+        const { name, value } = e.target;
+        setProfissional({
+            ...profissional,
+            [name]: value,
+        });
+    };
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setUsuarioInfo({
-            ...usuarioInfo,
-            [name]: type === 'checkbox' ? checked : value,
+    const handleUsuarioChange = (e) => {
+        const { name, value } = e.target;
+        setUsuario({
+            ...usuario,
+            [name]: value,
         });
     };
 
     const validate = () => {
         const newErros = {};
-        if (!usuarioInfo.nomeCompleto) newErros.nomeCompleto = 'Nome completo é obrigatório';
-        if (!usuarioInfo.dataNasc) newErros.dataNasc = 'Data de nascimento é obrigatória';
-        if (!usuarioInfo.cpf || !/^\d{11}$/.test(usuarioInfo.cpf)) newErros.cpf = 'CPF inválido. Deve conter 11 dígitos numéricos';
-        if (!usuarioInfo.rg || !/^\d+$/.test(usuarioInfo.rg)) newErros.rg = 'RG inválido. Deve conter apenas dígitos numéricos';
-        if (!usuarioInfo.email) newErros.email = 'Email é obrigatório';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(usuarioInfo.email)) newErros.email = 'Email inválido';
-        if (usuarioInfo.telefone && !/^\d{10,11}$/.test(usuarioInfo.telefone)) newErros.telefone = 'Telefone inválido. Deve conter 10 ou 11 dígitos';
-        if (!usuarioInfo.especialidade) newErros.especialidade = 'Especialidade é obrigatória';
-        if (!usuarioInfo.registroProfissional) newErros.registroProfissional = 'Registro profissional é obrigatório';
-        if (!usuarioInfo.senha) newErros.senha = 'Senha é obrigatória';
-        else if (usuarioInfo.senha.length < 6) newErros.senha = 'A senha deve ter pelo menos 6 caracteres';
+
+        if (!profissional.Nome_Completo) newErros.Nome_Completo = 'Nome completo é obrigatório';
+        if (!profissional.Data_Nascimento) newErros.Data_Nascimento = 'Data de nascimento é obrigatória';
+        if (!profissional.CPF || !/^\d{11}$/.test(profissional.CPF)) newErros.CPF = 'CPF inválido. Deve conter 11 dígitos numéricos';
+        if (!profissional.RG || !/^\d+$/.test(profissional.RG)) newErros.RG = 'RG inválido. Deve conter apenas dígitos numéricos';
+        if (!profissional.Email) newErros.Email = 'Email é obrigatório';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profissional.Email)) newErros.Email = 'Email inválido';
+        if (!profissional.Telefone || !/^\d{10,11}$/.test(profissional.Telefone)) newErros.Telefone = 'Telefone inválido. Deve conter 10 ou 11 dígitos';
+        if (!profissional.registroProfissional) newErros.registroProfissional = 'Registro profissional é obrigatório';
+        if (!usuario.Senha) newErros.Senha = 'Senha é obrigatória';
+        else if (usuario.Senha.length < 6) newErros.Senha = 'A senha deve ter pelo menos 6 caracteres';
+
         setErros(newErros);
         return Object.keys(newErros).length === 0;
     };
@@ -100,83 +100,79 @@ function CadastrarProfissionais() {
     };
 
     return (
-    <Container className={`container-usuario ${show ? "container-usuario-active" : ""}`}>
-        <h1>Cadastrar Profissional</h1>
-        <form className="form-container" onSubmit={handleSubmit}>
-        <h2>Informações Pessoais</h2>
-        <label htmlFor="nomeCompleto">Nome completo:</label>
-        <input type="text" id="nomeCompleto" name="nomeCompleto" value={usuarioInfo.nomeCompleto} onChange={handleInputChange} />
-        {erros.nomeCompleto && <p className="erros">{erros.nomeCompleto}</p>}
+        <Container className={`container-usuario ${show ? "container-usuario-active" : ""}`}>
+            <h1>Cadastrar Profissional</h1>
+            <form className="form-container" onSubmit={handleSubmit}>
+                <h2>Informações Pessoais</h2>
+                <label htmlFor="Nome_Completo">Nome completo:</label>
+                <input type="text" id="Nome_Completo" name="Nome_Completo" value={profissional.Nome_Completo} onChange={handleProfissionalChange} />
+                {erros.Nome_Completo && <p className="erros">{erros.Nome_Completo}</p>}
 
-        <div className="row">
-            <div className="form-group col-md-6">
-                <label htmlFor="dataNasc">Data de nascimento:</label>
-                <input type="date" id="dataNasc" name="dataNasc" value={usuarioInfo.dataNasc} onChange={handleInputChange} />
-                {erros.dataNasc && <p className="erros">{erros.dataNasc}</p>}
-            </div>
-            <div className="form-group col-md-6">
-                <label htmlFor="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" value={usuarioInfo.cpf} onChange={handleInputChange} />
-                {erros.cpf && <p className="erros">{erros.cpf}</p>}
-            </div>
-        </div>
+                <div className="row">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="Data_Nascimento">Data de nascimento:</label>
+                        <input type="date" id="Data_Nascimento" name="Data_Nascimento" value={profissional.Data_Nascimento} onChange={handleProfissionalChange} />
+                        {erros.Data_Nascimento && <p className="erros">{erros.Data_Nascimento}</p>}
+                    </div>
+                </div>
 
-        <div className="row">
-            <div className="form-group col-md-6">
-                <label htmlFor="rg">RG:</label>
-                <input type="text" id="rg" name="rg" value={usuarioInfo.rg} onChange={handleInputChange} />
-                {erros.rg && <p className="erros">{erros.rg}</p>}
-            </div>
-        </div>
+                <div className="row">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="RG">RG:</label>
+                        <input type="text" id="RG" name="RG" value={profissional.RG} onChange={handleProfissionalChange} />
+                        {erros.RG && <p className="erros">{erros.RG}</p>}
+                    </div>
+                </div>
 
-        <h2>Informações de Contato</h2>
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" name="email" value={usuarioInfo.email} onChange={handleInputChange} />
-        {erros.email && <p className="erros">{erros.email}</p>}
+                <div className="row">
+                    <div className="form-group col-md-6">
+                        <label htmlFor="CPF">CPF:</label>
+                        <input type="text" id="CPF" name="CPF" value={profissional.CPF} onChange={handleProfissionalChange} />
+                        {erros.CPF && <p className="erros">{erros.CPF}</p>}
+                    </div>
+                </div>
 
-        <label htmlFor="telefone">Telefone:</label>
-        <input type="text" id="telefone" name="telefone" value={usuarioInfo.telefone} onChange={handleInputChange} />
-        {erros.telefone && <p className="erros">{erros.telefone}</p>}
+                <h2>Informações de Contato</h2>
+                <label htmlFor="Email">Email:</label>
+                <input type="email" id="Email" name="Email" value={profissional.Email} onChange={(e) => {
+                    handleProfissionalChange(e);
+                    handleUsuarioChange(e);
+                }} />
+                {erros.Email && <p className="erros">{erros.Email}</p>}
 
-        <h2>Informações Profissionais</h2>
-        <label htmlFor="especialidade">Especialidade:</label>
-        <select id="especialidade" name="especialidade" value={usuarioInfo.especialidade} onChange={handleInputChange}>
-            <option value="">Selecione</option>
-            {servicos.map((servico) => (
-                <option key={servico.ID_Servico} value={servico.Nome_Servico}>{servico.Nome_Servico}</option>
-            ))}
-        </select>
-        {erros.especialidade && <p className="erros">{erros.especialidade}</p>}
+                <label htmlFor="Telefone">Telefone:</label>
+                <input type="text" id="Telefone" name="Telefone" value={profissional.Telefone} onChange={handleProfissionalChange} />
+                {erros.Telefone && <p className="erros">{erros.Telefone}</p>}
 
-        <label htmlFor="registroProfissional">Registro Profissional:</label>
-        <input type="text" id="registroProfissional" name="registroProfissional" value={usuarioInfo.registroProfissional} onChange={handleInputChange} />
-        {erros.registroProfissional && <p className="erros">{erros.registroProfissional}</p>}
+                <label htmlFor="registroProfissional">Registro Profissional:</label>
+                <input type="text" id="registroProfissional" name="registroProfissional" value={profissional.registroProfissional} onChange={handleProfissionalChange} />
+                {erros.registroProfissional && <p className="erros">{erros.registroProfissional}</p>}
 
-        <h2>Acesso ao Sistema</h2>
-        <label htmlFor="senha">Senha:</label>
-        <input type="password" id="senha" name="senha" value={usuarioInfo.senha} onChange={handleInputChange} />
-        {erros.senha && <p className="erros">{erros.senha}</p>}
+                <h2>Acesso ao Sistema</h2>
+                <label htmlFor="Senha">Senha:</label>
+                <input type="password" id="Senha" name="Senha" value={usuario.Senha} onChange={handleUsuarioChange} />
+                {erros.Senha && <p className="erros">{erros.Senha}</p>}
 
-        <div className="d-flex justify-content-end mt-3">
-            <Link to={"/Profissionais"}>
-                <Button variant="secondary" className="me-2">
-                    <FaArrowLeft className="me-2" /> Voltar
-                </Button>
-            </Link>
-            <Button type="submit" variant="primary">
-                <FaRegSave className="me-2" /> Cadastrar
-            </Button>
-        </div>
+                <div className="d-flex justify-content-end mt-3">
+                    <Link to={"/Profissionais"}>
+                        <Button variant="secondary" className="me-2">
+                            <FaArrowLeft className="me-2" /> Voltar
+                        </Button>
+                    </Link>
+                    <Button type="submit" variant="primary">
+                        <FaRegSave className="me-2" /> Cadastrar
+                    </Button>
+                </div>
 
-            {erros.form && <p className="erros text-danger mt-3">{erros.form}</p>}
+                {erros.form && <p className="erros text-danger mt-3">{erros.form}</p>}
 
-            <Alert show={showMensagem} variant="success" className="mt-3" dismissible onClose={() =>   setShowMensagem    (false)}>
-                <Alert.Heading>
-                    <FaCheckCircle className="me-2" /> Profissional Cadastrado!
-                </Alert.Heading>
-            </Alert>
-        </form>
-    </Container>
+                <Alert show={showMensagem} variant="success" className="mt-3" dismissible onClose={() => setShowMensagem(false)}>
+                    <Alert.Heading>
+                        <FaCheckCircle className="me-2" /> Profissional Cadastrado!
+                    </Alert.Heading>
+                </Alert>
+            </form>
+        </Container>
     );
 }
 
