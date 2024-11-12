@@ -24,31 +24,69 @@ class ProfissionaisServicoService {
     }
 
     async relacionarProfissionalServico(idProfissional, idServico) {
-        const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais/${idProfissional}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais/${idProfissional}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao relacionar o profissional ao serviço!');
+            } else {
+                return await response.json();
             }
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao relacionar o profissional ao serviço!');
-        } else {
-            return await response.json();
+        } catch (error) {
+            console.log('Erro ao relacionar o profissional ao serviço:', error);
+            throw error;
         }
     }
 
-    async deletarRelacaoProfissionalServico(idServico) {
-        const response = await fetch(`${API_BASE_URL}/profissionaiservicos/${idServico}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
+    async deletarRelacaoProfissionalServico(idProfissional, idServico) {
+        console.log("Profissional: ", idProfissional)
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/profissionalServico/deletar`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( { idProfissional, idServico } )
+            });
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                console.error('Erro ao deletar a relação do profissional ao serviço:', errorMessage);
+                throw new Error('Erro ao deletar a relação do profissional ao serviço!');
+            } else {
+                return await response.json();
             }
-        });
-        if (!response.ok) {
-            console.log('response: ', response);
-            throw new Error('Erro ao deletar a relação do profissional ao serviço!');
-        } else {
-            return await response.json();
+        } catch (error) {
+            console.log('Erro ao deletar a relação do profissional ao serviço:', error);
+            throw error;
+        }
+    }
+
+    async buscarProfissionais(searchTerm, searchType) {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/profissionais/buscar?searchTerm=${searchTerm}&searchType=${searchType}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao buscar profissionais!');
+            } else {
+                return await response.json();
+            }
+        } catch (error) {
+            console.log('Erro ao buscar profissionais:', error);
+            throw error;
         }
     }
 

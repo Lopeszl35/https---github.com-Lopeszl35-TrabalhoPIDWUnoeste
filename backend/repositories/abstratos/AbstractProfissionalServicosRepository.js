@@ -13,7 +13,7 @@ class AbstractProfissionalServicosRepository {
     throw new Error("Metodo não implementado");
   }
 
-  async deletarRelacao(idServico, idProfissional) {
+  async deletarRelacao(idProfissional, idServico) {
     throw new Error("Metodo não implementado");
   }
 

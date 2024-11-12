@@ -45,17 +45,19 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
     }
   }
 
-  async deletarRelacao(idServico, idProfissional) {
+  async deletarRelacao(idProfissional, idServico) {
     const sql = `
       DELETE FROM ProfissionalServicos
-      WHERE ID_Servico = ?
-      AND ID_Profissional = ?
+      WHERE ID_Profissional = ?
+      AND ID_Servico = ?
     `;
-    const params = [idServico, idProfissional];
+    const params = [idProfissional, idServico];
+    console.log("Params:", params);
     try {
       const relacaoDeletada = await this.database.executaComando(sql, params);
       return relacaoDeletada.affectedRows > 0;
     } catch (error) {
+      console.log("Erro ao deletar relação:", error);
       throw error;
     }
   }
@@ -64,6 +66,7 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
     const sql = `
     SELECT 
     p.Nome_Completo AS Nome_Profissional,
+    p.ID_Profissional,
     p.Email,
     p.Telefone,
     p.registroProfissional

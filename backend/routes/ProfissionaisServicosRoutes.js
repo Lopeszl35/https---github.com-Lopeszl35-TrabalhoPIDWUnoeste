@@ -26,4 +26,9 @@ router.get("/profissionalServico/servico/:id", (req, res) =>
   ProfissionaisServicosController.profissionaisDoServico(req, res)
 );
 
+// Rota para buscar profissionais 
+router.get("/profissionais/buscar?searchTerm=${searchTerm}&searchType=${searchType}", (req, res) => 
+  ProfissionaisServicosController.buscarProfissionais(req, res)
+);
+
 module.exports = router;
