@@ -20,6 +20,10 @@ class AbstractProfissionalServicosRepository {
   async obterRelacoesServico(id) {
     throw new Error("Metodo não implementado");
   }
+
+  async obterProfissionais(searchTerm, searchType) {
+    throw new Error("Metodo nao implementado");
+  }
 }
 
 module.exports = AbstractProfissionalServicosRepository;

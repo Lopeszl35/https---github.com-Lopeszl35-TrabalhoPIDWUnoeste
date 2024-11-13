@@ -81,11 +81,15 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
 
   async buscarProfissionais(searchTerm, searchType) {
     // adicionar validação para searchTerm e Type
+    if (!searchTerm || !searchType) {
+      return { message: "Termo de busca e tipo de busca obrigatórios" };
+    }
     try {
-      const profissionais = await this.profissionaisRepository.buscarProfissionais(searchTerm, searchType);
+      const profissionais = await this.profissionalServicosRepository.buscarProfissionais(searchTerm, searchType);
       if(!profissionais){
         throw new Error(`Nenhum profissional encontrado para seleção ${searchTerm}`);
       }
+      return profissionais;
     } catch (error) {
       console.error("Erro ao busca profissionais: ", error);
       throw error;

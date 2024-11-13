@@ -26,15 +26,17 @@ class ProfissionaisServicoService {
     async relacionarProfissionalServico(idProfissional, idServico) {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`${API_BASE_URL}/servicos/${idServico}/profissionais/${idProfissional}`, {
+            const response = await fetch(`${API_BASE_URL}/profissionalServico/relacionar`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify( { idProfissional, idServico } )
             });
             if (!response.ok) {
-                throw new Error('Erro ao relacionar o profissional ao serviço!');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao relacionar o profissional ao serviço!');
             } else {
                 return await response.json();
             }
@@ -72,23 +74,32 @@ class ProfissionaisServicoService {
     async buscarProfissionais(searchTerm, searchType) {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`${API_BASE_URL}/profissionais/buscar?searchTerm=${searchTerm}&searchType=${searchType}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+            const response = await fetch(
+                `${API_BASE_URL}/profissionaisServico/buscar?searchTerm=${encodeURIComponent(searchTerm)}&searchType=${encodeURIComponent(searchType)}`, 
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 }
-            });
+            );
+    
             if (!response.ok) {
+                const errorResponse = await response.text();
+                console.error('Erro ao buscar profissionais:', errorResponse);
                 throw new Error('Erro ao buscar profissionais!');
             } else {
-                return await response.json();
+                const data = await response.json();
+                return data;
             }
         } catch (error) {
-            console.log('Erro ao buscar profissionais:', error);
+            console.error('Erro ao buscar profissionais:', error);
             throw error;
         }
     }
+    
+
 
 }
 

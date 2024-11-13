@@ -64,7 +64,9 @@ class ProfissionaisServicosController extends AbstractProfissionaisServicosContr
     if(!errors.isEmpty) {
       return res.status(400).json({errors: errors.array()})
     }
-    const { searchTerm, searchType } = req.params;
+    const { searchTerm, searchType } = req.query;
+    console.log("searchTerm:", searchTerm);
+    console.log("Query:", req.query);
     try {
       const resultado = await this.profissionalServicosService.buscarProfissionais(searchTerm, searchType);
       return res.status(200).json(resultado);

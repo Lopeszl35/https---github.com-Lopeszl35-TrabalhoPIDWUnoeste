@@ -85,6 +85,21 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
       throw error;
     }
   }
+
+  async buscarProfissionais(searchTerm, searchType) {
+    const sql = `
+      SELECT * FROM Profissionais
+      WHERE ${searchType} LIKE ?
+    `;
+    const params = [`%${searchTerm}%`];
+    try {
+      const profissionais = await this.database.executaComando(sql, params);
+      return profissionais;
+    } catch (error) {
+      console.error("Erro ao obter profissionais:", error);
+      throw error;
+    }
+  }
 }
 
 module.exports = ProfissionalServicosRepository;

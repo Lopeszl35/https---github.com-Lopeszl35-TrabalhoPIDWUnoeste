@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Container, Form, Card, Button, Modal, ListGroup, Accordion, Row, Col } from "react-bootstrap";
+import { Container, Form, Card, Button, Modal, ListGroup, Accordion, Row, Col, Alert, AlertHeading } from "react-bootstrap";
 import { FaSearch, FaTrash, FaPlus } from "react-icons/fa";
 import { TbSelect } from "react-icons/tb";
 import { useParams, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
 import ProfissionaisServicoService from "../../services/profissionaisServicoService";
 import './profissionaisServico.css';
+import { FaCircleCheck } from "react-icons/fa6";
 
 const servicosService = new ServicosService();
 const profissionaisServicoService = new ProfissionaisServicoService();
@@ -16,8 +17,12 @@ function ProfissionaisPorServico() {
   const [servico, setServico] = useState(null);
   const [profissionais, setProfissionais] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchType, setSearchType] = useState("nome");
+  const [searchType, setSearchType] = useState("Nome_Completo");
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertVariant, setAlertVariant] = useState("");
+  const [alertIcon, setAlertIcon] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [profissionalSelecionado, setProfissionalSelecionado] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -45,6 +50,10 @@ function ProfissionaisPorServico() {
     setProfissionalSelecionado(null);
   };
 
+  const handleModalAlert = () => {
+    setShowAlertModal(true);
+  };
+
   const handleOpenConfirmModal = () => {
     setShowConfirmModal(true);
   };
@@ -62,8 +71,15 @@ function ProfissionaisPorServico() {
             setProfissionais(profissionais.filter(p => p.ID_Profissional !== profissionalSelecionado.ID_Profissional));
             setProfissionalSelecionado(null);
             handleCloseConfirmModal();
+            setAlertMessage("Operação concluída com sucesso!");
+            setAlertVariant("success");
+            setAlertIcon(<FaCircleCheck />);
+            setShowAlertModal(true);
         } catch (error) {
-            alert(`Erro ao excluir o profissional do serviço: ${error.message}`);
+            setAlertMessage(`Erro ao excluir o profissional do serviço ${error.message}`);
+            setAlertVariant("danger");
+            setAlertIcon(<FaTrash />);
+            setShowAlertModal(true);
             console.error("Erro ao excluir o profissional:", error);
         }
     }
@@ -73,14 +89,24 @@ function ProfissionaisPorServico() {
     try {
       await profissionaisServicoService.relacionarProfissionalServico(profissional.ID_Profissional, idServico);
       setProfissionais([...profissionais, profissional]);
+      setAlertMessage("Profissional relacionado com sucesso!");
+      setAlertVariant("success");
+      setAlertIcon(<FaCircleCheck />);
+      setShowAlertModal(true);
     } catch (error) {
+      setAlertMessage(`Erro ao relacionar o profissional ao serviço ${error.message}`);
+      setAlertVariant("danger");
+      setAlertIcon(<FaTrash />);
+      setShowAlertModal(true);
       console.error("Erro ao adicionar profissional:", error);
     }
   };
 
   const handleBuscarProfissionais = async () => {
     try {
+      console.log(`searchTerm: ${searchTerm}, searchType: ${searchType}`);
       const results = await profissionaisServicoService.buscarProfissionais(searchTerm, searchType);
+      console.log("Profissionais encontrados:", results);
       setSearchResults(results);
     } catch (error) {
       console.error("Erro ao buscar profissionais:", error);
@@ -97,24 +123,7 @@ function ProfissionaisPorServico() {
         {/* Adicionar e Excluir Profissionais */}
         <Container className="card-servicos mt-4">
           <Card.Body className="d-flex flex-column align-items-start">
-            {/* Adicionar Profissional */}
-            <div className="d-flex w-100 mb-3">
-              <Button variant="primary" onClick={() => setShowSearchModal(true)}>
-                <FaSearch />
-              </Button>
-              <Form.Control
-                type="text"
-                placeholder="Buscar profissionais no banco de dados"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="me-2"
-              />
-              <Button variant="success" onClick={() => handleAdicionarProfissional(profissionalSelecionado)} className="ms-2">
-                <FaPlus />
-              </Button>
-            </div>
-
-            {/* Excluir Profissional */}
+            {/* Excluir e adicionar Profissional */}
             <div className="d-flex w-100">
               <Button variant="primary" onClick={() => setShowSearchModal(true)}>
                 <FaSearch />
@@ -122,7 +131,7 @@ function ProfissionaisPorServico() {
               <Form.Control
                 type="text"
                 placeholder="Nome do profissional"
-                value={profissionalSelecionado?.Nome_Profissional || ""}
+                value={profissionalSelecionado?.Nome_Profissional || profissionalSelecionado?.Nome_Completo || ""}
                 readOnly
                 className="mx-2"
               />
@@ -133,9 +142,14 @@ function ProfissionaisPorServico() {
                 readOnly
                 className="small-input mx-2"
               />
+              <div className="d-flex gap-2">
+              <Button variant="success" onClick={() => handleAdicionarProfissional(profissionalSelecionado)} className="ms-2">
+                <FaPlus />
+              </Button>
               <Button variant="danger" onClick={handleOpenConfirmModal}>
                 <FaTrash />
               </Button>
+              </div>
             </div>
           </Card.Body>
         </Container>
@@ -209,13 +223,16 @@ function ProfissionaisPorServico() {
             onChange={(e) => setSearchType(e.target.value)}
             className="mt-3"
           >
-            <option value="nome">Nome</option>
-            <option value="registro">Registro Profissional</option>
+            <option value="Nome_Completo">Nome</option>
+            <option value="registroProfissional">Registro Profissional</option>
           </Form.Select>
           <ListGroup className="mt-3">
             {searchResults.map((profissional, index) => (
               <ListGroup.Item key={index} action onClick={() => handleSelectProfissional(profissional)}>
-                {profissional.Nome_Profissional} - {profissional.registroProfissional}
+                <Row>
+                  <p><strong className="mt-2 text-primary">Nome: </strong>{profissional.Nome_Completo}</p>
+                  <p><strong className="mt-2 text-primary">Registro Profissional: </strong>{profissional.registroProfissional}</p>
+                </Row>
               </ListGroup.Item>
             ))}
           </ListGroup>
@@ -223,6 +240,29 @@ function ProfissionaisPorServico() {
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowSearchModal(false)}>Fechar</Button>
           <Button variant="primary" onClick={handleBuscarProfissionais}>Buscar</Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal para alertas sucesso erros */}
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Alerta</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert
+            className="mt-3"
+            variant={alertVariant}
+            onClose={() => setShowAlertModal(false)}
+            dismissible
+          >
+            <AlertHeading>
+              {alertIcon && <span className="me-2">{alertIcon}</span>}
+              {alertMessage}
+            </AlertHeading>
+          </Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAlertModal(false)}>Fechar</Button>
         </Modal.Footer>
       </Modal>
     </main>
