@@ -48,12 +48,12 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
     }
   }
 
-  async deletarRelacao(idServico, idProfissional) {
+  async deletarRelacao(idProfissional, idServico) {
     try {
       const relacaoDeletada =
         await this.profissionalServicosRepository.deletarRelacao(
-          idServico,
-          idProfissional
+          idProfissional,
+          idServico
         );
       if (!relacaoDeletada) {
         throw new Error("Não foi possivel deletar a relação Error: ");
@@ -75,6 +75,23 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
       return relacoes;
     } catch (error) {
       console.error("Erro ao procurar relações Erro: ", error);
+      throw error;
+    }
+  }
+
+  async buscarProfissionais(searchTerm, searchType) {
+    // adicionar validação para searchTerm e Type
+    if (!searchTerm || !searchType) {
+      return { message: "Termo de busca e tipo de busca obrigatórios" };
+    }
+    try {
+      const profissionais = await this.profissionalServicosRepository.buscarProfissionais(searchTerm, searchType);
+      if(!profissionais){
+        throw new Error(`Nenhum profissional encontrado para seleção ${searchTerm}`);
+      }
+      return profissionais;
+    } catch (error) {
+      console.error("Erro ao busca profissionais: ", error);
       throw error;
     }
   }

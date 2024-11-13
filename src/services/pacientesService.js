@@ -70,7 +70,8 @@ class PacientesService {
         }  
 
         if (!response.ok) {
-            throw new Error('Erro ao adicionar o Paciente!');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao adicionar o Paciente!');
         } else {
             const dados = await response.json();
             return dados;

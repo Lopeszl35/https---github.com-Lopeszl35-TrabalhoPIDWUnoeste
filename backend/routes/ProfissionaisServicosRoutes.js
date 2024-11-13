@@ -11,6 +11,11 @@ const ProfissionaisServicosController = DependencyInjector.get(
 const router = express.Router();
 router.use(cors());
 
+// Rota para buscar profissionais
+router.get("/profissionaisServico/buscar", (req, res) => 
+  ProfissionaisServicosController.buscarProfissionais(req, res)
+);
+
 // Rota para criar relação
 router.post("/profissionalServico/relacionar", (req, res) =>
   ProfissionaisServicosController.relacionarProfissionalAServico(req, res)

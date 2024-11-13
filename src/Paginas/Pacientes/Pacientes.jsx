@@ -143,7 +143,7 @@ function Pacientes() {
                   currentPacientes.map((paciente) => (
                     <Accordion.Item eventKey={paciente.Prontuario} key={paciente.Prontuario}>
                       <Accordion.Header>
-                        {paciente.Prontuario} - {paciente.Nome_Completo} 
+                        <p className='m-2 text-primary'><strong>Prontuário: </strong></p>{paciente.Prontuario} - {paciente.Nome_Completo} 
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>

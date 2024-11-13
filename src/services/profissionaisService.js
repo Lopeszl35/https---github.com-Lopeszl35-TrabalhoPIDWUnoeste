@@ -36,14 +36,15 @@ class ProfissionaisService {
                 },
                 body: JSON.stringify(profissional)
             });
+            console.log("response: ", response);
             if (!response.ok) {
-                throw new Error('Erro ao cadastrar o Profissional!');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao adicionar o Profissional!');
             } else {
                 const dados = await response.json();
                 return dados;
             }
         } catch (error) {
-            console.log('Erro ao cadastrar o Profissional:', error);
             throw error;
         }
     }

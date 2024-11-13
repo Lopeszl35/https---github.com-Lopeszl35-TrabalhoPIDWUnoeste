@@ -43,7 +43,6 @@ class ProfissionaisController extends AbstractProfissionaisController {
             const resultado = await this.profissionalUsuarioService.adicionarProfissionalComUsuario(profissional, usuario);
             return res.status(201).json(resultado);
         } catch (error) {
-            console.error('Erro ao adicionar profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
@@ -78,21 +77,6 @@ class ProfissionaisController extends AbstractProfissionaisController {
             return res.status(500).json({ message: error.message });
         }
     }
-
-
-
-    /*
-    async profissionalDoServico(req, res) {
-        const { servico } = req.params;
-        try {
-            const profissionais = await this.profissionaisService.profissionalDoServico(servico);
-            return res.status(200).json(profissionais);
-        } catch (error) {
-            console.log('Erro ao obter os Profissionais:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }*/
-
 
 }
 

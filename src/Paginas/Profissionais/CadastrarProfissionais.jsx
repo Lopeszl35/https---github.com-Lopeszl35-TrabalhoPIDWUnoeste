@@ -49,12 +49,7 @@ function CadastrarProfissionais() {
             setShowMensagem(true);
         } catch (error) {
             console.error("Erro ao cadastrar profissional:", error);
-
-            if (error.response && error.response.data.errors) {
-                setErros(error.response.data.errors);
-            } else {
-                setErros({ form: 'Erro ao cadastrar o profissional. Tente novamente.' });
-            }
+            setErros({ form: error.message });
         }
     };
 
