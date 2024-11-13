@@ -7,6 +7,7 @@ import ServicosService from "../../services/servicosService";
 import ProfissionaisServicoService from "../../services/profissionaisServicoService";
 import './profissionaisServico.css';
 import { FaCircleCheck } from "react-icons/fa6";
+import { MdOutlineError } from "react-icons/md";
 
 const servicosService = new ServicosService();
 const profissionaisServicoService = new ProfissionaisServicoService();
@@ -46,14 +47,6 @@ function ProfissionaisPorServico() {
     setShowSearchModal(false);
   };
 
-  const handleClearSelected = () => {
-    setProfissionalSelecionado(null);
-  };
-
-  const handleModalAlert = () => {
-    setShowAlertModal(true);
-  };
-
   const handleOpenConfirmModal = () => {
     setShowConfirmModal(true);
   };
@@ -69,11 +62,12 @@ function ProfissionaisPorServico() {
             console.log("Profissional selecionado: ", profissionalSelecionado);
             await profissionaisServicoService.deletarRelacaoProfissionalServico(idProfissional, idServico);
             setProfissionais(profissionais.filter(p => p.ID_Profissional !== profissionalSelecionado.ID_Profissional));
+
             setProfissionalSelecionado(null);
             handleCloseConfirmModal();
-            setAlertMessage("Operação concluída com sucesso!");
+            setAlertMessage("Profissional excluido com sucesso!");
             setAlertVariant("success");
-            setAlertIcon(<FaCircleCheck />);
+            setAlertIcon(<FaTrash />);
             setShowAlertModal(true);
         } catch (error) {
             setAlertMessage(`Erro ao excluir o profissional do serviço ${error.message}`);
@@ -89,6 +83,11 @@ function ProfissionaisPorServico() {
     try {
       await profissionaisServicoService.relacionarProfissionalServico(profissional.ID_Profissional, idServico);
       setProfissionais([...profissionais, profissional]);
+
+      const updatedProfissionais = await profissionaisServicoService.obterProfissionaisPorServico(idServico);
+      setProfissionais(updatedProfissionais);
+      setProfissionalSelecionado(null);
+
       setAlertMessage("Profissional relacionado com sucesso!");
       setAlertVariant("success");
       setAlertIcon(<FaCircleCheck />);
@@ -96,7 +95,7 @@ function ProfissionaisPorServico() {
     } catch (error) {
       setAlertMessage(`Erro ao relacionar o profissional ao serviço ${error.message}`);
       setAlertVariant("danger");
-      setAlertIcon(<FaTrash />);
+      setAlertIcon(<MdOutlineError />);
       setShowAlertModal(true);
       console.error("Erro ao adicionar profissional:", error);
     }
@@ -104,7 +103,6 @@ function ProfissionaisPorServico() {
 
   const handleBuscarProfissionais = async () => {
     try {
-      console.log(`searchTerm: ${searchTerm}, searchType: ${searchType}`);
       const results = await profissionaisServicoService.buscarProfissionais(searchTerm, searchType);
       console.log("Profissionais encontrados:", results);
       setSearchResults(results);
