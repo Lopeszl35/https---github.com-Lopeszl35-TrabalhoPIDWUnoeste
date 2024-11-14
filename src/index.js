@@ -10,6 +10,7 @@ import Login from "./Componentes/Login/Login";
 import GerarRelatorios from "./Paginas/Relatorios/GerarRelatorios";
 import Pacientes from "./Paginas/Pacientes/Pacientes";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
+import ProfissionaisHorarios from "./Paginas/Profissionais/ProfissionaisHorarios";
 import CadastrarProfissionais from "./Paginas/Profissionais/CadastrarProfissionais";
 import Servicos from "./Paginas/Gerenciar-Servicos/Servicos";
 import ProfissionaisPorServico from "./Paginas/Gerenciar-Servicos/ProfissionaisPorServico";
@@ -51,6 +52,7 @@ function AppRouter() {
             <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
             <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
             <Route path="Profissionais" element={<Profissionais />} />
+            <Route path="profissionais/horarios/:idProfissional" element={<ProfissionaisHorarios />} />
             <Route path="Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
             <Route path="servicos" element={<Servicos />} />
             <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />

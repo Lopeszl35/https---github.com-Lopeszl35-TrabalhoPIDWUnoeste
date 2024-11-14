@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Accordion, Card, Col, Container, Form, Row, Button, Pagination } from "react-bootstrap";
 import { useOutletContext, Link } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
 import moment from "moment";
 import ProfissionaisService from "../../services/profissionaisService";
 import ModalExcluir from './ModalExcluir';
@@ -98,11 +98,7 @@ function Profissionais() {
       }
     } 
 
-    delete camposAlterados.ID_Profissional;
-    console.log('Campos alterados:', camposAlterados);
-    console.log('Profissional original:', profissionalOriginal);
-    console.log('Profissional editado:', profissionalAtualizado);
-
+    delete camposAlterados.ID_Profissional; 
     if (Object.keys(camposAlterados).length === 0) {
       alert("Nenhuma alteração detectada.");
       return;
@@ -178,7 +174,7 @@ function Profissionais() {
                   currentProfissionais.map((profissional) => (
                     <Accordion.Item eventKey={profissional.ID_Profissional} key={profissional.ID_Profissional}>
                       <Accordion.Header>
-                        <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p> - {profissional.Especialidade}
+                        <p className="m-2 text-primary"><strong>{profissional.Nome_Completo}</strong></p>
                       </Accordion.Header>
                       <Accordion.Body>
                         <Row>
@@ -198,6 +194,9 @@ function Profissionais() {
                           </Col>
                         </Row>
                         <div className="d-flex flex-row gap-2">
+                          <Button className='btn-success' as={Link} to={`/profissionais/horarios/${profissional.ID_Profissional}`}>
+                            <FaEye /> Ver Horários de Atendimento
+                          </Button>
                           <Button className='btn-primary' onClick={() => editarProfissional(profissional.ID_Profissional)}><FaEdit /></Button>
                           <Button className='btn-danger' onClick={() => abrirModalExcluir(profissional.ID_Profissional)}><FaTrashAlt /></Button>
                         </div>

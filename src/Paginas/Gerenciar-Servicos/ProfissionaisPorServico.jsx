@@ -191,7 +191,7 @@ function ProfissionaisPorServico() {
       </section>
 
       {/* Modal de confirmação para exclusão */}
-      <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
+      <Modal show={showConfirmModal} onHide={handleCloseConfirmModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Exclusão</Modal.Title>
         </Modal.Header>
@@ -205,7 +205,7 @@ function ProfissionaisPorServico() {
       </Modal>
 
       {/* Modal de pesquisa de profissionais */}
-      <Modal show={showSearchModal} onHide={() => setShowSearchModal(false)}>
+      <Modal show={showSearchModal} onHide={() => setShowSearchModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Buscar Profissionais</Modal.Title>
         </Modal.Header>
@@ -242,7 +242,7 @@ function ProfissionaisPorServico() {
       </Modal>
 
       {/* Modal para alertas sucesso erros */}
-      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Alerta</Modal.Title>
         </Modal.Header>
