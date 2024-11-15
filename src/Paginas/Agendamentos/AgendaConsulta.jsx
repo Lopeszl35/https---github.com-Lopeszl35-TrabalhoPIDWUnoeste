@@ -3,13 +3,13 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import PacientesService from "../../services/pacientesService";
 import ServicosService from "../../services/servicosService";
-import ProfissionaisService from "../../services/profissionaisService";
+import ProfissionaisServicoService from "../../services/profissionaisServicoService";
 import AgendamentoService from "../../services/agendamentoService";
 import './AgendaConsultas.css';
 
 const pacientesService = new PacientesService();
 const servicosService = new ServicosService();
-const profissionaisService = new ProfissionaisService();
+const profissionaisServicoService = new ProfissionaisServicoService();
 const agendamentoService = new AgendamentoService();
 
 function AgendarConsultas() {
@@ -65,7 +65,8 @@ function AgendarConsultas() {
       console.log("Servico selecionado:", selectedServico);
       const fetchProfissionais = async () => {
         try {
-          const dados = await profissionaisService.obterPorServico(selectedServico);
+          const dados = await profissionaisServicoService.obterProfissionaisPorServico(selectedServico);
+          console.log("Profissionais encontrados:", dados);
           if (dados) {
             setProfissionais(dados);
           }
@@ -211,7 +212,7 @@ function AgendarConsultas() {
                 <option value="">Selecione o profissional</option>
                 {Array.isArray(profissionais) && profissionais.map((profissional) => (
                   <option key={profissional.ID_Profissional} value={profissional.ID_Profissional}>
-                    {profissional.Nome_Completo}
+                    {profissional.Nome_Profissional}
                   </option>
                 ))}
               </Form.Select>
