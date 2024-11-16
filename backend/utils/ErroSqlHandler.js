@@ -38,6 +38,12 @@ class ErroSqlHandler {
                 }
                 break;
 
+            case 'horarios':
+                if (error.message.includes('ID_Profissional')) {
+                    throw new Error('Horário ja cadastrado para Profissional nesta data');
+                }
+                break;
+
             // Adicione mais entidades conforme necessário
             default:
                 throw new Error(`Erro de duplicação em ${entidade}: ${error.message}`);

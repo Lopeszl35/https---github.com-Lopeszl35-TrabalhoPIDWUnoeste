@@ -21,6 +21,14 @@ class AbstractProfissionaisService {
         throw new Error("Metodo nao implementado");
     }
 
+    async cadastrarHorarios(id, data, hora) {
+        throw new Error("Metodo nao implementado");
+    }
+
+    async obterHorariosProfissional(id) {
+        throw new Error("Metodo nao implementado");
+    }
+
 }
 
 module.exports = AbstractProfissionaisService;

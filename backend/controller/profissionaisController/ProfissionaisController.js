@@ -78,6 +78,37 @@ class ProfissionaisController extends AbstractProfissionaisController {
         }
     }
 
+    async cadastrarHorarios(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const { id } = req.params;
+        const { data, hora } = req.body;
+        try {
+            const resultado = await this.profissionaisService.cadastrarHorarios(id, data, hora);
+            return res.status(200).json(resultado);
+        } catch (error) {
+            console.error('Erro ao cadastrar horários:', error.message);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async obterHorariosProfissional(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        const { id } = req.params;
+        try {
+            const resultado = await this.profissionaisService.obterHorariosProfissional(id);
+            return res.status(200).json(resultado);
+        } catch (error) {
+            console.error('Erro ao obter horários:', error.message);
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
 }
 
 module.exports = ProfissionaisController;

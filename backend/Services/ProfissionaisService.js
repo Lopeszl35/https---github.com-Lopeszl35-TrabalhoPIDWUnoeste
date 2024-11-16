@@ -44,7 +44,31 @@ class ProfissionaisService extends AbstractProfissionaisService {
         }
     }
 
-   
+   async cadastrarHorarios(id, data, hora) {
+        try {
+            const horariosCadastrados = await this.profissionaisRepository.cadastrarHorarios(id, data, hora);
+            if(horariosCadastrados.length === 0) {
+                throw new Error("Nenhum horário cadastrado");
+            }
+            return horariosCadastrados
+        } catch (error) {
+            console.error("Erro ao cadastrar horários:", error);
+            ErroSqlHandler.tratarErroSql(error, "horarios");
+        }
+    }
+
+    async obterHorariosProfissional(id) {
+        try {
+            const horarios = await this.profissionaisRepository.obterHorariosProfissional(id);
+            if(horarios.length === 0) {
+                throw new Error("Nenhum horário encontrado para o Profissional");
+            }
+            return horarios
+        } catch (error) {
+            console.error("Erro ao obter os horários do Profissional:", error);
+            throw error;
+        }
+    }
 
 }
 

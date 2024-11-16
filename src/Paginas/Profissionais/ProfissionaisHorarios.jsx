@@ -10,6 +10,7 @@ const profissionaisService = new ProfissionaisService();
 function ProfissionaisHorarios() {
   const { show } = useOutletContext();
   const { idProfissional } = useParams();
+  const [erros, setErros] = useState({});
   const [profissional, setProfissional] = useState(null);
   const [horarios, setHorarios] = useState([]);
   const [form, setForm] = useState({
@@ -22,16 +23,14 @@ function ProfissionaisHorarios() {
       try {
         const profissionalData = await profissionaisService.obterPorId(idProfissional);
         setProfissional(profissionalData);
-        console.log(profissionalData);
 
-        // Simulando horários cadastrados para o profissional
-        const horariosCadastrados = [
-          { data: "2024-01-01", horario: "10:00" },
-          { data: "2024-01-01", horario: "11:00" },
-          { data: "2024-01-02", horario: "14:00" },
-        ];
-
-        setHorarios(horariosCadastrados);
+        const horariosCadastrados = await profissionaisService.obterHorariosProfissional(idProfissional);
+        const horariosFormatados = horariosCadastrados.map((item) => ({
+          data: item.Data.split("T")[0], // Extraindo apenas a data
+          horario: item.Horario.slice(0, 5), // Extraindo HH:mm
+        }));
+        setHorarios(horariosFormatados);
+        console.log("Horários cadastrados:", horariosCadastrados);
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       }
@@ -44,16 +43,18 @@ function ProfissionaisHorarios() {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (form.data && form.horario) {
-      const novoHorario = {
-        data: form.data,
-        horario: form.horario,
-      };
-      console.log("Novo horário cadastrado:", novoHorario);
-      setHorarios((prevHorarios) => [...prevHorarios, novoHorario]);
-      setForm({ data: "", horario: "" });
+      try {
+        const novoHorario = { data: form.data, hora: form.horario };
+        await profissionaisService.cadastrarHorarioProfissional(idProfissional, novoHorario);
+        setHorarios((prevHorarios) => [...prevHorarios, novoHorario]);
+        setForm({ data: "", horario: "" });
+      } catch (error) {
+        setErros({ form: error.message });
+        console.error("Erro ao cadastrar horário:", error);
+      }
     } else {
       alert("Por favor, preencha todos os campos obrigatórios.");
     }
@@ -123,12 +124,14 @@ function ProfissionaisHorarios() {
                 Cancelar
               </Button>
             </div>
+            {erros.form && <p className="erros text-danger mt-3">{erros.form}</p>}
           </Form>
         </Container>
 
         <Container className="mt-5 container-horarios-cadastrados">
           <h2>Horários Cadastrados</h2>
           <Accordion>
+            {horarios.length === 0 && <p className="text-danger">Nenhum horário cadastrado.</p>}
             {Object.entries(horariosAgrupados).map(([data, horarios], index) => (
               <Accordion.Item eventKey={index} key={index}>
                 <Accordion.Header><strong className="text-primary">{data}</strong></Accordion.Header>
