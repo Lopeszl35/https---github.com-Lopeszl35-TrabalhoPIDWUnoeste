@@ -53,9 +53,10 @@ class ProfissionaisRepository extends AbstractProfissionaisRepository {
         }
     }
 
-    async cadastrarHorarios(id, data, hora) {
-        const sql = `INSERT INTO HorariosDisponiveis (ID_Profissional, Data, Horario) VALUES (?, ?, ?)`;
-        const params = [id, data, hora];
+    async cadastrarHorarios(id, data, horaInicio, horaFim) {
+        const sql = `INSERT INTO HorariosDisponiveis (ID_Profissional, Data, HorarioInicio, HorarioTermino) VALUES (?, ?, ?, ?)`;
+        const params = [id, data, horaInicio, horaFim];
+        console.log("Params:", params);
         try {
             await this.database.executaComandoNonQuery(sql, params);
             return { message: "Horarios cadastrados com sucesso" };

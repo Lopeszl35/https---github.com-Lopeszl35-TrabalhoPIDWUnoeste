@@ -1,9 +1,14 @@
 import { useOutletContext, useParams } from "react-router-dom";
-import { Container, Form, Button, Row, Col, Accordion } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { useState, useEffect } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 import ProfissionaisService from "../../services/profissionaisService";
 import { TbClockHour5 } from "react-icons/tb";
 import "./ProfissionaisHorarios.css";
+import { FaCheckCircle } from "react-icons/fa";
 
 const profissionaisService = new ProfissionaisService();
 
@@ -11,11 +16,13 @@ function ProfissionaisHorarios() {
   const { show } = useOutletContext();
   const { idProfissional } = useParams();
   const [erros, setErros] = useState({});
+  const [showMensagem, setShowMensagem] = useState(false);
   const [profissional, setProfissional] = useState(null);
   const [horarios, setHorarios] = useState([]);
   const [form, setForm] = useState({
     data: "",
-    horario: "",
+    horarioInicial: "",
+    horarioFinal: "",
   });
 
   useEffect(() => {
@@ -25,12 +32,15 @@ function ProfissionaisHorarios() {
         setProfissional(profissionalData);
 
         const horariosCadastrados = await profissionaisService.obterHorariosProfissional(idProfissional);
-        const horariosFormatados = horariosCadastrados.map((item) => ({
-          data: item.Data.split("T")[0], // Extraindo apenas a data
-          horario: item.Horario.slice(0, 5), // Extraindo HH:mm
+        console.log("Horarios cadastrados:", horariosCadastrados);
+        const eventosFormatados = horariosCadastrados.map((item) => ({
+          title: item.Disponivel ? "Horário Disponível" : "Horário Indisponível",
+          start: `${item.Data.split("T")[0]}T${item.HorarioInicio}`,
+          end: `${item.Data.split("T")[0]}T${item.HorarioTermino}`,
+          color: item.Disponivel ? "green" : "red",
         }));
-        setHorarios(horariosFormatados);
-        console.log("Horários cadastrados:", horariosCadastrados);
+        setHorarios(eventosFormatados);
+        console.log("Horarios:", eventosFormatados);
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       }
@@ -45,12 +55,16 @@ function ProfissionaisHorarios() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (form.data && form.horario) {
+    if (form.data && form.horarioInicial && form.horarioFinal) {
       try {
-        const novoHorario = { data: form.data, hora: form.horario };
+        const novoHorario = { data: form.data, horaInicio: form.horarioInicial, horaFim: form.horarioFinal };
         await profissionaisService.cadastrarHorarioProfissional(idProfissional, novoHorario);
-        setHorarios((prevHorarios) => [...prevHorarios, novoHorario]);
-        setForm({ data: "", horario: "" });
+        setHorarios((prevHorarios) => [
+          ...prevHorarios,
+          { title: "Horário Disponível", start: `${form.data}T${form.horarioInicial}T${form.horarioFinal}`}
+        ]);
+        setForm({ data: "", horarioInicial: "", horarioFinal: "" });
+        setShowMensagem(true);
       } catch (error) {
         setErros({ form: error.message });
         console.error("Erro ao cadastrar horário:", error);
@@ -59,22 +73,6 @@ function ProfissionaisHorarios() {
       alert("Por favor, preencha todos os campos obrigatórios.");
     }
   };
-
-  const handleExcluirHorario = (data, horario) => {
-    setHorarios((prevHorarios) =>
-      prevHorarios.filter(
-        (item) => !(item.data === data && item.horario === horario)
-      )
-    );
-  };
-
-  const horariosAgrupados = horarios.reduce((acc, horario) => {
-    if (!acc[horario.data]) {
-      acc[horario.data] = [];
-    }
-    acc[horario.data].push(horario.horario);
-    return acc;
-  }, {});
 
   return (
     <main className={`container-profissionais ${show ? "container-profissionais-active" : ""}`}>
@@ -102,11 +100,22 @@ function ProfissionaisHorarios() {
               </Col>
               <Col md={3}>
                 <Form.Group controlId="formHorario">
-                  <Form.Label>Hora</Form.Label>
+                  <Form.Label>Hora inicial do atendimento</Form.Label>
                   <Form.Control
                     type="time"
-                    name="horario"
-                    value={form.horario}
+                    name="horarioInicial"
+                    value={form.horarioInicial}
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={3}>
+                <Form.Group controlId="formHorario">
+                  <Form.Label>Hora final do atendimento</Form.Label>
+                  <Form.Control
+                    type="time"
+                    name="horarioFinal"
+                    value={form.horarioFinal}
                     onChange={handleInputChange}
                   />
                 </Form.Group>
@@ -119,42 +128,34 @@ function ProfissionaisHorarios() {
               <Button
                 type="reset"
                 variant="secondary"
-                onClick={() => setForm({ data: "", horario: "" })}
+                onClick={() => setForm({ data: "", horarioInicial: "", horarioFinal: "" })}
               >
                 Cancelar
               </Button>
             </div>
+            <Alert show={showMensagem} variant="success" className="mt-3" onClose={() => setShowMensagem(false)} dismissible>
+              <Alert.Heading>
+                <FaCheckCircle className="me-2" /> Horário cadastrado com sucesso
+              </Alert.Heading>
+            </Alert>
             {erros.form && <p className="erros text-danger mt-3">{erros.form}</p>}
           </Form>
         </Container>
 
         <Container className="mt-5 container-horarios-cadastrados">
           <h2>Horários Cadastrados</h2>
-          <Accordion>
-            {horarios.length === 0 && <p className="text-danger">Nenhum horário cadastrado.</p>}
-            {Object.entries(horariosAgrupados).map(([data, horarios], index) => (
-              <Accordion.Item eventKey={index} key={index}>
-                <Accordion.Header><strong className="text-primary">{data}</strong></Accordion.Header>
-                <Accordion.Body>
-                  {horarios.map((horario, i) => (
-                    <div
-                      key={i}
-                      className="d-flex justify-content-between align-items-center mb-2 p-2 border rounded"
-                    >
-                      <span><strong className="text-secondary">{horario}</strong></span>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleExcluirHorario(data, horario)}
-                      >
-                        Excluir
-                      </Button>
-                    </div>
-                  ))}
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
-          </Accordion>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={horarios}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek",
+            }}
+            locale="pt-br"
+            height="auto"
+          />
         </Container>
       </section>
     </main>

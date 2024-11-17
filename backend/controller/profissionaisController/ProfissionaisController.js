@@ -84,9 +84,9 @@ class ProfissionaisController extends AbstractProfissionaisController {
             return res.status(400).json({ errors: errors.array() });
         }
         const { id } = req.params;
-        const { data, hora } = req.body;
+        const { data, horaInicio, horaFim } = req.body;
         try {
-            const resultado = await this.profissionaisService.cadastrarHorarios(id, data, hora);
+            const resultado = await this.profissionaisService.cadastrarHorarios(id, data, horaInicio, horaFim);
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao cadastrar horários:', error.message);

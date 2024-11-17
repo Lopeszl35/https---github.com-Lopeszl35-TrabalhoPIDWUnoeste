@@ -13,7 +13,8 @@ class AgendamentoService {
                 body: JSON.stringify(agendamento)
             });
             if(!response.ok) {
-                throw new Error('Erro ao criar o Agendamento!');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao criar o Agendamento!');
             } else {
                 const dados = await response.json();
                 return dados;

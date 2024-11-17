@@ -19,7 +19,8 @@ class AbstractAgendamentoService {
     idServico,
     dataHora,
     observacoes,
-    status = "Pendente"
+    status = "Pendente",
+    idHorarioProfissional
   ) {
     throw new Error("Metodo não implementado");
   }

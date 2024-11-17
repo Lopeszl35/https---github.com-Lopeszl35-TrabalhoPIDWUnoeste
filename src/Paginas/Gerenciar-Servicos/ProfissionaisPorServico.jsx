@@ -59,7 +59,6 @@ function ProfissionaisPorServico() {
     const idProfissional = profissionalSelecionado.ID_Profissional;
     if (profissionalSelecionado) {
         try {
-            console.log("Profissional selecionado: ", profissionalSelecionado);
             await profissionaisServicoService.deletarRelacaoProfissionalServico(idProfissional, idServico);
             setProfissionais(profissionais.filter(p => p.ID_Profissional !== profissionalSelecionado.ID_Profissional));
 
@@ -159,7 +158,7 @@ function ProfissionaisPorServico() {
           <Accordion>
             {profissionais.length <= 0 ? (
               <Accordion.Item eventKey="0">
-                <Accordion.Header>Nenhum profissional encontrado</Accordion.Header>
+                <Accordion.Header><span className="text-danger">Nenhum Profissional cadastrado</span></Accordion.Header>
               </Accordion.Item>
             ) : (
               profissionais.map((profissional, index) => (
@@ -197,6 +196,7 @@ function ProfissionaisPorServico() {
         </Modal.Header>
         <Modal.Body>
           Você tem certeza que deseja excluir o profissional <strong>{profissionalSelecionado?.Nome_Profissional}</strong> do serviço?
+           Isso excluira todos os agendamentos relacionados a este profissional.
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseConfirmModal}>Cancelar</Button>

@@ -35,6 +35,7 @@ class AgendamentosController extends AbstractAgendamentoController {
         dataHora,
         observacoes,
         status,
+        idHorarioProfissional
       } = req.body;
       const novoAgendamento = await this.agendamentoService.criarAgendamento(
         prontuario,
@@ -42,7 +43,8 @@ class AgendamentosController extends AbstractAgendamentoController {
         idServico,
         dataHora,
         observacoes,
-        status
+        status,
+        idHorarioProfissional
       );
       console.log("Novo Agendamento: ", novoAgendamento);
       res.status(201).json(novoAgendamento);

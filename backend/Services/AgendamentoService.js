@@ -1,5 +1,6 @@
 const AbstractAgendamentoService = require("./abstratos/AbstractAgendamentoService");
 const Agendamento = require("../model/Entities/agendamentoModel/Agendamento");
+const ErroSqlHandler = require("../utils/ErroSqlHandler");
 
 class AgendamentoService extends AbstractAgendamentoService {
   constructor(agendamentoRepository, database) {
@@ -39,10 +40,20 @@ class AgendamentoService extends AbstractAgendamentoService {
     idServico,
     dataHora,
     observacoes,
-    status = "Pendente"
+    status = "Pendente",
+    idHorarioProfissional
   ) {
     const connection = await this.database.beginTransaction();
     try {
+      // Verifica se o horário é disponível
+      const disponibilidadeHorario =
+        await this.agendamentoRepository.verificarDisponibilidadeHorario(
+          idHorarioProfissional
+        );
+      if (!disponibilidadeHorario) {
+        throw new Error("Horário indisponível");
+      }
+
       // Verifica se o agendamento ja existe
       const existeAgendamento =
         await this.agendamentoRepository.verificarAgendamentoExistente(
@@ -67,7 +78,7 @@ class AgendamentoService extends AbstractAgendamentoService {
         observacoes
       );
       const agendamentoId = await this.agendamentoRepository.criarAgendamento(
-        novoAgendamento,
+        novoAgendamento, idHorarioProfissional,
         connection
       );
       novoAgendamento.id = agendamentoId;
@@ -76,7 +87,7 @@ class AgendamentoService extends AbstractAgendamentoService {
       return novoAgendamento;
     } catch (error) {
       await this.database.rollbackTransaction(connection);
-      throw new Error(`Erro ao criar novo agendamento: ${error.message}`);
+      throw error;
     }
   }
 

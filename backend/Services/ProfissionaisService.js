@@ -44,9 +44,9 @@ class ProfissionaisService extends AbstractProfissionaisService {
         }
     }
 
-   async cadastrarHorarios(id, data, hora) {
+   async cadastrarHorarios(id, data, horaInicio, horaFim) {
         try {
-            const horariosCadastrados = await this.profissionaisRepository.cadastrarHorarios(id, data, hora);
+            const horariosCadastrados = await this.profissionaisRepository.cadastrarHorarios(id, data, horaInicio, horaFim);
             if(horariosCadastrados.length === 0) {
                 throw new Error("Nenhum horário cadastrado");
             }

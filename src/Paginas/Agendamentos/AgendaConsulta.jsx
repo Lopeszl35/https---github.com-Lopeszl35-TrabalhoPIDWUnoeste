@@ -1,136 +1,175 @@
 import { useState, useEffect } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import moment from "moment";
 import PacientesService from "../../services/pacientesService";
 import ServicosService from "../../services/servicosService";
+import ProfissionaisService from "../../services/profissionaisService";
 import ProfissionaisServicoService from "../../services/profissionaisServicoService";
 import AgendamentoService from "../../services/agendamentoService";
-import './AgendaConsultas.css';
+import "./AgendaConsultas.css";
+import { FaCheckCircle } from "react-icons/fa";
 
 const pacientesService = new PacientesService();
 const servicosService = new ServicosService();
 const profissionaisServicoService = new ProfissionaisServicoService();
+const profissionaisService = new ProfissionaisService();
 const agendamentoService = new AgendamentoService();
+
+const localizer = momentLocalizer(moment);
 
 function AgendarConsultas() {
   const { show } = useOutletContext();
 
-  // State hooks para armazenar dados
   const [pacientes, setPacientes] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [profissionais, setProfissionais] = useState([]);
+  const [horarios, setHorarios] = useState([]);
+  const [idHorarioProfissional, setIdHorarioProfissional] = useState(null);
   const [selectedPaciente, setSelectedPaciente] = useState("");
-  const [detalhesPaciente, setDetalhesPaciente] = useState(null);
   const [selectedServico, setSelectedServico] = useState("");
   const [selectedProfissional, setSelectedProfissional] = useState("");
-  const [dataHora, setDataHora] = useState("");
   const [observacoes, setObservacoes] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Obtém todos os pacientes ao carregar o componente
   useEffect(() => {
     const fetchPacientes = async () => {
+      setLoading(true);
       try {
         const dados = await pacientesService.obterTodos();
-        if (dados) {
-          setPacientes(dados);
-        }
+        setPacientes(dados || []);
       } catch (error) {
         console.error("Erro ao obter pacientes:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchPacientes();
   }, []);
 
-  // Obtém todos os serviços ao carregar o componente
   useEffect(() => {
     const fetchServicos = async () => {
+      setLoading(true);
       try {
         const dados = await servicosService.obterTodos();
-        if (dados) {
-          setServicos(dados);
-        }
+        setServicos(dados || []);
       } catch (error) {
         console.error("Erro ao obter serviços:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchServicos();
   }, []);
 
-  // Obtém os profissionais com base no serviço selecionado
   useEffect(() => {
     if (selectedServico) {
-      console.log("Servico selecionado:", selectedServico);
       const fetchProfissionais = async () => {
+        setLoading(true);
         try {
           const dados = await profissionaisServicoService.obterProfissionaisPorServico(selectedServico);
-          console.log("Profissionais encontrados:", dados);
-          if (dados) {
-            setProfissionais(dados);
-          }
+          setProfissionais(dados || []);
         } catch (error) {
           console.error("Erro ao obter profissionais:", error);
+        } finally {
+          setLoading(false);
         }
       };
-
       fetchProfissionais();
     } else {
-      setProfissionais([]); // Reseta os profissionais se nenhum serviço estiver selecionado
+      setProfissionais([]);
     }
   }, [selectedServico]);
 
-  // Busca os detalhes do paciente ao selecionar um paciente
   useEffect(() => {
-    if (selectedPaciente) {
-      const fetchDetalhesPaciente = async () => {
-        try {
-          const dados = await pacientesService.obterDadosCompletosDoPaciente(selectedPaciente);
-          if (dados) {
-            setDetalhesPaciente(dados);
-          }
-        } catch (error) {
-          console.error("Erro ao obter detalhes do paciente:", error);
-        }
-      };
+    async function fetchHorarios() {
+      setLoading(true);
+      try {
+        const horariosOriginais = await profissionaisService.obterHorariosProfissional(selectedProfissional);
 
-      fetchDetalhesPaciente();
-    } else {
-      setDetalhesPaciente(null);
+        const horariosFormatados = horariosOriginais.map((item) => {
+          const date = item.Data.split("T")[0];
+          const startDate = moment(`${date}T${item.HorarioInicio}`).toDate();
+          const endDate = moment(`${date}T${item.HorarioTermino}`).toDate();
+
+          return {
+            title: item.Disponivel ? "Disponível" : "Indisponível",
+            start: startDate,
+            end: endDate,
+            disponivel: item.Disponivel,
+            idHorarioProfissional: item.ID_Horario,
+          };
+        });
+
+        setHorarios(horariosFormatados);
+      } catch (error) {
+        console.error("Erro ao obter horários:", error);
+        setErrors({ profissional: error.message });
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [selectedPaciente]);
 
-  // Função para lidar com o envio do formulário
+    if (selectedProfissional) {
+      fetchHorarios();
+    }
+  }, [selectedProfissional]);
+
+  const eventStyleGetter = (event) => {
+    const style = {
+      backgroundColor: event.disponivel
+        ? event === selectedEvent
+          ? "blue"
+          : "green"
+        : "red",
+      color: "white",
+      borderRadius: "5px",
+      border: "solid 1px black",
+    };
+    return { style };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validação simples
     const newErrors = {};
     if (!selectedPaciente) newErrors.paciente = "Por favor, selecione um paciente.";
     if (!selectedServico) newErrors.servico = "Por favor, selecione um serviço.";
     if (!selectedProfissional) newErrors.profissional = "Por favor, selecione um profissional.";
-    if (!dataHora) newErrors.dataHora = "Por favor, selecione uma data e hora.";
+    if (!selectedEvent || !selectedEvent.disponivel) newErrors.event = "Por favor, selecione um horário disponível.";
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Implementar a lógica de envio dos dados de agendamento ao backend
       const agendamento = {
         prontuario: selectedPaciente,
         idProfissional: selectedProfissional,
         idServico: selectedServico,
-        dataHora: dataHora,
+        dataHora: moment(selectedEvent.start).format(),
         status: "Pendente",
-        observacoes: observacoes,
+        observacoes,
+        idHorarioProfissional: selectedEvent.idHorarioProfissional,
       };
+
       try {
+        setLoading(true);
         await agendamentoService.criarAgendamento(agendamento);
-        alert("Agendamento criado com sucesso!");
-        window.location.reload();
+        setSuccessMessage("Agendamento criado com sucesso!");
+        setSelectedPaciente("");
+        setSelectedServico("");
+        setSelectedProfissional("");
+        setObservacoes("");
+        setSelectedEvent(null);
       } catch (error) {
         console.error("Erro ao criar agendamento:", error);
-        alert("Erro ao criar agendamento. Por favor, tente novamente mais tarde.");
+        alert("Erro ao criar agendamento: " + error.message);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -149,32 +188,16 @@ function AgendarConsultas() {
                 isInvalid={!!errors.paciente}
               >
                 <option value="">Selecione o paciente</option>
-                {Array.isArray(pacientes) && pacientes.map((paciente) => (
+                {pacientes.map((paciente) => (
                   <option key={paciente.Prontuario} value={paciente.Prontuario}>
                     {paciente.Nome_Completo}
                   </option>
                 ))}
               </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {errors.paciente}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.paciente}</Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>
-
-        {detalhesPaciente && (
-          <Row className="mb-3">
-            <Col md={6}>
-              <h5>Informações do Paciente</h5>
-              <p><strong>Nome:</strong> {detalhesPaciente.Nome_Completo}</p>
-              <p><strong>Data de Nascimento:</strong> {new Date(detalhesPaciente.Data_De_Nascimento).toLocaleDateString()}</p>
-              <p><strong>Cartão SUS:</strong> {detalhesPaciente.CartaoSUS}</p>
-              <p><strong>Período Escolar:</strong> {detalhesPaciente.Periodo}</p>
-              <p><strong>Telefone da Mãe:</strong> {detalhesPaciente.Telefone_Mae}</p>
-              <p><strong>Telefone do Pai:</strong> {detalhesPaciente.Telefone_Pai}</p>
-            </Col>
-          </Row>
-        )}
 
         <Row className="mb-3">
           <Col md={6}>
@@ -186,15 +209,13 @@ function AgendarConsultas() {
                 isInvalid={!!errors.servico}
               >
                 <option value="">Selecione o serviço</option>
-                {Array.isArray(servicos) && servicos.map((servico) => (
+                {servicos.map((servico) => (
                   <option key={servico.ID_Servico} value={servico.ID_Servico}>
                     {servico.Nome_Servico}
                   </option>
                 ))}
               </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {errors.servico}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.servico}</Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>
@@ -210,35 +231,42 @@ function AgendarConsultas() {
                 disabled={!selectedServico}
               >
                 <option value="">Selecione o profissional</option>
-                {Array.isArray(profissionais) && profissionais.map((profissional) => (
+                {profissionais.map((profissional) => (
                   <option key={profissional.ID_Profissional} value={profissional.ID_Profissional}>
                     {profissional.Nome_Profissional}
                   </option>
                 ))}
               </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {errors.profissional}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.profissional}</Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>
 
-        <Row className="mb-3">
-          <Col md={6}>
-            <Form.Group controlId="formDataHora">
-              <Form.Label>Data e Hora da Consulta</Form.Label>
-              <Form.Control
-                type="datetime-local"
-                value={dataHora}
-                onChange={(e) => setDataHora(e.target.value)}
-                isInvalid={!!errors.dataHora}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.dataHora}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-        </Row>
+        <div className="mb-4">
+          <h3>Horários Disponíveis</h3>
+          {loading ? (
+            <Spinner animation="border" variant="primary" />
+          ) : (
+            <Calendar
+              localizer={localizer}
+              events={horarios}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: 500, width: 700 }}
+              selectable
+              onSelectEvent={(event) => {
+                if (!event.disponivel) {
+                  alert("Data indisponível. Por favor, escolha outra data.");
+                } else {
+                  setSelectedEvent(event);
+                  setIdHorarioProfissional(event.idHorarioProfissional);
+                }
+              }}
+              eventPropGetter={eventStyleGetter}
+            />
+          )}
+          {errors.event && <div className="text-danger mt-2">{errors.event}</div>}
+        </div>
 
         <Row className="mb-3">
           <Col md={6}>
@@ -254,9 +282,15 @@ function AgendarConsultas() {
           </Col>
         </Row>
 
-        <Button variant="primary" type="submit">
-          Agendar Consulta
+        <Button variant="primary" type="submit" disabled={loading}>
+          {loading ? "Aguarde..." : "Confirmar Agendamento"}
         </Button>
+
+        {successMessage && (
+          <Alert variant="success" className="mt-3">
+            <FaCheckCircle className="me-2" /> {successMessage}
+          </Alert>
+        )}
       </Form>
     </Container>
   );

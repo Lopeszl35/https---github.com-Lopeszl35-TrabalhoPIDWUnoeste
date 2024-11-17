@@ -3,6 +3,9 @@ class ErroSqlHandler {
         if (error.code === 'ER_DUP_ENTRY') {
             return this.tratarErroDuplicado(error, entidade);
         }
+        if (error.code === 'ER_BAD_NULL_ERROR') {
+            return this.tratarErroCamposNulos(error, entidade);
+        }
         throw error;
     }
 
@@ -49,6 +52,29 @@ class ErroSqlHandler {
                 throw new Error(`Erro de duplicação em ${entidade}: ${error.message}`);
         }
         throw error;
+    }
+
+    static tratarErroCamposNulos(error, entidade) {
+        switch (entidade) {
+            case 'horarios':
+                if (error.message.includes('Data')) {
+                    throw new Error('Data nula');
+                } else if (error.message.includes('HoraInicio')) {
+                    throw new Error('Hora de inicio nula');
+                } else if (error.message.includes('HoraFim')) {
+                    throw new Error('Hora de fim nula');
+                }
+                break;
+
+            case 'agendamento':
+                if (error.message.includes('Data_Hora')) {
+                    throw new Error('Data e hora nao podem ser nulas');
+                }
+                if (error.message.includes('Prontuario')) {
+                    throw new Error('Paciente deve ser informado para agendamento');
+                }
+                break;
+        }
     }
 }
 
