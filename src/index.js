@@ -9,6 +9,7 @@ import Home from "./Paginas/Home/Home";
 import Login from "./Componentes/Login/Login";
 import GerarRelatorios from "./Paginas/Relatorios/GerarRelatorios";
 import Pacientes from "./Paginas/Pacientes/Pacientes";
+import EvolucaoPaciente from "./Paginas/Pacientes/EvolucaoPaciente";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
 import ProfissionaisHorarios from "./Paginas/Profissionais/ProfissionaisHorarios";
 import CadastrarProfissionais from "./Paginas/Profissionais/CadastrarProfissionais";
@@ -49,6 +50,7 @@ function AppRouter() {
             <Route index element={<Navigate to="/home" />} /> {/* Redireciona apenas na rota raiz */}
             <Route path="home" element={<Home />} />
             <Route path="pacientes" element={<Pacientes />} />
+            <Route path="evoluirPacientes" element={<EvolucaoPaciente />} />
             <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
             <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
             <Route path="Profissionais" element={<Profissionais />} />

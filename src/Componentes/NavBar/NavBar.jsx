@@ -50,6 +50,12 @@ function NavBar() {
           </Link>
         </li>
         <li className="nav-link">
+          <Link to="/evoluirPacientes">
+            <TbUserHeart />
+            <span className="mx-2">Evoluir Pacientes</span>
+          </Link>
+        </li>
+        <li className="nav-link">
           <Link to="/Profissionais">
             <LiaUserLockSolid />
             <span className="mx-2">Profissionais</span>
