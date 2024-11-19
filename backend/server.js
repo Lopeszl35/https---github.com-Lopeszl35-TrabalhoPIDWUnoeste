@@ -160,7 +160,7 @@ const ProfissionalServicosRoutes = require('./routes/ProfissionaisServicosRoutes
 
 
 app.use(loginRoute);
-app.use(verifyToken, UsuariosRoutes);
+app.use(UsuariosRoutes);
 app.use(verifyToken, AgendamentoRoutes);
 app.use(verifyToken, PacientesRoutes);
 app.use(verifyToken, ServicosRoutes);
