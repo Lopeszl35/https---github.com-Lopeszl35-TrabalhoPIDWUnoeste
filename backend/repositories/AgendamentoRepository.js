@@ -204,7 +204,41 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       console.log("Erro ao obter consultas nao arquivadas");
       throw error;
     }
-    
+  }
+
+  async buscarConsultaPorData(prontuario, data) {
+    const sql = `
+    SELECT 
+      a.ID_Agendamento,
+      a.Prontuario,
+      a.ID_Profissional,
+      a.ID_Servico,
+      a.Data_Hora,
+      a.Status,
+      a.Observacoes,
+      a.Arquivado,
+      p.Nome_Completo AS Profissional,
+      s.Nome_Servico AS Servico
+    FROM 
+      Agendamentos a
+    JOIN 
+      Profissionais p ON a.ID_Profissional = p.ID_Profissional
+    JOIN 
+      Servicos s ON a.ID_Servico = s.ID_Servico
+    WHERE 
+      a.Prontuario = ?
+      AND DATE(CONVERT_TZ(a.Data_Hora, '+00:00', '-03:00')) = DATE(?)
+  `;
+    const params = [prontuario, data];
+    console.log('params', params);
+    try {
+      const result = await this.database.executaComando(sql, params);
+      console.log('result', result);
+      return result;
+    } catch (error) {
+      console.error("Erro ao buscar consulta por data:", error);
+      throw new Error("Erro ao buscar consulta por data");
+    } 
   }
 
   /* implementar posteriormente

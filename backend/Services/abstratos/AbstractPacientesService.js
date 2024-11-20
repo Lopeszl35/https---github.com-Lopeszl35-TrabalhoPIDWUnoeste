@@ -24,6 +24,18 @@ class AbstractPacienteService {
     async obterDadosCompletosDoPaciente(prontuario) {
         throw new Error("Metodo não implementado");
     }
+
+    async buscarPaciente(searchTerm, searchType) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async salvarEvolucao(evolucao) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async obterEvolucoesDoPaciente(prontuario) {
+        throw new Error("Metodo não implementado");
+    }
 }
 
 module.exports = AbstractPacienteService;
