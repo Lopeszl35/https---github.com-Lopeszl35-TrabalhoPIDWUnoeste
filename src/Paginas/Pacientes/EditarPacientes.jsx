@@ -1,350 +1,269 @@
-import { Container } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import { useOutletContext, useParams, useNavigate, Link } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
-import React, { useEffect, useState } from 'react';
-import "./CadastrarPacientes.css";
+import React, { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { Form, Button, Container, Row, Col, Card, ListGroup, Modal, Alert } from "react-bootstrap";
 import PacientesService from "../../services/pacientesService";
 
 const pacientesService = new PacientesService();
 
-function EditarPacientes() {
+function EvolucaoPaciente() {
   const { show } = useOutletContext();
-  const { prontuario } = useParams();
-  const navigate = useNavigate();
-  const estados = [
-    "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
-  ];
-
-  const [pacienteInfo, setPacienteInfo] = useState({
-    Prontuario: '',
-    Nome_Completo: '', 
-    Data_De_Nascimento: '', 
-    CPF: '', 
-    RG: '',
-    Nome_Mae: '', 
-    Telefone_Mae: '',
-    Nome_Pai: '',
-    Telefone_Pai: '',
-    Numero: '', 
-    Logradouro: '', 
-    Bairro: '', 
-    Complemento: '',
-    Estado: '',
-    Cidade: '',
-    CEP: '',
-    Email: '',
-    cidadeEscola: '',
-    Escola: '',
-    Ano_Escolar: '',
-    Periodo: '',
-    autorizacaoImagem: false,
-    CartaoSUS: '',
+  const [pacientes, setPacientes] = useState([]);
+  const [filteredPacientes, setFilteredPacientes] = useState([]);
+  const [selectedPaciente, setSelectedPaciente] = useState(null);
+  const [searchFields, setSearchFields] = useState({
+    Nome_Completo: "",
+    Prontuario: "",
+    CPF: "",
+    RG: "",
+    Email: "",
   });
+  const [agendamentos, setAgendamentos] = useState([]);
+  const [evolucoes, setEvolucoes] = useState([]);
+  const [selectedAgendamento, setSelectedAgendamento] = useState(null);
+  const [avaliacao, setAvaliacao] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+  const [selectedEvolucao, setSelectedEvolucao] = useState(null);
+  const [noAgendamentos, setNoAgendamentos] = useState(false);
 
-  const [erros, setErros] = useState({});
-
-  useEffect(() => {
-    const fetchPaciente = async () => {
-      try {
-        const paciente = await pacientesService.obterDadosCompletosDoPaciente(prontuario);
-        setPacienteInfo({
-          Prontuario: paciente.Prontuario || '',
-          Nome_Completo: paciente.Nome_Completo || '',
-          Data_De_Nascimento: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
-          CPF: paciente.CPF || '',
-          RG: paciente.RG || '',
-          Nome_Mae: paciente.Nome_Mae || '',
-          Telefone_Mae: paciente.Telefone_Mae || '',
-          Nome_Pai: paciente.Nome_Pai || '',
-          Telefone_Pai: paciente.Telefone_Pai || '',
-          Numero: paciente.Numero || '', 
-          Logradouro: paciente.Logradouro || '', 
-          Bairro: paciente.Bairro || '', 
-          Complemento: paciente.Complemento || '',
-          Estado: paciente.Estado || '',
-          Cidade: paciente.Cidade || '',
-          CEP: paciente.CEP || '',
-          Email: paciente.Email || '',
-          cidadeEscola: paciente.cidadeEscola || '',
-          Escola: paciente.Escola || '',
-          Ano_Escolar: paciente.Ano_Escolar || '',
-          Periodo: paciente.Periodo || '',
-          autorizacaoImagem: paciente.autorizacaoImagem || false,
-          CartaoSUS: paciente.CartaoSUS || '',
-        });
-      } catch (error) {
-        console.error('Erro ao obter paciente:', error);
-      }
-    };
-    fetchPaciente();
-  }, [prontuario]);
-
-  const handleInputChange = (e) => {
-    setPacienteInfo({
-      ...pacienteInfo,
-      [e.target.name]: e.target.value,
-    });
+  // Atualiza o campo de busca conforme o usuário digita
+  const handleSearchChange = (e) => {
+    const { name, value } = e.target;
+    setSearchFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckboxChange = (e) => {
-    setPacienteInfo({
-      ...pacienteInfo,
-      autorizacaoImagem: e.target.checked,
-    });
-  };
-
-  const validate = () => {
-    const newErros = {};
-
-    if (!pacienteInfo.Nome_Completo) {
-      newErros.Nome_Completo = 'Nome completo é obrigatório';
-    }
-
-    if (!pacienteInfo.Nome_Mae) {
-      newErros.Nome_Mae = 'Nome da mãe é obrigatório';
-    }
-
-    if (!pacienteInfo.Nome_Pai) {
-      newErros.Nome_Pai = 'Nome do pai é obrigatório';
-    }
-
-    if (!pacienteInfo.Data_De_Nascimento) {
-      newErros.Data_De_Nascimento = 'Data de nascimento é obrigatória';
-    }
-
-    const cpfRegex = /^\d{11}$/;
-    if (!pacienteInfo.CPF || !cpfRegex.test(pacienteInfo.CPF)) {
-      newErros.CPF = 'CPF inválido. Deve conter 11 dígitos numéricos';
-    }
-
-    const rgRegex = /^\d+$/;
-    if (!pacienteInfo.RG || !rgRegex.test(pacienteInfo.RG)) {
-      newErros.RG = 'RG inválido. Deve conter apenas dígitos numéricos';
-    }
-
-    const telRegex = /^\d{10,11}$/;
-    if (pacienteInfo.Telefone_Mae && !telRegex.test(pacienteInfo.Telefone_Mae)) {
-      newErros.Telefone_Mae = 'Telefone da mãe inválido. Deve conter 10 ou 11 dígitos numéricos';
-    }
-
-    if (pacienteInfo.Telefone_Pai && !telRegex.test(pacienteInfo.Telefone_Pai)) {
-      newErros.Telefone_Pai = 'Telefone do pai inválido. Deve conter 10 ou 11 dígitos numéricos';
-    }
-
-    const cepRegex = /^\d{8}$/;
-    if (!pacienteInfo.CEP || !cepRegex.test(pacienteInfo.CEP)) {
-      newErros.CEP = 'CEP inválido. Deve conter 8 dígitos numéricos';
-    }
-
-    if (!pacienteInfo.Email) {
-      newErros.Email = 'O email é obrigatório';
-    }
-
-    setErros(newErros);
-    return Object.keys(newErros).length === 0;
-  };
-
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (validate()) {
+  // Função para buscar pacientes diretamente do banco de dados
+  const handleSearchPaciente = async () => {
     try {
-      // Organizar dados separadamente
-      const paciente = {
-        Nome_Completo: pacienteInfo.Nome_Completo,
-        Data_De_Nascimento: pacienteInfo.Data_De_Nascimento,
-        CPF: pacienteInfo.CPF,
-        RG: pacienteInfo.RG,
-        CartaoSUS: pacienteInfo.CartaoSUS,
-        Email: pacienteInfo.Email,
-        Escola: pacienteInfo.Escola,
-        Ano_Escolar: pacienteInfo.Ano_Escolar,
-        Periodo: pacienteInfo.Periodo,
-        autorizacaoImagem: pacienteInfo.autorizacaoImagem,
-      };
+      const searchTerm = Object.values(searchFields).find(value => value.trim() !== "");
+      const searchType = Object.keys(searchFields).find(key => searchFields[key].trim() !== "");
 
-      const endereco = {
-        Numero: pacienteInfo.Numero,
-        Logradouro: pacienteInfo.Logradouro,
-        Bairro: pacienteInfo.Bairro,
-        Complemento: pacienteInfo.Complemento,
-        Estado: pacienteInfo.Estado,
-        Cidade: pacienteInfo.Cidade,
-        CEP: pacienteInfo.CEP,
-      };
+      if (!searchTerm || !searchType) {
+        alert("Por favor, preencha um dos campos de busca.");
+        return;
+      }
 
-      const responsavel = {
-        Nome_Mae: pacienteInfo.Nome_Mae,
-        Telefone_Mae: pacienteInfo.Telefone_Mae,
-        Nome_Pai: pacienteInfo.Nome_Pai,
-        Telefone_Pai: pacienteInfo.Telefone_Pai,
-      };
-
-      const pacienteAtualizado = { paciente, endereco, responsavel };
-      await pacientesService.atualizar(prontuario, pacienteAtualizado);
-      navigate('/pacientes');
+      const pacientes = await pacientesService.buscarPaciente(searchTerm, searchType);
+      setPacientes(pacientes);
+      setFilteredPacientes(pacientes);
     } catch (error) {
-      console.error('Erro ao atualizar paciente:', error);
+      console.error("Erro ao buscar pacientes: ", error);
+      alert("Erro ao buscar pacientes: " + error.message);
     }
-  }
-};
+  };
 
+  // Seleciona um paciente da lista de resultados
+  const handleSelectPaciente = (paciente) => {
+    setSelectedPaciente(paciente);
+    setSearchFields({
+      Nome_Completo: paciente.Nome_Completo,
+      Prontuario: paciente.Prontuario.toString(),
+      CPF: paciente.CPF,
+      RG: paciente.RG,
+      Email: paciente.Email,
+    });
+
+    const agendamentosFiltrados = agendamentos.filter((a) => a.Prontuario === paciente.Prontuario);
+    setAgendamentos(agendamentosFiltrados);
+    setNoAgendamentos(agendamentosFiltrados.length === 0);
+  };
+
+  // Salva a evolução
+  const handleSaveEvolucao = () => {
+    if (selectedAgendamento && avaliacao) {
+      const novaEvolucao = {
+        ID_Evolucao: evolucoes.length + 1,
+        Data: new Date().toISOString().split("T")[0],
+        Nome_Servico: agendamentos.find((a) => a.ID_Agendamento === selectedAgendamento).Nome_Servico,
+        Profissional: agendamentos.find((a) => a.ID_Agendamento === selectedAgendamento).Profissional,
+        Avaliacao: avaliacao,
+        Observacoes: observacoes,
+      };
+      setEvolucoes([novaEvolucao, ...evolucoes]);
+      setAvaliacao("");
+      setObservacoes("");
+      alert("Evolução salva com sucesso!");
+    } else {
+      alert("Por favor, selecione um agendamento e preencha a avaliação.");
+    }
+  };
+
+  // Modal para exibir detalhes de uma evolução
+  const handleShowEvolucao = (evolucao) => {
+    setSelectedEvolucao(evolucao);
+  };
 
   return (
-    <div>
-      <Container className={`container-pacientes ${show ? "container-pacientes-active" : ""}`}>
-        <h1>Editar Paciente</h1>
-        <form className="form-container" onSubmit={handleSubmit}>
-          <h2>Paciente</h2>
-          <label htmlFor="Nome_Completo">Nome completo:</label>
-          <input type="text" id="Nome_Completo" name="Nome_Completo" value={pacienteInfo.Nome_Completo} onChange={handleInputChange} />
-          {erros.Nome_Completo && <p className="erros">{erros.Nome_Completo}</p>}
+    <Container className={`container-pacientes ${show ? "container-pacientes-active" : ""}`}>
+      <h1 className="my-4">Evolução de Paciente</h1>
 
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Data_De_Nascimento">Data de nascimento:</label>
-              <input type="date" id="Data_De_Nascimento" name="Data_De_Nascimento" value={pacienteInfo.Data_De_Nascimento} onChange={handleInputChange} />
-              {erros.Data_De_Nascimento && <p className="erros">{erros.Data_De_Nascimento}</p>}
-            </div>
-            <div className="form-group col-md-6">
-              <label htmlFor="CPF">CPF:</label>
-              <input type="text" id="CPF" name="CPF" value={pacienteInfo.CPF} onChange={handleInputChange} />
-              {erros.CPF && <p className="erros">{erros.CPF}</p>}
-            </div>
-          </div>
+      {/* Campos de busca */}
+      <Row className="mb-4">
+        {["Nome_Completo", "Prontuario", "CPF", "RG", "Email"].map((field) => (
+          <Col md={4} key={field}>
+            <Form.Group controlId={`search-${field}`}>
+              <Form.Label>{field.replace("_", " ")}</Form.Label>
+              <Form.Control
+                type="text"
+                name={field}
+                placeholder={`Digite ${field.replace("_", " ").toLowerCase()}`}
+                value={searchFields[field]}
+                onChange={handleSearchChange}
+              />
+            </Form.Group>
+          </Col>
+        ))}
+        <Col md={4} className="d-flex align-items-center mt-2">
+          <Button variant="primary" onClick={handleSearchPaciente}>
+            Buscar Paciente
+          </Button>
+        </Col>
+      </Row>
 
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="RG">RG:</label>
-              <input type="text" id="RG" name="RG" value={pacienteInfo.RG} onChange={handleInputChange} />
-              {erros.RG && <p className="erros">{erros.RG}</p>}
-            </div>
-            <div className="form-group col-md-6">
-              <label htmlFor="CartaoSUS">Cartão nacional de saúde (CNS):</label>
-              <input type="text" id="CartaoSUS" name="CartaoSUS" value={pacienteInfo.CartaoSUS} onChange={handleInputChange} />
-            </div>
-          </div>
+      {/* Lista de resultados */}
+      {filteredPacientes.length > 0 && (
+        <Card className="mb-4">
+          <Card.Header>Pacientes Encontrados</Card.Header>
+          <ListGroup variant="flush">
+            {filteredPacientes.map((paciente) => (
+              <ListGroup.Item
+                key={paciente.Prontuario}
+                action
+                onClick={() => handleSelectPaciente(paciente)}
+              >
+                {paciente.Nome_Completo} - Prontuário: {paciente.Prontuario}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Card>
+      )}
 
-          <h2>Responsáveis</h2>
+      {/* Informações do paciente selecionado */}
+      {selectedPaciente && (
+        <Card className="mb-4">
+          <Card.Header>Informações do Paciente Selecionado</Card.Header>
+          <Card.Body>
+            <Row>
+              <Col md={4}>
+                <Card.Text><strong>Nome:</strong> {selectedPaciente.Nome_Completo}</Card.Text>
+              </Col>
+              <Col md={4}>
+                <Card.Text><strong>Prontuário:</strong> {selectedPaciente.Prontuario}</Card.Text>
+              </Col>
+              <Col md={4}>
+                <Card.Text><strong>CPF:</strong> {selectedPaciente.CPF}</Card.Text>
+              </Col>
+              <Col md={4}>
+                <Card.Text><strong>RG:</strong> {selectedPaciente.RG}</Card.Text>
+              </Col>
+              <Col md={4}>
+                <Card.Text><strong>Email:</strong> {selectedPaciente.Email}</Card.Text>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      )}
 
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Nome_Mae">Nome da mãe:</label>
-              <input type="text" id="Nome_Mae" name="Nome_Mae" value={pacienteInfo.Nome_Mae} onChange={handleInputChange} />
-              {erros.Nome_Mae && <p className="erros">{erros.Nome_Mae}</p>}
+      {/* Formulário de evolução */}
+      <Form>
+        {selectedPaciente && (
+          <>
+            <Row>
+              <Col md={6}>
+                <Form.Group controlId="agendamentoSelect">
+                  <Form.Label>Agendamentos</Form.Label>
+                  {noAgendamentos ? (
+                    <Alert variant="warning">Paciente não possui consultas para esta data.</Alert>
+                  ) : (
+                    <Form.Select
+                      value={selectedAgendamento || ""}
+                      onChange={(e) => setSelectedAgendamento(e.target.value)}
+                    >
+                      <option value="">Selecione um agendamento</option>
+                      {agendamentos.map((agendamento) => (
+                        <option key={agendamento.ID_Agendamento} value={agendamento.ID_Agendamento}>
+                          {`${agendamento.Nome_Servico} - ${agendamento.Profissional} (${agendamento.Data})`}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  )}
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row className="mt-4">
+              <Col>
+                <Form.Group controlId="avaliacao">
+                  <Form.Label>Avaliação</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={avaliacao}
+                    onChange={(e) => setAvaliacao(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col>
+                <Form.Group controlId="observacoes">
+                  <Form.Label>Observações</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={observacoes}
+                    onChange={(e) => setObservacoes(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button className="mt-4" variant="primary" onClick={handleSaveEvolucao}>
+              Salvar Evolução
+            </Button>
+          </>
+        )}
+      </Form>
+
+      {/* Últimas avaliações */}
+      <h2 className="my-4">Últimas Avaliações</h2>
+      <Card>
+        <ListGroup variant="flush">
+          {evolucoes.length > 0 ? (
+            evolucoes.map((evolucao) => (
+              <ListGroup.Item key={evolucao.ID_Evolucao} className="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{evolucao.Nome_Servico}</strong> - {evolucao.Data}
+                </div>
+                <Button variant="info" size="sm" onClick={() => handleShowEvolucao(evolucao)}>
+                  Detalhes
+                </Button>
+              </ListGroup.Item>
+            ))
+          ) : (
+            <ListGroup.Item>Nenhuma avaliação anterior encontrada.</ListGroup.Item>
+          )}
+        </ListGroup>
+      </Card>
+
+      {/* Modal de detalhes */}
+      <Modal show={!!selectedEvolucao} onHide={() => setSelectedEvolucao(null)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Detalhes da Avaliação</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedEvolucao ? (
+            <div>
+              <p><strong>Serviço:</strong> {selectedEvolucao.Nome_Servico}</p>
+              <p><strong>Profissional:</strong> {selectedEvolucao.Profissional}</p>
+              <p><strong>Data:</strong> {selectedEvolucao.Data}</p>
+              <p><strong>Avaliação:</strong> {selectedEvolucao.Avaliacao}</p>
+              <p><strong>Observações:</strong> {selectedEvolucao.Observacoes || "Nenhuma"}</p>
             </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="Telefone_Mae">Telefone da mãe:</label>
-              <input type="tel" id="Telefone_Mae" name="Telefone_Mae" value={pacienteInfo.Telefone_Mae} onChange={handleInputChange} />
-              {erros.Telefone_Mae && <p className="erros">{erros.Telefone_Mae}</p>}
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Nome_Pai">Nome do pai:</label>
-              <input type="text" id="Nome_Pai" name="Nome_Pai" value={pacienteInfo.Nome_Pai} onChange={handleInputChange} />
-              {erros.Nome_Pai && <p className="erros">{erros.Nome_Pai}</p>}
-            </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="Telefone_Pai">Telefone do pai:</label>
-              <input type="tel" id="Telefone_Pai" name="Telefone_Pai" value={pacienteInfo.Telefone_Pai} onChange={handleInputChange} />
-              {erros.Telefone_Pai && <p className="erros">{erros.Telefone_Pai}</p>}
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group">
-              <label htmlFor="Email">Email:</label>
-              <input type="text" id="Email" name="Email" value={pacienteInfo.Email} onChange={handleInputChange} />
-              {erros.Email && <p className="erros">{erros.Email}</p>}
-            </div>
-          </div>
-
-          <h2>Endereço</h2>
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Logradouro">Rua:</label>
-              <input type="text" id="Logradouro" name="Logradouro" value={pacienteInfo.Logradouro} onChange={handleInputChange} />
-            </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="Numero">Numero:</label>
-              <input type="text" id="Numero" name="Numero" value={pacienteInfo.Numero} onChange={handleInputChange} />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Complemento">Complemento:</label>
-              <input type="text" id="Complemento" name="Complemento" value={pacienteInfo.Complemento} onChange={handleInputChange} />
-            </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="Bairro">Bairro:</label>
-              <input type="text" id="Bairro" name="Bairro" value={pacienteInfo.Bairro} onChange={handleInputChange} />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Cidade">Cidade:</label>
-              <input type="text" id="Cidade" name="Cidade" value={pacienteInfo.Cidade} onChange={handleInputChange} />
-            </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="Estado">Estado:</label>
-              <select id="Estado" name="Estado" value={pacienteInfo.Estado} onChange={handleInputChange}>
-                {estados.map((Estado, index) => (
-                  <option key={index} value={Estado}>{Estado}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="CEP">CEP:</label>
-              <input type="text" id="CEP" name="CEP" value={pacienteInfo.CEP} onChange={handleInputChange} />
-              {erros.CEP && <p className="erros">{erros.CEP}</p>}
-            </div>
-          </div>
-
-          <h2>Escolaridade</h2>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Escola">Escola:</label>
-              <input type="text" id="Escola" name="Escola" value={pacienteInfo.Escola} onChange={handleInputChange} />
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="form-group col-md-6">
-              <label htmlFor="Ano_Escolar">Ano Escolar:</label>
-              <input type="text" id="Ano_Escolar" name="Ano_Escolar" value={pacienteInfo.Ano_Escolar} onChange={handleInputChange} />
-            </div>
-
-            <div className="form-group col-md-6">
-              <label htmlFor="Periodo">Periodo:</label>
-              <input type="text" id="Periodo" name="Periodo" value={pacienteInfo.Periodo} onChange={handleInputChange} />
-            </div>
-          </div>
-          <Link to={"/pacientes"}>
-              <Button variant="secondary" className="me-2">
-                <FaArrowLeft className="me-2" />
-                Voltar
-              </Button>
-          </Link>
-          <div className="botao">
-            <button type="submit">Salvar</button>
-          </div>
-        </form>
-      </Container>
-    </div>
+          ) : (
+            <p className="text-danger">Nenhuma avaliação anterior encontrada.</p>
+          )}
+        </Modal.Body>
+      </Modal>
+    </Container>
   );
 }
 
-export default EditarPacientes;
+export default EvolucaoPaciente;

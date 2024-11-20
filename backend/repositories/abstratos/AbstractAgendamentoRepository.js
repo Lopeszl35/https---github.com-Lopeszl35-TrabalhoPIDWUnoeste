@@ -12,12 +12,15 @@ class AbstractAgendamentoRepository {
   async obterConsultasDoPaciente(prontuario) {
     throw new Error("Metodo nãp implementado");
   }
+  async verificarDisponibilidadeHorario(idHorarioProfissional) {
+    throw new Error("Metodo nao implementado");
+  }
 
   async verificarAgendamentoExistente(prontuario, idServico, dataHora) {
     throw new Error("Metodo não implementado");
   }
 
-  async criarAgendamento(agendamento, connection) {
+  async criarAgendamento(agendamento, idHorarioProfissional, connection) {
     throw new Error("Metodo não implementado");
   }
 
@@ -39,6 +42,10 @@ class AbstractAgendamentoRepository {
 
   async obterConsultasNaoArquivadas() {
     throw new Error("Metodo não implementado");
+  }
+
+  async buscarConsultaPorData(prontuario, data) {
+    throw new Error("Metodo nao implementado");
   }
 
   /* implementar posteriormente

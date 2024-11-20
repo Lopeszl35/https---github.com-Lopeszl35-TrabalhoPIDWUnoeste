@@ -19,7 +19,8 @@ class AbstractAgendamentoService {
     idServico,
     dataHora,
     observacoes,
-    status = "Pendente"
+    status = "Pendente",
+    idHorarioProfissional
   ) {
     throw new Error("Metodo não implementado");
   }
@@ -41,6 +42,10 @@ class AbstractAgendamentoService {
 
   async obterConsultasNaoArquivadas() {
     throw new Error("Metodo não implementado");
+  }
+
+  async buscarConsultaPorData(data) {
+    throw new Error("Metodo nao implementado");
   }
 
   /* implementar posteriormente

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Accordion, Container, Button, Row, Col, Form, Card } from "react-bootstrap";
-import { FaListAlt, FaPlus, FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaListAlt, FaPlus, FaEdit, FaTrashAlt, FaEye } from "react-icons/fa";
 import { Link, useOutletContext } from "react-router-dom";
 import ServicosService from "../../services/servicosService";
 import ModalConfirmDelete from "./ModalConfirmDelete";
@@ -186,7 +186,7 @@ function Servicos() {
                     </Row>
                     <div className="d-flex flex-row gap-2">
                       <Button className='btn-success' as={Link} to={`/servicos/${servico.ID_Servico}/profissionais`}>
-                        Ver Profissionais
+                        <FaEye /> Ver Profissionais
                       </Button>
                       <Button className='btn-primary' onClick={() => abrirModalEdicao(servico.ID_Servico)}><FaEdit /></Button>
                       <Button className='btn-danger' onClick={() => abrirModalConfirmacao(servico.ID_Servico)}><FaTrashAlt /></Button>

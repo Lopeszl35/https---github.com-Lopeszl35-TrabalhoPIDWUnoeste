@@ -53,6 +53,32 @@ class ProfissionaisRepository extends AbstractProfissionaisRepository {
         }
     }
 
+    async cadastrarHorarios(id, data, horaInicio, horaFim) {
+        const sql = `INSERT INTO HorariosDisponiveis (ID_Profissional, Data, HorarioInicio, HorarioTermino) VALUES (?, ?, ?, ?)`;
+        const params = [id, data, horaInicio, horaFim];
+        console.log("Params:", params);
+        try {
+            await this.database.executaComandoNonQuery(sql, params);
+            return { message: "Horarios cadastrados com sucesso" };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async obterHorariosProfissional(id) {
+        const sql = `
+            SELECT * FROM HorariosDisponiveis
+            WHERE ID_Profissional = ?
+        `;
+        try {
+            const horarios = await this.database.executaComando(sql, [id]);
+            return horarios;
+        } catch (error) {
+            console.error("Erro ao obter os horários do Profissional:", error);
+            throw error;
+        }
+    }
+
 }
 
 module.exports = ProfissionaisRepository

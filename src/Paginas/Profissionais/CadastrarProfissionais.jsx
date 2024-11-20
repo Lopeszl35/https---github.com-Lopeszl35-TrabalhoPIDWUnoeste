@@ -28,8 +28,8 @@ function CadastrarProfissionais() {
 
     const cadastrarProfissional = async () => {
         try {
-            const dadosCadastro = { profissional, usuario }; // Cria o objeto para envio
-            await profissionaisService.cadastrarProfissional(dadosCadastro); // Envia o objeto ao backend
+            const dadosCadastro = { profissional, usuario };
+            await profissionaisService.cadastrarProfissional(dadosCadastro);
 
             setProfissional({
                 Nome_Completo: '',

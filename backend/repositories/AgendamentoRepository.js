@@ -57,12 +57,28 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     }
   }
 
-  async criarAgendamento(agendamento, connection) {
+  async verificarDisponibilidadeHorario(idHorarioProfissional) {
     const sql = `
+            SELECT * FROM HorariosDisponiveis 
+            WHERE ID_Horario = ? AND Disponivel = 1
+        `;
+    const params = [idHorarioProfissional];
+
+    try {
+      const rows = await this.database.executaComando(sql, params);
+      return rows.length > 0;
+    } catch (error) {
+      console.error("Erro ao verificar disponibilidade de horario:", error);
+      throw new Error("Erro ao verificar disponibilidade de horario");
+    }
+  }
+
+  async criarAgendamento(agendamento, idHorarioProfissional, connection) {
+    const sqlAgendamento = `
             INSERT INTO Agendamentos (Prontuario, ID_Profissional, ID_Servico, Data_Hora, Status, Observacoes, arquivado)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
-    const params = [
+    const paramsAgendamento = [
       agendamento.prontuario,
       agendamento.idProfissional,
       agendamento.idServico,
@@ -72,9 +88,15 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       false,
     ];
 
+    const sqlHorarioProfissional = `
+      UPDATE HorariosDisponiveis SET Disponivel = 0 WHERE ID_Horario = ?
+    `;
+    const paramsHorarioProfissional = [idHorarioProfissional];
+
     try {
-      const [result] = await connection.query(sql, params);
-      return { id: result.insertId, message: "Agendamento criado com sucesso" };
+      const [resultAgendamento] = await connection.query(sqlAgendamento, paramsAgendamento);
+      await connection.query(sqlHorarioProfissional, paramsHorarioProfissional);
+      return { id: resultAgendamento.insertId, message: "Agendamento criado com sucesso" };
     } catch (error) {
       console.error("Erro ao criar agendamento no banco de dados:", error);
       throw new Error("Erro ao criar agendamento no banco de dados");
@@ -182,7 +204,41 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       console.log("Erro ao obter consultas nao arquivadas");
       throw error;
     }
-    
+  }
+
+  async buscarConsultaPorData(prontuario, data) {
+    const sql = `
+    SELECT 
+      a.ID_Agendamento,
+      a.Prontuario,
+      a.ID_Profissional,
+      a.ID_Servico,
+      a.Data_Hora,
+      a.Status,
+      a.Observacoes,
+      a.Arquivado,
+      p.Nome_Completo AS Profissional,
+      s.Nome_Servico AS Servico
+    FROM 
+      Agendamentos a
+    JOIN 
+      Profissionais p ON a.ID_Profissional = p.ID_Profissional
+    JOIN 
+      Servicos s ON a.ID_Servico = s.ID_Servico
+    WHERE 
+      a.Prontuario = ?
+      AND DATE(CONVERT_TZ(a.Data_Hora, '+00:00', '-03:00')) = DATE(?)
+  `;
+    const params = [prontuario, data];
+    console.log('params', params);
+    try {
+      const result = await this.database.executaComando(sql, params);
+      console.log('result', result);
+      return result;
+    } catch (error) {
+      console.error("Erro ao buscar consulta por data:", error);
+      throw new Error("Erro ao buscar consulta por data");
+    } 
   }
 
   /* implementar posteriormente

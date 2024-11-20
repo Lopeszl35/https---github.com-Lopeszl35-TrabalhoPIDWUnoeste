@@ -1,10 +1,13 @@
 .container-pacientes {
-  margin: 4em 0 0 10em;
-  width: 100vh;
+  margin: 4em 0 0 6em;
+  border: solid 1px #ccc;
+  padding: 0.7em;
+  border-radius: 5px;
+  width: 270vh;
 }
 
 .container-pacientes-active {
-  margin: 4em 0 0 16em;
+  margin-left: 16em;
   transition: 0.5s;
 }
 

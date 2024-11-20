@@ -13,6 +13,11 @@ router.post('/profissionais/adicionar', (req, res) =>
     ProfissionaisController.adicionarProfissional(req, res)
 );
 
+// Rota para cadastrar horarios para profissional
+router.post('/profissionais/horarios/:id', (req, res) => 
+    ProfissionaisController.cadastrarHorarios(req, res)
+);
+
 // Rota para editar profissional
 router.put('/profissionais/editar/:id', (req, res) => 
     ProfissionaisController.editarProfissional(req, res)
@@ -21,6 +26,11 @@ router.put('/profissionais/editar/:id', (req, res) =>
 // Rota para obter todos os profissionais
 router.get('/profissionais', (req, res) => 
     ProfissionaisController.obterProfissionais(req, res)
+);
+
+// Rota para obter horarios de profissional
+router.get('/profissionais/horarios/:id', (req, res) => 
+    ProfissionaisController.obterHorariosProfissional(req, res)
 );
 
 // Rota para obter profissional por id

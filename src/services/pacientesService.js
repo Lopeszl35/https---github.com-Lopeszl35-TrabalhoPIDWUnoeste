@@ -1,5 +1,3 @@
-import { json } from "react-router-dom";
-
 const API_BASE_URL ='http://localhost:3001';
 
 class PacientesService {
@@ -115,6 +113,69 @@ class PacientesService {
             }
             const data = await response.json();
             return data;
+    }
+
+    async buscarPaciente(searchTerm, searchType) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/pacientes/buscar?searchTerm=${searchTerm}&searchType=${searchType}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao buscar o paciente!');
+        }
+        const data = await response.json();
+        return data;
+    }
+
+    async salvarEvolucao(evolucao) {
+        console.log("Evolucao: ", evolucao);
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/evolucoes/salvar`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({evolucao}),
+            });
+            if (!response.ok) {
+                const errorData = response.json();
+                throw new Error(errorData.message || 'Erro ao salvar a evolução!');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.log("Erro ao salvar evolução:", error);
+            throw error;
+        }
+    }
+
+    async buscarEvolucaoPaciente(prontuario) {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/evolucoes/buscar/${prontuario}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao buscar a evolução!');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.log("Erro ao buscar evolução:", error);
+            throw error;
+        }
     }
     
     

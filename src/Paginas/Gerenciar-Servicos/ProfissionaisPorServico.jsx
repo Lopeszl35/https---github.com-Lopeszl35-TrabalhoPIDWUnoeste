@@ -7,6 +7,7 @@ import ServicosService from "../../services/servicosService";
 import ProfissionaisServicoService from "../../services/profissionaisServicoService";
 import './profissionaisServico.css';
 import { FaCircleCheck } from "react-icons/fa6";
+import { MdOutlineError } from "react-icons/md";
 
 const servicosService = new ServicosService();
 const profissionaisServicoService = new ProfissionaisServicoService();
@@ -46,14 +47,6 @@ function ProfissionaisPorServico() {
     setShowSearchModal(false);
   };
 
-  const handleClearSelected = () => {
-    setProfissionalSelecionado(null);
-  };
-
-  const handleModalAlert = () => {
-    setShowAlertModal(true);
-  };
-
   const handleOpenConfirmModal = () => {
     setShowConfirmModal(true);
   };
@@ -66,14 +59,14 @@ function ProfissionaisPorServico() {
     const idProfissional = profissionalSelecionado.ID_Profissional;
     if (profissionalSelecionado) {
         try {
-            console.log("Profissional selecionado: ", profissionalSelecionado);
             await profissionaisServicoService.deletarRelacaoProfissionalServico(idProfissional, idServico);
             setProfissionais(profissionais.filter(p => p.ID_Profissional !== profissionalSelecionado.ID_Profissional));
+
             setProfissionalSelecionado(null);
             handleCloseConfirmModal();
-            setAlertMessage("Operação concluída com sucesso!");
+            setAlertMessage("Profissional excluido com sucesso!");
             setAlertVariant("success");
-            setAlertIcon(<FaCircleCheck />);
+            setAlertIcon(<FaTrash />);
             setShowAlertModal(true);
         } catch (error) {
             setAlertMessage(`Erro ao excluir o profissional do serviço ${error.message}`);
@@ -89,6 +82,11 @@ function ProfissionaisPorServico() {
     try {
       await profissionaisServicoService.relacionarProfissionalServico(profissional.ID_Profissional, idServico);
       setProfissionais([...profissionais, profissional]);
+
+      const updatedProfissionais = await profissionaisServicoService.obterProfissionaisPorServico(idServico);
+      setProfissionais(updatedProfissionais);
+      setProfissionalSelecionado(null);
+
       setAlertMessage("Profissional relacionado com sucesso!");
       setAlertVariant("success");
       setAlertIcon(<FaCircleCheck />);
@@ -96,7 +94,7 @@ function ProfissionaisPorServico() {
     } catch (error) {
       setAlertMessage(`Erro ao relacionar o profissional ao serviço ${error.message}`);
       setAlertVariant("danger");
-      setAlertIcon(<FaTrash />);
+      setAlertIcon(<MdOutlineError />);
       setShowAlertModal(true);
       console.error("Erro ao adicionar profissional:", error);
     }
@@ -104,7 +102,6 @@ function ProfissionaisPorServico() {
 
   const handleBuscarProfissionais = async () => {
     try {
-      console.log(`searchTerm: ${searchTerm}, searchType: ${searchType}`);
       const results = await profissionaisServicoService.buscarProfissionais(searchTerm, searchType);
       console.log("Profissionais encontrados:", results);
       setSearchResults(results);
@@ -161,7 +158,7 @@ function ProfissionaisPorServico() {
           <Accordion>
             {profissionais.length <= 0 ? (
               <Accordion.Item eventKey="0">
-                <Accordion.Header>Nenhum profissional encontrado</Accordion.Header>
+                <Accordion.Header><span className="text-danger">Nenhum Profissional cadastrado</span></Accordion.Header>
               </Accordion.Item>
             ) : (
               profissionais.map((profissional, index) => (
@@ -193,12 +190,13 @@ function ProfissionaisPorServico() {
       </section>
 
       {/* Modal de confirmação para exclusão */}
-      <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
+      <Modal show={showConfirmModal} onHide={handleCloseConfirmModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Exclusão</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           Você tem certeza que deseja excluir o profissional <strong>{profissionalSelecionado?.Nome_Profissional}</strong> do serviço?
+           Isso excluira todos os agendamentos relacionados a este profissional.
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseConfirmModal}>Cancelar</Button>
@@ -207,7 +205,7 @@ function ProfissionaisPorServico() {
       </Modal>
 
       {/* Modal de pesquisa de profissionais */}
-      <Modal show={showSearchModal} onHide={() => setShowSearchModal(false)}>
+      <Modal show={showSearchModal} onHide={() => setShowSearchModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Buscar Profissionais</Modal.Title>
         </Modal.Header>
@@ -244,7 +242,7 @@ function ProfissionaisPorServico() {
       </Modal>
 
       {/* Modal para alertas sucesso erros */}
-      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)}>
+      <Modal show={showAlertModal} onHide={() => setShowAlertModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Alerta</Modal.Title>
         </Modal.Header>
