@@ -9,11 +9,6 @@ const AgendamentoController = DependencyInjector.get('AgendamentoController');
 const router = express.Router();
 router.use(cors());
 
-// Rota para buscar consulta de paciente por data
-router.get('/agendamentos/buscar', (req, res) => 
-    AgendamentoController.buscarConsultaPorData(req, res)
-);
-
 // Rota para obter consulta do paciente por prontuário
 router.get('/agendamentos/paciente/:prontuario', (req, res) => 
     AgendamentoController.obterConsultasDoPaciente(req, res)

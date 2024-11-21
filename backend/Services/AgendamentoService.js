@@ -173,18 +173,6 @@ class AgendamentoService extends AbstractAgendamentoService {
     }
   }
 
-  async buscarConsultaPorData(prontuario, data) {
-    try {
-        const consultas = await this.agendamentoRepository.buscarConsultaPorData(prontuario, data);
-        if (!consultas) {
-            throw new Error("Nenhum agendamento encontrado");
-        }
-        return consultas;
-    } catch (error) {
-        throw new Error(`Erro ao obter consultas: ${error.message}`);
-    }
-  }
-
 }
 
 module.exports = AgendamentoService;

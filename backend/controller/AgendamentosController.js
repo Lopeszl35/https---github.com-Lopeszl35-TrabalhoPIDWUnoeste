@@ -1,5 +1,4 @@
 const AbstractAgendamentoController = require("./abstratos/AbstractAgendamentoController");
-const { validationResult } = require("express-validator");
 
 class AgendamentosController extends AbstractAgendamentoController {
   constructor(agendamentoService) {
@@ -88,20 +87,6 @@ class AgendamentosController extends AbstractAgendamentoController {
   async obterConsultasNaoArquivadas(req, res) {
     try {
       const consultas = await this.agendamentoService.obterConsultasNaoArquivadas();
-      res.status(200).json(consultas);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  }
-
-  async buscarConsultaPorData(req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const { prontuario, data } = req.query;
-    try {
-      const consultas = await this.agendamentoService.buscarConsultaPorData(prontuario, data);
       res.status(200).json(consultas);
     } catch (error) {
       res.status(400).json({ message: error.message });

@@ -4,6 +4,8 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const dotenv = require("dotenv");
+const http = require('http');
+const {Server} = require("socket.io"); // Import Socket.IO module para utilizar no chat realtime
 
 // Utilidades
 const DependencyInjector = require("./utils/DependencyInjector");
@@ -17,6 +19,10 @@ dotenv.config();
 // Configuração do Servidor
 const app = express();
 const port = process.env.PORT;
+
+// Configuração do Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "http://localhost:3000" } });
 
 // Configuração do Banco de Dados
 const Database = require("./model/database");
@@ -33,6 +39,7 @@ const ServicosRepository = require('./repositories/ServicosRepository');
 const ProfissionaisRepository = require('./repositories/ProfissionaisRepository');
 const ProfissionalUsuarioRepository = require('./repositories/ProfissionalUsuarioRepository');
 const ProfissionalServicosRepository = require('./repositories/ProfissionalServicosRepository');
+const MessagesRepository = require('./repositories/MessagesRepository');
 
 
 DependencyInjector.register("AgendamentoRepository",new AgendamentoRepository(database));
@@ -44,6 +51,7 @@ DependencyInjector.register('ServicosRepository', new ServicosRepository(databas
 DependencyInjector.register('ProfissionaisRepository', new ProfissionaisRepository(database));
 DependencyInjector.register('ProfissionalUsuarioRepository', new ProfissionalUsuarioRepository(database));
 DependencyInjector.register('ProfissionalServicosRepository', new ProfissionalServicosRepository(database));
+DependencyInjector.register('MessagesRepository', new MessagesRepository(database));
 
 
 // Registro de Serviços
@@ -54,6 +62,7 @@ const ServicosService = require('./Services/ServicosService');
 const ProfissionaisService = require('./Services/ProfissionaisService');
 const ProfissionalUsuarioService = require('./Services/ProfissionalUsuarioService');
 const ProfissionalServicosService = require('./Services/ProfissionalServicosService');
+const MessagesService = require('./Services/MessagesService');
 
 
 DependencyInjector.register("AgendamentoService",new AgendamentoService(
@@ -96,6 +105,10 @@ DependencyInjector.register('ProfissionalServicosService', new ProfissionalServi
   )
 );
 
+DependencyInjector.register("MessagesService", new MessagesService(
+  DependencyInjector.get("MessagesRepository")
+));
+
 
 // Registro de Controladores
 const AgendamentoController = require("./controller/AgendamentosController");
@@ -104,6 +117,7 @@ const PacientesController = require('./controller/pacientesController');
 const ServicoController = require('./controller/servicoController');
 const ProfissionaisController = require('./controller/profissionaisController/ProfissionaisController');
 const ProfissionalServicosController = require('./controller/ProfissionalServicosController');
+
 
 
 DependencyInjector.register("AgendamentoController",new AgendamentoController(
@@ -157,6 +171,7 @@ const PacientesRoutes = require('./routes/pacientesRoutes');
 const ServicosRoutes = require('./routes/servicosRoutes');
 const ProfissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisRoutes');
 const ProfissionalServicosRoutes = require('./routes/ProfissionaisServicosRoutes');
+const MessagesRoutes = require('./routes/messagesRoutes');
 
 
 app.use(loginRoute);
@@ -166,7 +181,10 @@ app.use(verifyToken, PacientesRoutes);
 app.use(verifyToken, ServicosRoutes);
 app.use(verifyToken, ProfissionaisRoutes);
 app.use(verifyToken, ProfissionalServicosRoutes);
+app.use(verifyToken, messagesRoutes);
 
+//Configuração do WebSocket
+require("./websocket")(io);
 
 // Inicialização do Servidor
 app.listen(port, () => console.log(`Servidor ouvindo na porta ${port}`));

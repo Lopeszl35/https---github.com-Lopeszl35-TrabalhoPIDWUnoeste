@@ -115,44 +115,6 @@ class PacientesService extends AbstractPacienteService {
         }
     }
 
-    async buscarPaciente(searchTerm, searchType) {
-        try {
-            const pacientes = await this.pacientesRepository.buscarPaciente(searchTerm, searchType);
-            if (!pacientes) {
-                throw new Error("Nenhum paciente encontrado");
-            }
-            return pacientes;
-        } catch (error) {
-            console.error("Erro ao buscar pacientes:", error);
-            throw error;
-        }
-    }
-
-    async salvarEvolucao(evolucao) {
-        try {
-            const evolucaoSalva = await this.pacientesRepository.salvarEvolucao(evolucao);
-            if (!evolucaoSalva) {
-                throw new Error("Erro ao salvar evolução");
-            }
-            return evolucaoSalva;
-        } catch (error) {
-            console.error("Erro ao salvar evolução:", error);
-            throw error;
-        }
-    }
-
-    async obterEvolucoesDoPaciente(prontuario) {
-        try {
-            const evolucoes = await this.pacientesRepository.obterEvolucoesDoPaciente(prontuario);
-            if (!evolucoes) {
-                throw new Error("Nenhuma evolução encontrada");
-            }
-            return evolucoes;
-        } catch (error) {
-            console.error("Erro ao obter evoluções do paciente:", error);
-            throw error;
-        }
-    }
 
 }
 

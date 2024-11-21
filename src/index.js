@@ -19,6 +19,7 @@ import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 import EditarPacientes from "./Paginas/Pacientes/EditarPacientes";
 import AgendarConsultas from "./Paginas/Agendamentos/AgendaConsulta";
+import Chat from "./Paginas/Chat/Chat";
 import { AuthProvider, useAuth } from "./context/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -61,6 +62,7 @@ function AppRouter() {
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="agendamentos" element={<AgendarConsultas />} />
             <Route path="relatorios" element={<GerarRelatorios />} />
+            <Route path="chat" element={<Chat/>} /> {/*Rota para acessar o chat*/}
             <Route path="*" element={<Navigate to="/home" />} /> {/* Redireciona qualquer rota desconhecida para Home */}
           </Route>
         )}

@@ -25,18 +25,6 @@ class AbstractPacientesController {
         throw new error("Metodo não implementado");
     }
 
-    async buscarPaciente(req, res) {
-        throw new Error("Metodo não implementado");
-    }
-
-    async salvarEvolucao(req, res) {
-        throw new Error("Metodo não implementado");
-    }
-
-    async obterEvolucoesDoPaciente(req, res) {
-        throw new Error("Metodo não implementado");
-    }
-
 }
 
 module.exports = AbstractPacientesController

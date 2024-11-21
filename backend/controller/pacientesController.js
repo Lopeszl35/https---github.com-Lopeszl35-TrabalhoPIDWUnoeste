@@ -85,51 +85,7 @@ class PacientesController extends AbstractPacientesController {
         }
     }
 
-    async buscarPaciente(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { searchTerm, searchType } = req.query;
-        try {
-            const paciente = await this.pacientesService.buscarPaciente(searchTerm, searchType);
-            return res.status(200).json(paciente);
-        } catch (error) {
-            console.log('Erro ao buscar o Paciente:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }
-
-    async salvarEvolucao(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        try {
-            const { evolucao } = req.body;
-            const resultado = await this.pacientesService.salvarEvolucao(evolucao);
-            console.log('Evolução: ', evolucao);
-            return res.status(200).json(resultado);
-        } catch (error) {
-            console.log('Erro ao salvar a evolução do Paciente:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }    
-
-    async obterEvolucoesDoPaciente(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { prontuario } = req.params;
-        try {
-            const evolucoes = await this.pacientesService.obterEvolucoesDoPaciente(prontuario);
-            return res.status(200).json(evolucoes);
-        } catch (error) {
-            console.log('Erro ao obter as evoluções do Paciente:', error);
-            return res.status(500).json({ message: error.message });
-        }
-    }
+    
 }
 
 module.exports = PacientesController;

@@ -44,10 +44,6 @@ class AbstractAgendamentoService {
     throw new Error("Metodo não implementado");
   }
 
-  async buscarConsultaPorData(data) {
-    throw new Error("Metodo nao implementado");
-  }
-
   /* implementar posteriormente
   async obterAgendamentosPendentes() {
     throw new Error("Metodo nao implementado");
