@@ -98,12 +98,12 @@ DependencyInjector.register('ProfissionalServicosService', new ProfissionalServi
 
 
 // Registro de Controladores
-const AgendamentoController = require("./controller/AgendamentosController");
-const UsuariosController = require("./controller/usuariosController/UsuariosController");
-const PacientesController = require('./controller/pacientesController');
-const ServicoController = require('./controller/servicoController');
-const ProfissionaisController = require('./controller/profissionaisController/ProfissionaisController');
-const ProfissionalServicosController = require('./controller/ProfissionalServicosController');
+const AgendamentoController = require("./control/AgendamentosController");
+const UsuariosController = require("./control/usuariosController/UsuariosController");
+const PacientesController = require('./control/pacientesControl');
+const ServicoController = require('./control/servicoController');
+const ProfissionaisController = require('./control/profissionaisController/ProfissionaisController');
+const ProfissionalServicosController = require('./control/ProfissionalServicosController');
 
 
 DependencyInjector.register("AgendamentoController",new AgendamentoController(
