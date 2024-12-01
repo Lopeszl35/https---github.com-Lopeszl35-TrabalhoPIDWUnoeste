@@ -1,12 +1,11 @@
-const AbstractProfissionalServicosService = require("./abstratos/AbstractProfissionalServicosService ");
+const AbstractProfissionalServicosModel = require("../../abstratos/AbstractProfissionalServicosModel");
 
-class ProfissionalServicosService extends AbstractProfissionalServicosService {
+class ProfissionalServicosModel extends AbstractProfissionalServicosModel {
   constructor(profissionaisRepository, servicoRepository, profissionalServicosRepository, database) {
     super();
     this.profissionaisRepository = profissionaisRepository;
     this.servicoRepository = servicoRepository;
     this.profissionalServicosRepository = profissionalServicosRepository;
-    this.database = database;
   }
 
   async relacionarProfissionalAServico(idProfissional, idServico) {
@@ -93,4 +92,4 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
   }
 }
 
-module.exports = ProfissionalServicosService;
+module.exports = ProfissionalServicosModel;

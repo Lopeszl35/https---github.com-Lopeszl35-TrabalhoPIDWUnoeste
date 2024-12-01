@@ -1,6 +1,6 @@
-class AbstractProfissionalServicosController {
+class AbstractProfissionalServicosControl {
   constructor() {
-    if (new.target === AbstractProfissionalServicosController) {
+    if (new.target === AbstractProfissionalServicosControl) {
       throw new Error("Classe abstrata não pode ser instanciada");
     }
   }
@@ -22,4 +22,4 @@ class AbstractProfissionalServicosController {
   }
 }
 
-module.exports = AbstractProfissionalServicosController;
+module.exports = AbstractProfissionalServicosControl;
