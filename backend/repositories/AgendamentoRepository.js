@@ -153,7 +153,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     let result;
     try {
         if(connection) {
-            result = await connection.query(sql, params);
+           [result] = await connection.query(sql, params);
         } else {
             result = await this.database.executaComandoNonQuery(sql, params);
         }
@@ -178,7 +178,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     let result;
     try {
         if(connection) {
-            result = await connection.query(sql, params);
+            [result] = await connection.query(sql, params);
         } else {
             result = await this.database.executaComandoNonQuery(sql, params);
         }
@@ -233,7 +233,6 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     console.log('params', params);
     try {
       const result = await this.database.executaComando(sql, params);
-      console.log('result', result);
       return result;
     } catch (error) {
       console.error("Erro ao buscar consulta por data:", error);

@@ -1,19 +1,16 @@
-const AbstractrProfissionalUsuarioService = require("./abstratos/AbstractProfissionalUsuarioService");
+const AbstractrProfissionalUsuarioModel = require("../../abstratos/AbstractProfissionalUsuarioModel");
 const bycrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const ErroSqlHandler = require("../utils/ErroSqlHandler");
+const ErroSqlHandler = require("../../../utils/ErroSqlHandler");
 
-class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
+class ProfissionalUsuarioModel extends AbstractrProfissionalUsuarioModel {
     constructor(profissionalUsuarioRepository, database) {
         super();
         this.profissionalUsuarioRepository = profissionalUsuarioRepository;
-        this.database = database;
     }
 
-    async adicionarProfissionalComUsuario(profissional, usuario) {
-        let connection;
+    async adicionarProfissionalComUsuario(profissional, usuario, connection) {
         try {
-            connection = await this.database.beginTransaction();
 
             const profissionalAdicionado = await this.profissionalUsuarioRepository.adicionarProfissional(profissional, connection);
             if(!profissionalAdicionado) {
@@ -29,7 +26,6 @@ class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
                 throw new Error("Erro ao adicionar usuario na chamada ao repository");
             }
 
-            await this.database.commitTransaction(connection);
             return {
                 message: 'Profissional e usuário adicionados com sucesso',
                 profissionalId: profissionalAdicionado,
@@ -37,17 +33,12 @@ class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
             };
     
         } catch (error) {
-            if(connection) {
-                await this.database.rollbackTransaction(connection);
-            }
             ErroSqlHandler.tratarErroSql(error, "profissional");
         }
     }
 
-    async deletarProfissionalUsuario(id) {
-        let connection;
+    async deletarProfissionalUsuario(id, connection) {
         try {
-            connection = await this.database.beginTransaction();
 
             const profissionalDeletado = await this.profissionalUsuarioRepository.deletarProfissional(id, connection);
             if(!profissionalDeletado.affectedRows) {
@@ -59,7 +50,6 @@ class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
                 throw new Error("Erro ao deletar usuario");
             }
 
-            await this.database.commitTransaction(connection);
             return {message: "Profissional e usuario deletados com sucesso"}
 
         } catch (error) {
@@ -70,4 +60,4 @@ class ProfissionalUsuarioService extends AbstractrProfissionalUsuarioService {
     
 }
 
-module.exports = ProfissionalUsuarioService
+module.exports = ProfissionalUsuarioModel;

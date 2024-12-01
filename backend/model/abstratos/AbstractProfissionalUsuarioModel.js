@@ -1,6 +1,6 @@
-class AbstractProfissionalUsuarioService {
+class AbstractProfissionalUsuarioModel {
     consutructor() {
-        if (new.target === AbstractProfissionalUsuarioService) {
+        if (new.target === AbstractProfissionalUsuarioModel) {
             throw new Error("Não é possivel instanciar uma classe abstrata");
         }
     }
@@ -15,4 +15,4 @@ class AbstractProfissionalUsuarioService {
 
 }
 
-module.exports = AbstractProfissionalUsuarioService
+module.exports = AbstractProfissionalUsuarioModel

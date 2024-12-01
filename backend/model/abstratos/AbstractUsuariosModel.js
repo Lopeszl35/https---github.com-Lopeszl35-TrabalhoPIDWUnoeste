@@ -1,6 +1,6 @@
-class AbstractUsuariosService {
+class AbstractUsuariosModel {
   constructor() {
-    if (new.target === AbstractUsuariosService) {
+    if (new.target === AbstractUsuariosModel) {
       throw new Error("Classe abstrata não pode ser instanciada");
     }
   }
@@ -27,4 +27,4 @@ class AbstractUsuariosService {
 
 }
 
-module.exports = AbstractUsuariosService;
+module.exports = AbstractUsuariosModel;

@@ -84,9 +84,9 @@ class PacientesService extends AbstractPacientesModel {
         }
     }
 
-    async salvarEvolucao(evolucao) {
+    async salvarEvolucao(evolucao, connection) {
         try {
-            const evolucaoSalva = await this.pacientesRepository.salvarEvolucao(evolucao);
+            const evolucaoSalva = await this.pacientesRepository.salvarEvolucao(evolucao, connection);
             if (!evolucaoSalva) {
                 throw new Error("Erro ao salvar evolução");
             }

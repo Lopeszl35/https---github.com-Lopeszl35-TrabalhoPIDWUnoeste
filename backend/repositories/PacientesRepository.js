@@ -58,13 +58,13 @@ class PacienteRepository extends AbstractPacienteRepository {
         }
     }
 
-    async deletarPaciente(prontuario) {
+    async deletarPaciente(prontuario, connection) {
         const sql = `
             DELETE FROM Pacientes
             WHERE Prontuario = ?
         `
         try {
-            const resultado = await this.database.executaComando(sql, [prontuario]);
+            const [resultado] = await connection.query(sql, [prontuario]);
             return resultado.affectedRows > 0;
         } catch (error) {
             console.error("Erro ao deletar paciente no repository:", error);
@@ -151,7 +151,6 @@ class PacienteRepository extends AbstractPacienteRepository {
             LEFT JOIN Enderecos e ON p.Prontuario = e.Prontuario
             WHERE ?? LIKE ?
         `;
-        // Se o tipo de busca for 'Prontuario', use o alias 'p' para especificar a tabela Pacientes
         if (searchType === 'Prontuario') {
             searchType = 'p.Prontuario';
         }
@@ -166,8 +165,7 @@ class PacienteRepository extends AbstractPacienteRepository {
         }
     }
 
-    async salvarEvolucao(evolucao) {
-        console.log("Evolucao: ", evolucao);
+    async salvarEvolucao(evolucao, connection) {
         const sql = `
             INSERT INTO evolucoesPacientes (ID_Evolucao, Prontuario, ID_Servico, ID_Profissional, Data_Servico, Avaliacao, Observacoes)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -184,7 +182,7 @@ class PacienteRepository extends AbstractPacienteRepository {
         ];
 
         try {
-            const result = await this.database.executaComando(sql, params);
+            const [result] = await connection.query(sql, params);
             return result.affectedRows > 0;
         } catch (error) {
             throw error;

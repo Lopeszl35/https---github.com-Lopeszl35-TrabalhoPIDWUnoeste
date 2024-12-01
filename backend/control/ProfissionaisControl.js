@@ -2,10 +2,10 @@ const AbstractProfissionaisControl = require('./abstratos/AbstractProfissionaisC
 const { validationResult } = require('express-validator');
 
 class ProfissionaisControl extends AbstractProfissionaisControl {
-    constructor(profissionaisModel, profissionalUsuarioService, transactionUtil) {
+    constructor(profissionaisModel, profissionalUsuarioModel, transactionUtil) {
         super();
         this.profissionaisModel = profissionaisModel;
-        this.profissionalUsuarioService = profissionalUsuarioService;
+        this.profissionalUsuarioModel = profissionalUsuarioModel;
         this.transactionUtil = transactionUtil;
     }
 
@@ -34,29 +34,46 @@ class ProfissionaisControl extends AbstractProfissionaisControl {
         }
     }
 
+    // Adiciona um novo profissional e seu usuário associado dentro de uma transação
     async adicionarProfissional(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { profissional, usuario } = req.body;
         try {
-            const resultado = await this.profissionalUsuarioService.adicionarProfissionalComUsuario(profissional, usuario);
+            const resultado = await this.transactionUtil.executeTransaction(async (connection) => {
+                return await this.profissionalUsuarioModel.adicionarProfissionalComUsuario(
+                    profissional,
+                    usuario,
+                    connection
+                );
+            });
+
             return res.status(201).json(resultado);
         } catch (error) {
+            console.error('Erro ao adicionar profissional:', error.message);
             return res.status(500).json({ message: error.message });
         }
     }
 
+    // Edita os dados de um profissional em uma transação
     async editarProfissional(req, res) {
         const { id } = req.params;
         const { profissional } = req.body;
+
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const resultado = await this.profissionaisModel.editarProfissional(id, profissional);
+
+            const resultado = await this.transactionUtil.executeTransaction(async (connection) => {
+                // Edita as informações do profissional dentro de uma transação
+                return await this.profissionaisModel.editarProfissional(id, profissional, connection);
+            });
+
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao editar profissional:', error.message);
@@ -64,14 +81,21 @@ class ProfissionaisControl extends AbstractProfissionaisControl {
         }
     }
 
+    // Remove um profissional e seu usuário associado dentro de uma transação
     async deletarProfissional(req, res) {
         const { id } = req.params;
+
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const resultado = await this.profissionalUsuarioService.deletarProfissionalUsuario(id);
+
+            await this.transactionUtil.executeTransaction(async (connection) => {
+                // Exclui o profissional e o usuário associado em uma transação
+                await this.profissionalUsuarioModel.deletarProfissionalUsuario(id, connection);
+            });
+
             return res.status(200).json({ message: 'Profissional excluído com sucesso!' });
         } catch (error) {
             console.error('Erro ao deletar profissional:', error.message);
@@ -79,15 +103,22 @@ class ProfissionaisControl extends AbstractProfissionaisControl {
         }
     }
 
+    // Cadastra horários para um profissional
     async cadastrarHorarios(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { id } = req.params;
         const { data, horaInicio, horaFim } = req.body;
+
         try {
-            const resultado = await this.profissionaisModel.cadastrarHorarios(id, data, horaInicio, horaFim);
+            const resultado = await this.transactionUtil.executeTransaction(async (connection) => {
+                // Cadastra os horários em uma transação
+                return await this.profissionaisModel.cadastrarHorarios(id, data, horaInicio, horaFim, connection);
+            });
+
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao cadastrar horários:', error.message);
@@ -100,7 +131,9 @@ class ProfissionaisControl extends AbstractProfissionaisControl {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { id } = req.params;
+
         try {
             const resultado = await this.profissionaisModel.obterHorariosProfissional(id);
             return res.status(200).json(resultado);
@@ -109,7 +142,6 @@ class ProfissionaisControl extends AbstractProfissionaisControl {
             return res.status(500).json({ message: error.message });
         }
     }
-
 }
 
 module.exports = ProfissionaisControl;

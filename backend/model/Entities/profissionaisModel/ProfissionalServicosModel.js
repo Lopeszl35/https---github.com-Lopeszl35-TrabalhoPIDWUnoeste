@@ -1,14 +1,14 @@
 const AbstractProfissionalServicosModel = require("../../abstratos/AbstractProfissionalServicosModel");
 
 class ProfissionalServicosModel extends AbstractProfissionalServicosModel {
-  constructor(profissionaisRepository, servicoRepository, profissionalServicosRepository, database) {
+  constructor(profissionaisRepository, servicoRepository, profissionalServicosRepository) {
     super();
     this.profissionaisRepository = profissionaisRepository;
     this.servicoRepository = servicoRepository;
     this.profissionalServicosRepository = profissionalServicosRepository;
   }
 
-  async relacionarProfissionalAServico(idProfissional, idServico) {
+  async relacionarProfissionalAServico(idProfissional, idServico, connection) {
     try {
       const profissional = await this.profissionaisRepository.obterPorId(
         idProfissional
@@ -20,19 +20,11 @@ class ProfissionalServicosModel extends AbstractProfissionalServicosModel {
       if (!servico) {
         throw new Error("Servico nao encontrado");
       }
-      const profissionalServico =
-        await this.profissionalServicosRepository.existeRelacionamentoProfissionalServico(
-          idProfissional,
-          idServico
-        );
+      const profissionalServico = await this.profissionalServicosRepository.existeRelacionamentoProfissionalServico(idProfissional,idServico);
       if (profissionalServico) {
         throw new Error("Profissional ja possui esse servico");
       }
-      const relacionado =
-        await this.profissionalServicosRepository.relacionarProfissionalAServico(
-          idProfissional,
-          idServico
-        );
+      const relacionado = await this.profissionalServicosRepository.relacionarProfissionalAServico(idProfissional, idServico, connection);
       if (!relacionado) {
         throw new Error("Erro ao relacionar profissional com o servico");
       }
@@ -45,11 +37,7 @@ class ProfissionalServicosModel extends AbstractProfissionalServicosModel {
 
   async deletarRelacao(idProfissional, idServico) {
     try {
-      const relacaoDeletada =
-        await this.profissionalServicosRepository.deletarRelacao(
-          idProfissional,
-          idServico
-        );
+      const relacaoDeletada = await this.profissionalServicosRepository.deletarRelacao(idProfissional, idServico);
       if (!relacaoDeletada) {
         throw new Error("Não foi possivel deletar a relação Error: ");
       }
