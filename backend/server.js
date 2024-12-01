@@ -19,9 +19,13 @@ const app = express();
 const port = process.env.PORT;
 
 // Configuração do Banco de Dados
-const Database = require("./model/database");
+const Database = require("./Model/database");
 const database = Database.getInstance();
 DependencyInjector.register("Database", database);
+
+// Configuração do transactionUtil
+const TransactionUtil = require("./utils/TransactionUtil");
+DependencyInjector.register("TransactionUtil", new TransactionUtil(database));
 
 // Registro de Repositórios
 const AgendamentoRepository = require("./repositories/AgendamentoRepository");
@@ -46,19 +50,20 @@ DependencyInjector.register('ProfissionalUsuarioRepository', new ProfissionalUsu
 DependencyInjector.register('ProfissionalServicosRepository', new ProfissionalServicosRepository(database));
 
 
-// Registro de Serviços
-const AgendamentoService = require("./Services/AgendamentoService");
-const UsuariosService = require("./Services/UsuariosService");
-const PacientesService = require('./Services/PacientesService');
-const ServicosService = require('./Services/ServicosService');
-const ProfissionaisService = require('./Services/ProfissionaisService');
-const ProfissionalUsuarioService = require('./Services/ProfissionalUsuarioService');
-const ProfissionalServicosService = require('./Services/ProfissionalServicosService');
+// Registro de Models
+const AgendamentoModel = require("./Model/Entities/agendamentoModel/AgendamentoModel");
+const UsuariosService = require("./Model/UsuariosService");
+const PacientesModel = require('./Model/Entities/pacientesModel/PacientesModel');
+const ResponsaveisModel = require('./Model/Entities/pacientesModel/responsaveisModel');
+const EnderecosModel = require('./Model/Entities/pacientesModel/enderecosModel');
+const ServicosService = require('./Model/ServicosService');
+const ProfissionaisModel = require('./Model/Entities/profissionaisModel/ProfissionaisModel');
+const ProfissionalUsuarioService = require('./Model/ProfissionalUsuarioService');
+const ProfissionalServicosService = require('./Model/ProfissionalServicosService');
 
 
-DependencyInjector.register("AgendamentoService",new AgendamentoService(
-    DependencyInjector.get("AgendamentoRepository"),
-    database
+DependencyInjector.register("AgendamentoModel",new AgendamentoModel(
+    DependencyInjector.get("AgendamentoRepository")
   ));
 
 DependencyInjector.register("UsuariosService", new UsuariosService(
@@ -66,10 +71,16 @@ DependencyInjector.register("UsuariosService", new UsuariosService(
     database
   ));
 
-DependencyInjector.register('PacientesService', new PacientesService(
-  DependencyInjector.get('PacientesRepository'), 
-  DependencyInjector.get('EnderecosRepository'),
+DependencyInjector.register('PacientesModel', new PacientesModel(
+  DependencyInjector.get('PacientesRepository')
+));
+
+DependencyInjector.register('ResponsaveisModel', new ResponsaveisModel(
   DependencyInjector.get('ResponsaveisRepository')
+));
+
+DependencyInjector.register('EnderecosModel', new EnderecosModel(
+  DependencyInjector.get('EnderecosRepository')
 ));
 
 DependencyInjector.register('ServicosService', new ServicosService(
@@ -77,7 +88,7 @@ DependencyInjector.register('ServicosService', new ServicosService(
   database
 ));
 
-DependencyInjector.register('ProfissionaisService', new ProfissionaisService(
+DependencyInjector.register('ProfissionaisModel', new ProfissionaisModel(
   DependencyInjector.get('ProfissionaisRepository'), 
   database
 ));
@@ -97,29 +108,32 @@ DependencyInjector.register('ProfissionalServicosService', new ProfissionalServi
 
 
 // Registro de Controladores
-const AgendamentoController = require("./control/AgendamentosController");
-const UsuariosController = require("./control/usuariosController/UsuariosController");
-const PacientesController = require('./control/pacientesControl');
+const AgendamentoControl = require("./control/AgendamentosControl");
+const UsuariosController = require("./control/UsuariosController");
+const PacientesControl = require('./control/pacientesControl');
 const ServicoController = require('./control/servicoController');
-const ProfissionaisController = require('./control/profissionaisController/ProfissionaisController');
+const ProfissionaisControl = require('./control/ProfissionaisControl');
 const ProfissionalServicosController = require('./control/ProfissionalServicosController');
 
 
-DependencyInjector.register("AgendamentoController",new AgendamentoController(
-  DependencyInjector.get("AgendamentoService"))
+DependencyInjector.register("AgendamentoControl",new AgendamentoControl(
+  DependencyInjector.get("AgendamentoModel"),
+  DependencyInjector.get("TransactionUtil"))
 );
 DependencyInjector.register("UsuariosController",new UsuariosController(
     DependencyInjector.get("UsuariosService"))
 );
-DependencyInjector.register('PacientesController', new PacientesController(
-  DependencyInjector.get('PacientesService'),
-  database)
+DependencyInjector.register('PacientesControl', new PacientesControl(
+  DependencyInjector.get('PacientesModel'),
+  DependencyInjector.get('ResponsaveisModel'),
+  DependencyInjector.get('EnderecosModel'),
+  DependencyInjector.get('TransactionUtil'))
 );
 DependencyInjector.register('ServicoController', new ServicoController(
   DependencyInjector.get('ServicosService'))
 );
-DependencyInjector.register('ProfissionaisController', new ProfissionaisController(
-  DependencyInjector.get('ProfissionaisService'),
+DependencyInjector.register('ProfissionaisControl', new ProfissionaisControl(
+  DependencyInjector.get('ProfissionaisModel'),
   DependencyInjector.get('ProfissionalUsuarioService'))
 );
 DependencyInjector.register('ProfissionalServicosController', new ProfissionalServicosController(
@@ -155,7 +169,7 @@ const UsuariosRoutes = require("./routes/usuariosRoutes");
 const loginRoute = require("./routes/loginRoute");
 const PacientesRoutes = require('./routes/pacientesRoutes');
 const ServicosRoutes = require('./routes/servicosRoutes');
-const ProfissionaisRoutes = require('./routes/profissionaisRoutes/ProfissionaisRoutes');
+const ProfissionaisRoutes = require('./routes/ProfissionaisRoutes');
 const ProfissionalServicosRoutes = require('./routes/ProfissionaisServicosRoutes');
 
 

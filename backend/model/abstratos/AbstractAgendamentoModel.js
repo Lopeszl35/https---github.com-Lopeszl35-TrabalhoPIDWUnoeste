@@ -1,6 +1,6 @@
-class AbstractAgendamentoService {
+class AbstractAgendamentoModel {
   constructor() {
-    if (new.target === AbstractAgendamentoService) {
+    if (new.target === AbstractAgendamentoModel) {
       throw new Error("Não é possível instanciar uma classe abstrata");
     }
   }
@@ -57,4 +57,4 @@ class AbstractAgendamentoService {
 
 }
 
-module.exports = AbstractAgendamentoService;
+module.exports = AbstractAgendamentoModel;

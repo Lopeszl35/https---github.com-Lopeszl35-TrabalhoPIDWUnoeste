@@ -1,12 +1,13 @@
 const { validationResult } = require('express-validator');
-const AbstractPacientesController = require('./abstratos/AbstractPacientesController');
+const AbstractPacientesControl = require('./abstratos/AbstractPacientesControl');
 
-
-class PacientesController extends AbstractPacientesController {
-    constructor(pacientesService, database) {
+class PacientesControl extends AbstractPacientesControl {
+    constructor(pacientesModel, responsaveisModel, enderecosModel, transactionUtil) {
         super();
-        this.pacientesService = pacientesService;
-        this.database = database;
+        this.pacientesModel = pacientesModel;
+        this.responsaveisModel = responsaveisModel;
+        this.enderecosModel = enderecosModel;
+        this.transactionUtil = transactionUtil; // Utilitário para gerenciar transações
     }
 
     async adicionarPaciente(req, res) {
@@ -14,66 +15,95 @@ class PacientesController extends AbstractPacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { paciente, endereco, responsavel } = req.body;
 
         try {
-            let connection = await this.database.beginTransaction();
-            const resultado = await this.pacientesService.adicionarPaciente(paciente, endereco, responsavel, connection);
-            await this.database.commitTransaction(connection);
-            return res.status(200).json(resultado);
+            // Usa o utilitário de transação
+            const result = await this.transactionUtil.executeTransaction(async (connection) => {
+                // Adiciona o paciente e retorna o prontuário
+                const prontuario = await this.pacientesModel.adicionarPaciente(paciente, connection);
+
+                // Adiciona o endereço associado ao prontuário do paciente
+                endereco.Prontuario = prontuario;
+                await this.enderecosModel.adicionarEndereco(endereco, connection);
+
+                // Adiciona o responsável associado ao prontuário do paciente
+                responsavel.Prontuario = prontuario;
+                await this.responsaveisModel.adicionarResponsavel(responsavel, connection);
+
+                return { message: 'Paciente adicionado com sucesso!' };
+            });
+
+            res.status(200).json(result);
         } catch (error) {
-            await this.database.rollbackTransaction(connection);
             console.error('Erro ao adicionar o Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
     async atualizarPaciente(req, res) {
         const errors = validationResult(req);
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
+        const { prontuario } = req.params;
+        const { paciente, endereco, responsavel } = req.body;
+
         try {
-            let connection = await this.database.beginTransaction();
-            const { prontuario } = req.params;
-            const { paciente, endereco, responsavel } = req.body;
-            paciente.Prontuario = prontuario;
-            const resultado = await this.pacientesService.atualizarPaciente(paciente, endereco, responsavel, connection);
-            await this.database.commitTransaction(connection);
-            return res.status(200).json(resultado);
+            // Usa o utilitário de transação
+            const result = await this.transactionUtil.executeTransaction(async (connection) => {
+                // Atualiza as informações do paciente
+                paciente.Prontuario = prontuario;
+                await this.pacientesModel.atualizarPaciente(paciente, connection);
+
+                // Atualiza as informações do endereço associado ao prontuário
+                endereco.Prontuario = prontuario;
+                await this.enderecosModel.atualizarEndereco(endereco, connection);
+
+                // Atualiza as informações do responsável associado ao prontuário
+                responsavel.Prontuario = prontuario;
+                await this.responsaveisModel.atualizarResponsavel(responsavel, connection);
+
+                return { message: 'Paciente atualizado com sucesso!' };
+            });
+
+            res.status(200).json(result);
         } catch (error) {
-            await this.database.rollbackTransaction(connection);
             console.error('Erro ao atualizar o Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
     async deletarPaciente(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array()});
+            return res.status(400).json({ errors: errors.array() });
         }
+
         const { prontuario } = req.params;
+
         try {
-            const resultado = await this.pacientesService.deletarPaciente(prontuario);
-            return res.status(200).json({ message: 'Paciente excluído com sucesso!' });
+            const result = await this.transactionUtil.executeTransaction(async (connection) => {
+                await this.pacientesModel.deletarPaciente(prontuario, connection);
+                return { message: 'Paciente excluído com sucesso!' };
+            });
+
+            res.status(200).json(result);
         } catch (error) {
             console.error('Erro ao excluir o Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            res.status(500).json({ message: error.message });
         }
     }
 
     async obterPacientes(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
         try {
-            const paciente = await this.pacientesService.obterPacientes();
-            return res.status(200).json(paciente);
+            const pacientes = await this.pacientesModel.obterPacientes();
+            res.status(200).json(pacientes);
         } catch (error) {
-            console.log('Erro ao obter os Pacientes:', error);
-            return res.status(500).json({ message: error.message });
+            console.error('Erro ao obter os Pacientes:', error);
+            res.status(500).json({ message: error.message });
         }
     }
 
@@ -82,13 +112,15 @@ class PacientesController extends AbstractPacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { prontuario } = req.params;
+
         try {
-            const paciente = await this.pacientesService.obterDadosCompletosDoPaciente(prontuario);
-            return res.status(200).json(paciente);
+            const paciente = await this.pacientesModel.obterDadosCompletosDoPaciente(prontuario);
+            res.status(200).json(paciente);
         } catch (error) {
-            console.log('Erro ao obter o Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            console.error('Erro ao obter o Paciente:', error);
+            res.status(500).json({ message: error.message });
         }
     }
 
@@ -97,13 +129,15 @@ class PacientesController extends AbstractPacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { searchTerm, searchType } = req.query;
+
         try {
-            const paciente = await this.pacientesService.buscarPaciente(searchTerm, searchType);
-            return res.status(200).json(paciente);
+            const paciente = await this.pacientesModel.buscarPaciente(searchTerm, searchType);
+            res.status(200).json(paciente);
         } catch (error) {
-            console.log('Erro ao buscar o Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            console.error('Erro ao buscar o Paciente:', error);
+            res.status(500).json({ message: error.message });
         }
     }
 
@@ -112,31 +146,37 @@ class PacientesController extends AbstractPacientesController {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         try {
             const { evolucao } = req.body;
-            const resultado = await this.pacientesService.salvarEvolucao(evolucao);
-            console.log('Evolução: ', evolucao);
-            return res.status(200).json(resultado);
+
+            const result = await this.transactionUtil.executeTransaction(async (connection) => {
+                return await this.pacientesModel.salvarEvolucao(evolucao, connection);
+            });
+
+            res.status(200).json(result);
         } catch (error) {
-            console.log('Erro ao salvar a evolução do Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            console.error('Erro ao salvar a evolução do Paciente:', error);
+            res.status(500).json({ message: error.message });
         }
-    }    
+    }
 
     async obterEvolucoesDoPaciente(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
+
         const { prontuario } = req.params;
+
         try {
-            const evolucoes = await this.pacientesService.obterEvolucoesDoPaciente(prontuario);
-            return res.status(200).json(evolucoes);
+            const evolucoes = await this.pacientesModel.obterEvolucoesDoPaciente(prontuario);
+            res.status(200).json(evolucoes);
         } catch (error) {
-            console.log('Erro ao obter as evoluções do Paciente:', error);
-            return res.status(500).json({ message: error.message });
+            console.error('Erro ao obter as evoluções do Paciente:', error);
+            res.status(500).json({ message: error.message });
         }
     }
 }
 
-module.exports = PacientesController;
+module.exports = PacientesControl;

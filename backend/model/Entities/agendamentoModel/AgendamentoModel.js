@@ -1,12 +1,10 @@
-const AbstractAgendamentoService = require("./abstratos/AbstractAgendamentoService");
-const Agendamento = require("../model/Entities/agendamentoModel/Agendamento");
-const ErroSqlHandler = require("../utils/ErroSqlHandler");
+const AbstractAgendamentoModel = require("../../abstratos/AbstractAgendamentoModel");
+const ErroSqlHandler = require("../../../utils/ErroSqlHandler");
 
-class AgendamentoService extends AbstractAgendamentoService {
-  constructor(agendamentoRepository, database) {
+class AgendamentoModel extends AbstractAgendamentoModel {
+  constructor(agendamentoRepository) {
     super();
     this.agendamentoRepository = agendamentoRepository;
-    this.database = database;
   }
 
   async obterTodasConsultas() {
@@ -41,26 +39,18 @@ class AgendamentoService extends AbstractAgendamentoService {
     dataHora,
     observacoes,
     status = "Pendente",
-    idHorarioProfissional
+    idHorarioProfissional,
+    connection
   ) {
-    const connection = await this.database.beginTransaction();
     try {
       // Verifica se o horário é disponível
-      const disponibilidadeHorario =
-        await this.agendamentoRepository.verificarDisponibilidadeHorario(
-          idHorarioProfissional
-        );
+      const disponibilidadeHorario = await this.agendamentoRepository.verificarDisponibilidadeHorario(idHorarioProfissional);
       if (!disponibilidadeHorario) {
         throw new Error("Horário indisponível");
       }
 
       // Verifica se o agendamento ja existe
-      const existeAgendamento =
-        await this.agendamentoRepository.verificarAgendamentoExistente(
-          prontuario,
-          idServico,
-          dataHora
-        );
+      const existeAgendamento = await this.agendamentoRepository.verificarAgendamentoExistente(prontuario, idServico,dataHora);
       if (existeAgendamento) {
         throw new Error(
           "Já existe um agendamento para este paciente para este serviço nesta data"
@@ -68,25 +58,19 @@ class AgendamentoService extends AbstractAgendamentoService {
       }
 
       // Cria o novo agendamento
-      const novoAgendamento = new Agendamento(
-        null,
+      const novoAgendamento = {
+        id: null,
         prontuario,
         idProfissional,
         idServico,
         dataHora,
         status,
         observacoes
-      );
-      const agendamentoId = await this.agendamentoRepository.criarAgendamento(
-        novoAgendamento, idHorarioProfissional,
-        connection
-      );
+      }
+      const agendamentoId = await this.agendamentoRepository.criarAgendamento(novoAgendamento, idHorarioProfissional, connection);
       novoAgendamento.id = agendamentoId;
-
-      await this.database.commitTransaction(connection);
       return novoAgendamento;
     } catch (error) {
-      await this.database.rollbackTransaction(connection);
       throw error;
     }
   }
@@ -98,12 +82,12 @@ class AgendamentoService extends AbstractAgendamentoService {
     dataHora,
     observacoes,
     status,
-    idAgendamento
+    idAgendamento,
+    connection
   ) {
-    const connection = await this.database.beginTransaction();
     let agendamentoAtualizado;
     try {
-      const novoAgendamento = new Agendamento(
+      const novoAgendamento = {
         idAgendamento,
         prontuario,
         idProfissional,
@@ -111,7 +95,7 @@ class AgendamentoService extends AbstractAgendamentoService {
         dataHora,
         status,
         observacoes
-      );
+    }
         agendamentoAtualizado = await this.agendamentoRepository.editarAgendamento(novoAgendamento, connection);
       // Se o status atualizado é "Concluído" ou "Cancelado", arquive o agendamento
       if (status === "Concluído" || status === "Cancelado") {
@@ -120,22 +104,16 @@ class AgendamentoService extends AbstractAgendamentoService {
       else if (status === "Pendente" || status === "Confirmado") {
         await this.agendamentoRepository.desarquivarConsulta(idAgendamento, connection);
       }
-  
-      await this.database.commitTransaction(connection);
       return agendamentoAtualizado;
     } catch (error) {
-      await this.database.rollbackTransaction(connection);
       throw new Error(`Erro ao editar agendamento: ${error.message}`);
     }
   }
 
-  async arquivarAgendamento(idAgendamento) {
-    const connection = await this.database.beginTransaction();
+  async arquivarAgendamento(idAgendamento, connection) {
     try {
       // Verifica se o agendamento existe
-      const consulta = await this.agendamentoRepository.buscarConsultaPorId(
-        idAgendamento
-      );
+      const consulta = await this.agendamentoRepository.buscarConsultaPorId(idAgendamento);
       if (!consulta) {
         throw new Error(
           "Nenhum agendamento encontrado para este paciente para este serviço nesta data"
@@ -150,13 +128,9 @@ class AgendamentoService extends AbstractAgendamentoService {
       }
 
       // Arquiva o agendamento
-      const resultado = await this.agendamentoRepository.arquivarConsulta(
-        idAgendamento
-      );
-      await this.database.commitTransaction(connection);
+      const resultado = await this.agendamentoRepository.arquivarConsulta(idAgendamento, connection);
       return resultado;
     } catch (error) {
-      await this.database.rollbackTransaction(connection);
       throw new Error(`Erro ao deletar agendamento: ${error.message}`);
     }
   }
@@ -187,4 +161,4 @@ class AgendamentoService extends AbstractAgendamentoService {
 
 }
 
-module.exports = AgendamentoService;
+module.exports = AgendamentoModel;

@@ -1,5 +1,5 @@
 const AbstractUsuariosService = require("./abstratos/AbstractUsuariosService");
-const Usuario = require("../model/Entities/usuariosModel/UsuariosModel");
+const Usuario = require("./Entities/usuariosModel/UsuariosModel");
 const bycrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ErroSqlHandler = require("../utils/ErroSqlHandler");
@@ -17,9 +17,7 @@ class UsuariosService extends AbstractUsuariosService {
       const senhaHash = await bycrypt.hash(senha, salt);
 
       const novoUsuarioModel = new Usuario(email, senhaHash, tipoPermissao);
-      const novoUsuairo = await this.UsuarioRepository.adicionarUsuario(
-        novoUsuarioModel
-      );
+      const novoUsuairo = await this.UsuarioRepository.adicionarUsuario(novoUsuarioModel);
       return novoUsuairo;
     } catch (error) {
      ErroSqlHandler.tratarErroSql(error, "usuario");

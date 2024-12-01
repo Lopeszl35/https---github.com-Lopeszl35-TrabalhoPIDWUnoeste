@@ -1,11 +1,12 @@
-const AbstractProfissionaisController = require('../abstratos/AbstractProfissionaisController');
+const AbstractProfissionaisControl = require('./abstratos/AbstractProfissionaisControl');
 const { validationResult } = require('express-validator');
 
-class ProfissionaisController extends AbstractProfissionaisController {
-    constructor(profissionaisService, profissionalUsuarioService) {
+class ProfissionaisControl extends AbstractProfissionaisControl {
+    constructor(profissionaisModel, profissionalUsuarioService, transactionUtil) {
         super();
-        this.profissionaisService = profissionaisService;
+        this.profissionaisModel = profissionaisModel;
         this.profissionalUsuarioService = profissionalUsuarioService;
+        this.transactionUtil = transactionUtil;
     }
 
     async obterProfissionais(req, res) {
@@ -14,7 +15,7 @@ class ProfissionaisController extends AbstractProfissionaisController {
             return res.status(400).json({ errors: errors.array() });
         }
         try {
-            const profissionais = await this.profissionaisService.obterProfissionais();
+            const profissionais = await this.profissionaisModel.obterProfissionais();
             return res.status(200).json(profissionais);
         } catch (error) {
             console.error('Erro ao obter os Profissionais:', error);
@@ -25,7 +26,7 @@ class ProfissionaisController extends AbstractProfissionaisController {
     async obterProfissionalPorId(req, res) {
         const { id } = req.params;
         try {
-            const profissional = await this.profissionaisService.obterPorId(id);
+            const profissional = await this.profissionaisModel.obterPorId(id);
             return res.status(200).json(profissional);
         } catch (error) {
             console.error('Erro ao obter o profissional:', error.message);
@@ -55,7 +56,7 @@ class ProfissionaisController extends AbstractProfissionaisController {
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const resultado = await this.profissionaisService.editarProfissional(id, profissional);
+            const resultado = await this.profissionaisModel.editarProfissional(id, profissional);
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao editar profissional:', error.message);
@@ -86,7 +87,7 @@ class ProfissionaisController extends AbstractProfissionaisController {
         const { id } = req.params;
         const { data, horaInicio, horaFim } = req.body;
         try {
-            const resultado = await this.profissionaisService.cadastrarHorarios(id, data, horaInicio, horaFim);
+            const resultado = await this.profissionaisModel.cadastrarHorarios(id, data, horaInicio, horaFim);
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao cadastrar horários:', error.message);
@@ -101,7 +102,7 @@ class ProfissionaisController extends AbstractProfissionaisController {
         }
         const { id } = req.params;
         try {
-            const resultado = await this.profissionaisService.obterHorariosProfissional(id);
+            const resultado = await this.profissionaisModel.obterHorariosProfissional(id);
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao obter horários:', error.message);
@@ -111,4 +112,4 @@ class ProfissionaisController extends AbstractProfissionaisController {
 
 }
 
-module.exports = ProfissionaisController;
+module.exports = ProfissionaisControl;

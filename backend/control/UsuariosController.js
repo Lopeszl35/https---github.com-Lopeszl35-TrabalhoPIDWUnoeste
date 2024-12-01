@@ -1,4 +1,4 @@
-const AbstractUsuariosController = require("../abstratos/AbstractUsuariosController");
+const AbstractUsuariosController = require("./abstratos/AbstractUsuariosController");
 const { validationResult } = require('express-validator');
 
 class UsuariosController extends AbstractUsuariosController {
