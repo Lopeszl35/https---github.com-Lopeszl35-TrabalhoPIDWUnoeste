@@ -18,16 +18,6 @@ class Agendamento {
         this.#observacoes = observacoes;
     }
 
-    get idAgendamento() { return this.#idAgendamento; }
-    get prontuario() { return this.#prontuario; }
-    get idProfissional() { return this.#idProfissional; }
-    get idServico() { return this.#idServico; }
-    get dataHora() { return this.#dataHora; }
-    get status() { return this.#status; }
-    get observacoes() { return this.#observacoes; }
-
-    set status(value) { this.#status = value; }
-    set observacoes(value) { this.#observacoes = value; }
 
 
 }
