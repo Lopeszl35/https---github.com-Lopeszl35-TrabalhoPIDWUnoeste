@@ -1,11 +1,12 @@
 const { validationResult } = require('express-validator');
-const AbstractPacientesController = require('./abstratos/AbstractPacientesController');
+const AbstractPacientesControl = require('./abstratos/AbstractPacientesControl');
 
 
-class PacientesController extends AbstractPacientesController {
-    constructor(pacientesService) {
+class PacientesControl extends AbstractPacientesControl {
+    constructor(pacientesModel, database) {
         super();
-        this.pacientesService = pacientesService;
+        this.pacientesModel = pacientesModel;
+        this.database = database;
     }
 
     async adicionarPaciente(req, res) {
@@ -16,9 +17,16 @@ class PacientesController extends AbstractPacientesController {
         const { paciente, endereco, responsavel } = req.body;
 
         try {
-            const resultado = await this.pacientesService.adicionarPaciente(paciente, endereco, responsavel);
+
+            let connection = await this.database.beginTransaction();
+            const resultado = await this.pacientesModel.adicionarPaciente(paciente, endereco, responsavel, connection);
+            await this.database.commitTransaction(connection);
             return res.status(200).json(resultado);
+
         } catch (error) {
+            if(connection) {
+                await this.database.rollbackTransaction(connection);
+            }
             console.error('Erro ao adicionar o Paciente:', error);
             return res.status(500).json({ message: error.message });
         }
@@ -33,7 +41,7 @@ class PacientesController extends AbstractPacientesController {
             const { prontuario } = req.params;
             const { paciente, endereco, responsavel } = req.body;
             paciente.Prontuario = prontuario;
-            const resultado = await this.pacientesService.atualizarPaciente(paciente, endereco, responsavel);
+            const resultado = await this.pacientesModel.atualizarPaciente(paciente, endereco, responsavel);
             return res.status(200).json(resultado);
         } catch (error) {
             console.error('Erro ao atualizar o Paciente:', error);
@@ -48,7 +56,7 @@ class PacientesController extends AbstractPacientesController {
         }
         const { prontuario } = req.params;
         try {
-            const resultado = await this.pacientesService.deletarPaciente(prontuario);
+            const resultado = await this.pacientesModel.deletarPaciente(prontuario);
             return res.status(200).json({ message: 'Paciente excluído com sucesso!' });
         } catch (error) {
             console.error('Erro ao excluir o Paciente:', error);
@@ -62,7 +70,7 @@ class PacientesController extends AbstractPacientesController {
             return res.status(400).json({ errors: errors.array() });
         }
         try {
-            const paciente = await this.pacientesService.obterPacientes();
+            const paciente = await this.pacientesModel.obterPacientes();
             return res.status(200).json(paciente);
         } catch (error) {
             console.log('Erro ao obter os Pacientes:', error);
@@ -77,7 +85,7 @@ class PacientesController extends AbstractPacientesController {
         }
         const { prontuario } = req.params;
         try {
-            const paciente = await this.pacientesService.obterDadosCompletosDoPaciente(prontuario);
+            const paciente = await this.pacientesModel.obterDadosCompletosDoPaciente(prontuario);
             return res.status(200).json(paciente);
         } catch (error) {
             console.log('Erro ao obter o Paciente:', error);
@@ -92,7 +100,7 @@ class PacientesController extends AbstractPacientesController {
         }
         const { searchTerm, searchType } = req.query;
         try {
-            const paciente = await this.pacientesService.buscarPaciente(searchTerm, searchType);
+            const paciente = await this.pacientesModel.buscarPaciente(searchTerm, searchType);
             return res.status(200).json(paciente);
         } catch (error) {
             console.log('Erro ao buscar o Paciente:', error);
@@ -107,8 +115,7 @@ class PacientesController extends AbstractPacientesController {
         }
         try {
             const { evolucao } = req.body;
-            const resultado = await this.pacientesService.salvarEvolucao(evolucao);
-            console.log('Evolução: ', evolucao);
+            const resultado = await this.pacientesModel.salvarEvolucao(evolucao);
             return res.status(200).json(resultado);
         } catch (error) {
             console.log('Erro ao salvar a evolução do Paciente:', error);
@@ -123,7 +130,7 @@ class PacientesController extends AbstractPacientesController {
         }
         const { prontuario } = req.params;
         try {
-            const evolucoes = await this.pacientesService.obterEvolucoesDoPaciente(prontuario);
+            const evolucoes = await this.pacientesModel.obterEvolucoesDoPaciente(prontuario);
             return res.status(200).json(evolucoes);
         } catch (error) {
             console.log('Erro ao obter as evoluções do Paciente:', error);
@@ -132,4 +139,4 @@ class PacientesController extends AbstractPacientesController {
     }
 }
 
-module.exports = PacientesController;
+module.exports = PacientesControl;

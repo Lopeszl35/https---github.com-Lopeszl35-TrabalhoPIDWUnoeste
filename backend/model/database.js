@@ -9,10 +9,11 @@ class DataBase {
         }
 
         this.pool = mysql.createPool({
-            host: 'localhost',
+            host: process.env.HOST_DB,
             user: process.env.USER_DB,
-            database: 'careconnectdb',
-            port: 3306,
+            password: process.env.PASSWORD_DB,
+            database: process.env.DATABASE,
+            port: process.env.DATABASE_PORT,
         });
     }
 

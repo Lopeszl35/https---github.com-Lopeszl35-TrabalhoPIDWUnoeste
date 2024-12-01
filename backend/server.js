@@ -55,6 +55,14 @@ const ProfissionaisService = require('./Services/ProfissionaisService');
 const ProfissionalUsuarioService = require('./Services/ProfissionalUsuarioService');
 const ProfissionalServicosService = require('./Services/ProfissionalServicosService');
 
+// Registro de Models
+const PacientesModel = require('./model/Entities/pacientesModel/pacientesModel')
+DependencyInjector.register('PacientesModel', new PacientesModel(
+  DependencyInjector.get('PacientesRepository'), 
+  DependencyInjector.get('EnderecosRepository'),
+  DependencyInjector.get('ResponsaveisRepository')
+));
+
 
 DependencyInjector.register("AgendamentoService",new AgendamentoService(
     DependencyInjector.get("AgendamentoRepository"),
@@ -113,7 +121,7 @@ DependencyInjector.register("UsuariosController",new UsuariosController(
     DependencyInjector.get("UsuariosService"))
 );
 DependencyInjector.register('PacientesController', new PacientesController(
-  DependencyInjector.get('PacientesService'))
+  DependencyInjector.get('PacientesModel'))
 );
 DependencyInjector.register('ServicoController', new ServicoController(
   DependencyInjector.get('ServicosService'))
