@@ -62,6 +62,7 @@ function EvolucaoPaciente() {
           return;
         }
         const dataAtual = new Date().toISOString().split('T')[0];
+        console.log("Data atual:", dataAtual);
         const agendamentos = await agendamentoService.buscarAgendamentosPorData(prontuario, dataAtual);
         setAgendamentos(agendamentos);
         setNoAgendamentos(agendamentos.length === 0);

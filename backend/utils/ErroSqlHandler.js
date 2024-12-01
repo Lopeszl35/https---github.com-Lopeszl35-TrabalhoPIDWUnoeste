@@ -14,7 +14,7 @@ class ErroSqlHandler {
             case 'paciente':
                 if (error.message.includes('CPF')) {
                     throw new Error('CPF já cadastrado para Paciente');
-                } else if (error.message.includes('unique_rg')) {
+                } else if (error.message.includes('RG')) {
                     throw new Error('RG já cadastrado para Paciente');
                 } else if (error.message.includes('unique_cartao_sus')) {
                     throw new Error('Cartão SUS já cadastrado para Paciente');

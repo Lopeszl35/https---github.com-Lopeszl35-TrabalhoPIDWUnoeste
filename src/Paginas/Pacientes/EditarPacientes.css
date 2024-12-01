@@ -1,10 +1,11 @@
-.container-profissional {
-    margin: 4em 0 0 10em;
+.container-pacientes {
+    margin: 7em 2em 0 10em;
+    transition: 0.5s;
     width: 100vh;
   }
   
-  .container-profissional-active {
-    margin: 4em 0 0 16em;
+  .container-pacientes-active {
+    margin: 7em 0em 0 10em;
     transition: 0.5s;
   }
 

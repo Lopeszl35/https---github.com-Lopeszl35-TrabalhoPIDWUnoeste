@@ -1,9 +1,9 @@
 .container-servicos {
-    margin: 4em 0 0 6em;
+    margin: 7em 0 0 6em;
 }
 
 .container-servicos-side-active {
-    margin-left: 16em;
+    margin-left: 10em;
     transition: 0.5s;
 }
 
