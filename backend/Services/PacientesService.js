@@ -7,13 +7,10 @@ class PacientesService extends AbstractPacienteService {
         this.pacientesRepository = pacientesRepository;
         this.enderecosRepository = enderecosRepository;
         this.responsaveisRepository = responsaveisRepository;
-        this.database = database;
     }
 
-    async adicionarPaciente(pacienteData, enderecoData, responsavelData) {
-        let connection;
+    async adicionarPaciente(pacienteData, enderecoData, responsavelData, connection) {
         try {
-            connection = await this.database.beginTransaction();
 
             const prontuario = await this.pacientesRepository.adicionarPaciente(pacienteData, connection);
             if(!prontuario) {
@@ -33,21 +30,16 @@ class PacientesService extends AbstractPacienteService {
                 throw new Error("Erro ao adicionar responsável");
             }
 
-            await this.database.commitTransaction(connection);
             return {message: 'Paciente adicionado com sucesso'};
 
         } catch (error) {
-            if (connection) {
-                await this.database.rollbackTransaction(connection);
-            }
             ErroSqlHandler.tratarErroSql(error, "paciente");
+            throw error;
         }
     }
 
-    async atualizarPaciente(pacienteData, enderecoData, responsavelData) {
-        let connection;
+    async atualizarPaciente(pacienteData, enderecoData, responsavelData, connection) {
         try {
-            connection = await this.database.beginTransaction();
             const prontuario = await this.pacientesRepository.atualizarPaciente(pacienteData, connection)
             if(!prontuario) {
                 throw new Error("Erro ao atualizar paciente na chamada ao repository");
@@ -66,14 +58,10 @@ class PacientesService extends AbstractPacienteService {
             if(!responsavelAtualizado) {
                 throw new Error("Erro ao atualizar responsável");
             }
-
-            await this.database.commitTransaction(connection);
             return {message: 'Paciente atualizado com sucesso'};
         } catch (error) {
-            if (connection) {
-                await this.database.rollbackTransaction(connection);
-            }
             ErroSqlHandler.tratarErroSql(error, "paciente");
+            throw error;
         }
     }
 
@@ -86,6 +74,7 @@ class PacientesService extends AbstractPacienteService {
             return {message: 'Paciente excluído com sucesso'};
         } catch (error) {
             ErroSqlHandler.tratarErroSql(error, "paciente");
+            throw error;
         }
     }
 

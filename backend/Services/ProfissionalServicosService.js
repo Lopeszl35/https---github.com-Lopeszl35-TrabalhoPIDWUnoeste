@@ -7,10 +7,6 @@ class ProfissionalServicosService extends AbstractProfissionalServicosService {
     this.servicoRepository = servicoRepository;
     this.profissionalServicosRepository = profissionalServicosRepository;
     this.database = database;
-
-    if (!this.profissionalServicosRepository) {
-      console.error("Erro: profissionalServicosRepository não foi injetado corretamente.");
-    }
   }
 
   async relacionarProfissionalAServico(idProfissional, idServico) {

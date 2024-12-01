@@ -69,8 +69,7 @@ DependencyInjector.register("UsuariosService", new UsuariosService(
 DependencyInjector.register('PacientesService', new PacientesService(
   DependencyInjector.get('PacientesRepository'), 
   DependencyInjector.get('EnderecosRepository'),
-  DependencyInjector.get('ResponsaveisRepository'),
-  database
+  DependencyInjector.get('ResponsaveisRepository')
 ));
 
 DependencyInjector.register('ServicosService', new ServicosService(
@@ -113,7 +112,8 @@ DependencyInjector.register("UsuariosController",new UsuariosController(
     DependencyInjector.get("UsuariosService"))
 );
 DependencyInjector.register('PacientesController', new PacientesController(
-  DependencyInjector.get('PacientesService'))
+  DependencyInjector.get('PacientesService'),
+  database)
 );
 DependencyInjector.register('ServicoController', new ServicoController(
   DependencyInjector.get('ServicosService'))

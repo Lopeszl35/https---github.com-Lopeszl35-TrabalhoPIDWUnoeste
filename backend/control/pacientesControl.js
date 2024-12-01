@@ -3,9 +3,10 @@ const AbstractPacientesController = require('./abstratos/AbstractPacientesContro
 
 
 class PacientesController extends AbstractPacientesController {
-    constructor(pacientesService) {
+    constructor(pacientesService, database) {
         super();
         this.pacientesService = pacientesService;
+        this.database = database;
     }
 
     async adicionarPaciente(req, res) {
@@ -16,9 +17,12 @@ class PacientesController extends AbstractPacientesController {
         const { paciente, endereco, responsavel } = req.body;
 
         try {
-            const resultado = await this.pacientesService.adicionarPaciente(paciente, endereco, responsavel);
+            let connection = await this.database.beginTransaction();
+            const resultado = await this.pacientesService.adicionarPaciente(paciente, endereco, responsavel, connection);
+            await this.database.commitTransaction(connection);
             return res.status(200).json(resultado);
         } catch (error) {
+            await this.database.rollbackTransaction(connection);
             console.error('Erro ao adicionar o Paciente:', error);
             return res.status(500).json({ message: error.message });
         }
@@ -30,12 +34,15 @@ class PacientesController extends AbstractPacientesController {
             return res.status(400).json({ errors: errors.array() });
         }
         try {
+            let connection = await this.database.beginTransaction();
             const { prontuario } = req.params;
             const { paciente, endereco, responsavel } = req.body;
             paciente.Prontuario = prontuario;
-            const resultado = await this.pacientesService.atualizarPaciente(paciente, endereco, responsavel);
+            const resultado = await this.pacientesService.atualizarPaciente(paciente, endereco, responsavel, connection);
+            await this.database.commitTransaction(connection);
             return res.status(200).json(resultado);
         } catch (error) {
+            await this.database.rollbackTransaction(connection);
             console.error('Erro ao atualizar o Paciente:', error);
             return res.status(500).json({ message: error.message });
         }

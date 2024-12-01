@@ -62,7 +62,6 @@ class ServicosService extends AbstractServicosService {
         return false;
       }
     } catch (error) {
-      console.error("Erro ao verificar serviço:", error.message);
       throw error;
     }
   }
@@ -86,7 +85,6 @@ class ServicosService extends AbstractServicosService {
       }
       return { message: "Serviço adicionado com sucesso!" };
     } catch (error) {
-      console.log("Erro ao adicionar serviço");
       throw error;
     }
   }
@@ -99,14 +97,12 @@ class ServicosService extends AbstractServicosService {
         Data_De_Cadastro,
         Status
       );
-      const { sucesso, servicoAtualizado } =
-        await this.servicoRepository.atualizar(servico, id);
+      const { sucesso, servicoAtualizado } = await this.servicoRepository.atualizar(servico, id);
       if (!sucesso) {
         throw new Error("Erro ao atualizar servico");
       }
       return { message: "Serviço atualizado com sucesso!", servicoAtualizado };
     } catch (error) {
-      console.log("Erro lançado pelo servicoService: ", error);
       throw error;
     }
   }

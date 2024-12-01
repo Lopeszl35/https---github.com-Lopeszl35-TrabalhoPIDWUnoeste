@@ -23,6 +23,7 @@ class UsuariosService extends AbstractUsuariosService {
       return novoUsuairo;
     } catch (error) {
      ErroSqlHandler.tratarErroSql(error, "usuario");
+     throw error;
     }
   }
 
@@ -47,7 +48,7 @@ class UsuariosService extends AbstractUsuariosService {
         return { token };
       }
     } catch (error) {
-      throw new Error("Erro ao realizar login: " + error.message);
+      throw error;
     }
   }
 
@@ -63,7 +64,6 @@ class UsuariosService extends AbstractUsuariosService {
       );
       return usuarioAtualizado;
     } catch (error) {
-      console.log("Erro ao editar usuário");
       throw error;
     }
   }
