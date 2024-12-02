@@ -2,10 +2,9 @@ const AbstractProfissionaisModel = require("../../abstratos/AbstractProfissionai
 const ErroSqlHandler = require("../../../utils/ErroSqlHandler");
 
 class ProfissionaisModel extends AbstractProfissionaisModel {
-    constructor(profissionaisRepository, database) {
+    constructor(profissionaisRepository) {
         super();
         this.profissionaisRepository = profissionaisRepository;
-        this.database = database;
     }
 
     async obterProfissionais() {
@@ -34,9 +33,9 @@ class ProfissionaisModel extends AbstractProfissionaisModel {
         }
     }
 
-    async editarProfissional(id, profissional) {
+    async editarProfissional(id, profissional, connection) {
         try {
-            const profissionalEditado = await this.profissionaisRepository.editarProfissional(id, profissional);
+            const profissionalEditado = await this.profissionaisRepository.editarProfissional(id, profissional, connection);
             return profissionalEditado
         } catch (error) {
             console.error("Erro ao editar o Profissional:", error);
@@ -44,9 +43,9 @@ class ProfissionaisModel extends AbstractProfissionaisModel {
         }
     }
 
-   async cadastrarHorarios(id, data, horaInicio, horaFim) {
+   async cadastrarHorarios(id, data, horaInicio, horaFim, connection) {
         try {
-            const horariosCadastrados = await this.profissionaisRepository.cadastrarHorarios(id, data, horaInicio, horaFim);
+            const horariosCadastrados = await this.profissionaisRepository.cadastrarHorarios(id, data, horaInicio, horaFim, connection);
             if(horariosCadastrados.length === 0) {
                 throw new Error("Nenhum horário cadastrado");
             }
@@ -54,6 +53,7 @@ class ProfissionaisModel extends AbstractProfissionaisModel {
         } catch (error) {
             console.error("Erro ao cadastrar horários:", error);
             ErroSqlHandler.tratarErroSql(error, "horarios");
+            throw error;
         }
     }
 

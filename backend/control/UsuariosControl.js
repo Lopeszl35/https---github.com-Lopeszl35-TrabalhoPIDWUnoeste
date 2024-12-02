@@ -1,10 +1,11 @@
-const AbstractUsuariosController = require("./abstratos/AbstractUsuariosController");
+const AbstractUsuariosControl = require("./abstratos/AbstractUsuariosControl");
 const { validationResult } = require('express-validator');
 
-class UsuariosController extends AbstractUsuariosController {
-    constructor(UsuariosService) {
+class UsuariosControl extends AbstractUsuariosControl {
+    constructor(UsuariosModel, transactionUtils) {
         super();
-        this.UsuariosService = UsuariosService;
+        this.UsuariosModel = UsuariosModel;
+        this.transactionUtils = transactionUtils;
     }
 
     async adicionarUsuario(req, res) {
@@ -14,7 +15,7 @@ class UsuariosController extends AbstractUsuariosController {
         }
         try {
             const { email, senha, tipoPermissao } = req.body;
-            const result = await this.UsuariosService.adicionarUsuario(email, senha, tipoPermissao);
+            const result = await this.UsuariosModel.adicionarUsuario(email, senha, tipoPermissao);
             return res.status(201).json(result);
         } catch (error) {
             return res.status(500).json({ message: error.message });
@@ -28,7 +29,7 @@ class UsuariosController extends AbstractUsuariosController {
         }
         try {
             const { email, senha } = req.body;
-            const result = await this.UsuariosService.login(email, senha);
+            const result = await this.UsuariosModel.login(email, senha);
             return res.status(200).json(result);
         } catch (error) {
             const statusCode = error.message.includes("já está cadastrado") ? 409 : 500;
@@ -44,7 +45,7 @@ class UsuariosController extends AbstractUsuariosController {
         const { id } = req.params;
         const { email, senha, tipoPermissao } = req.body;
         try {
-            const result = await this.UsuariosService.editarUsuario(id, email, senha, tipoPermissao);
+            const result = await this.UsuariosModel.editarUsuario(id, email, senha, tipoPermissao);
             return res.status(200).json(result);
         } catch (error) {
             return res.status(500).json({ message: error.message });
@@ -58,7 +59,7 @@ class UsuariosController extends AbstractUsuariosController {
         }
         const { id } = req.params;
         try {
-            const result = await this.UsuariosService.excluirUsuario(id);
+            const result = await this.UsuariosModel.excluirUsuario(id);
             return res.status(200).json(result);
         } catch (error) {
             return res.status(500).json({ message: error.message });
@@ -67,7 +68,7 @@ class UsuariosController extends AbstractUsuariosController {
 
     async obterUsuarios(req, res) {
         try {
-            const usuarios = await this.UsuariosService.obterUsuarios();
+            const usuarios = await this.UsuariosModel.obterUsuarios();
             return res.status(200).json(usuarios);
         } catch (error) {
             return res.status(500).json({ message: error.message });
@@ -76,4 +77,4 @@ class UsuariosController extends AbstractUsuariosController {
 
 }
 
-module.exports = UsuariosController;
+module.exports = UsuariosControl;

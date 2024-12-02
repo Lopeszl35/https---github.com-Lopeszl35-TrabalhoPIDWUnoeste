@@ -6,14 +6,13 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     this.database = database;
   }
 
-  async adicionarUsuario(usuario) {
+  async adicionarUsuario(usuario, connection) {
     const sql = `INSERT INTO usuarios (Email, Senha, Tipo_Permissao) VALUES (?, ?, ?)`;
     const params = [usuario.Email, usuario.Senha, usuario.Tipo_Permissao];
     try {
-      await this.database.executaComandoNonQuery(sql, params);
-      return { message: "Usuário adicionado com sucesso" };
+      const [result] = await connection.query(sql, params);
+      return result.affectedRows > 0;
     } catch (error) {
-      console.error("Erro ao adicionar usuário:", error);
       throw error;
     }
   }
@@ -38,7 +37,7 @@ class UsuariosRepository extends AbstractUsuariosRepository {
     }
   }
 
-  async editarUsuario(id, novoUsuario) {
+  async editarUsuario(id, novoUsuario, connection) {
     const sql = `UPDATE usuarios SET Senha = ?, Tipo_Permissao = ?, Email = ? WHERE ID_Usuario = ?`;
     const params = [
       novoUsuario.Senha,
@@ -47,19 +46,19 @@ class UsuariosRepository extends AbstractUsuariosRepository {
       id
     ];
     try {
-      await this.database.executaComandoNonQuery(sql, params);
-      return { message: "Usuário atualizado com sucesso" };
+      const [result] = await connection.query(sql, params);
+      return result.affectedRows > 0;
     } catch (error) {
       console.error("Erro ao atualizar usuário:", error);
       throw error;
     }
   }
 
-  async excluirUsuario(id) {
+  async excluirUsuario(id, connection) {
     const sql = `DELETE FROM usuarios WHERE ID_Usuario = ?`;
     try {
-      await this.database.executaComandoNonQuery(sql, [id]);
-      return { message: "Usuário excluido com sucesso" };
+      const [result] = await connection.query(sql, [id]);
+      return result.affectedRows > 0;
     } catch (error) {
       console.error("Erro ao excluir hete:", error);
       throw error;

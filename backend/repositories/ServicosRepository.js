@@ -26,24 +26,12 @@ class ServicosRepository extends AbstractServicosRepository {
     }
   }
 
-  async deletar(id) {
+  async deletar(id, connection) {
     const sql = `DELETE FROM Servicos WHERE ID_Servico = ?`;
     try {
-      await this.database.executaComando(sql, [id]);
+      await connection.query(sql, [id]);
     } catch (error) {
-      if (error.code === "ER_ROW_IS_REFERENCED_2") {
-        // ERRO DE VIOLACAO DE CHAVE ESTRANGEIRA
-        throw new Error(
-          "ViolacaoChaveEstrangeira: Não é possivel excluir o serviço porque ele esta em uso"
-        );
-      } else if (error.code === "ER_NO_REFERENCED_ROW_2") {
-        // ERRO DE RESTRIÇÃO DE INTEGRIDADE REFERENCIAL
-        throw new Error(
-          "RestricaoIntegridadeReferencial: Serviço possui relacionamentos que impedem a exclusão"
-        );
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 
@@ -59,7 +47,7 @@ class ServicosRepository extends AbstractServicosRepository {
     }
   }
 
-  async adicionar(novoServico) {
+  async adicionar(novoServico, connection) {
     const sql = `
       INSERT INTO Servicos (Nome_Servico, Descricao, Data_De_Cadastro, Status)
       VALUES (?, ?, ?, ?)
@@ -71,7 +59,7 @@ class ServicosRepository extends AbstractServicosRepository {
       novoServico.Status,
     ];
     try {
-      const resultado = await this.database.executaComando(sql, params);
+      const [resultado] = await connection.query(sql, params);
       return resultado.affectedRows > 0;
     } catch (error) {
       console.log("Erro ao adicionar serviço");
@@ -79,7 +67,7 @@ class ServicosRepository extends AbstractServicosRepository {
     }
   }
 
-  async atualizar(servico, id) {
+  async atualizar(servico, id, connection) {
     const sql = `
       UPDATE Servicos
       SET Nome_Servico = ?, Descricao = ?, Data_De_Cadastro = ?, Status = ?
@@ -93,10 +81,9 @@ class ServicosRepository extends AbstractServicosRepository {
       id,
     ];
     try {
-      const resultado = await this.database.executaComando(sql, params);
+      const [resultado] = await connection.query(sql, params);
       return {sucesso: resultado.affectedRows > 0, servicoEditado: servico};
     } catch (error) {
-      console.log("Erro ao atualizar servico");
       throw error;
     }
   }

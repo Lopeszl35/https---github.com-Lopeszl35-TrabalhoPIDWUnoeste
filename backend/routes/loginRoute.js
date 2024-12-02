@@ -3,7 +3,7 @@ const cors = require('cors');
 const DependencyInjector = require('../utils/DependencyInjector');
 
 // Importa o UsuariosController e injeta o UsuariosService
-const UsuariosController = DependencyInjector.get('UsuariosController');
+const UsuariosControl = DependencyInjector.get('UsuariosControl');
 
 // Configurações
 const router = express.Router();
@@ -11,7 +11,7 @@ router.use(cors());
 
 // Rota para login
 router.post('/login', (req, res) => 
-    UsuariosController.login(req, res)
+    UsuariosControl.login(req, res)
 );
 
 module.exports = router

@@ -5,6 +5,9 @@ class ErroSqlHandler {
         }
         if (error.code === 'ER_BAD_NULL_ERROR') {
             return this.tratarErroCamposNulos(error, entidade);
+        } 
+        if (error.message.includes('undefined')) {
+            return this.tratarErroCamposInvalidos(error, entidade);
         }
         throw error;
     }
@@ -20,7 +23,7 @@ class ErroSqlHandler {
                     throw new Error('Cartão SUS já cadastrado para Paciente');
                 } else if (error.message.includes('Email')) {
                     throw new Error('Email já cadastrado para Paciente');
-                }
+                } 
                 break;
 
             case 'profissional':
@@ -74,6 +77,20 @@ class ErroSqlHandler {
                     throw new Error('Paciente deve ser informado para agendamento');
                 }
                 break;
+
+        }
+    }
+
+    static tratarErroCamposInvalidos(error, entidade) {
+        switch (entidade) {
+            case 'responsavel':
+                if (error.message.includes('affectedRows')) {
+                    throw new Error('Erro ao processar operação em Responsável: operação não foi concluída corretamente.');
+                }
+                break;
+
+            default:
+                throw new Error(`Erro de campo inválido em ${entidade}: ${error.message}`);
         }
     }
 }

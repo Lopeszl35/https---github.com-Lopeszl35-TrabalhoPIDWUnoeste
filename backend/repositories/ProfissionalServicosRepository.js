@@ -6,13 +6,13 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
     this.database = database;
   }
 
-  async relacionarProfissionalAServico(idProfissional, idServico) {
+  async relacionarProfissionalAServico(idProfissional, idServico, connection) {
     const sql = `
           INSERT INTO ProfissionalServicos (ID_Profissional, ID_Servico)
           VALUES (?, ?)
         `;
     try {
-      const resultado = await this.database.executaComando(sql, [
+      const [resultado] = await connection.query(sql, [
         idProfissional,
         idServico,
       ]);
@@ -45,16 +45,15 @@ class ProfissionalServicosRepository extends AbstractProfissionalServicosReposit
     }
   }
 
-  async deletarRelacao(idProfissional, idServico) {
+  async deletarRelacao(idProfissional, idServico, connection) {
     const sql = `
       DELETE FROM ProfissionalServicos
       WHERE ID_Profissional = ?
       AND ID_Servico = ?
     `;
     const params = [idProfissional, idServico];
-    console.log("Params:", params);
     try {
-      const relacaoDeletada = await this.database.executaComando(sql, params);
+      const [relacaoDeletada] = await connection.query(sql, params);
       return relacaoDeletada.affectedRows > 0;
     } catch (error) {
       console.log("Erro ao deletar relação:", error);

@@ -1,6 +1,6 @@
-class AbstractServicoController {
+class AbstractServicoControl {
   constructor() {
-    if (new.target === AbstractServicoController) {
+    if (new.target === AbstractServicoControl) {
       throw new Error("Classe abstrata não pode ser instanciada");
     }
   }
@@ -26,4 +26,4 @@ class AbstractServicoController {
   }
 }
 
-module.exports = AbstractServicoController;
+module.exports = AbstractServicoControl;

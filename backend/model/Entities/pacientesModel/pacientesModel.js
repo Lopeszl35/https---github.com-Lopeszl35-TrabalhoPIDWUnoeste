@@ -33,9 +33,9 @@ class PacientesService extends AbstractPacientesModel {
         }
     }
 
-    async deletarPaciente(prontuario) {
+    async deletarPaciente(prontuario, connection) {
         try {
-            const deletado = await this.pacientesRepository.deletarPaciente(prontuario);
+            const deletado = await this.pacientesRepository.deletarPaciente(prontuario, connection);
             if(!deletado) {
                 throw new Error("Erro ao deletar paciente na chamada ao repository");
             }
@@ -84,9 +84,9 @@ class PacientesService extends AbstractPacientesModel {
         }
     }
 
-    async salvarEvolucao(evolucao) {
+    async salvarEvolucao(evolucao, connection) {
         try {
-            const evolucaoSalva = await this.pacientesRepository.salvarEvolucao(evolucao);
+            const evolucaoSalva = await this.pacientesRepository.salvarEvolucao(evolucao, connection);
             if (!evolucaoSalva) {
                 throw new Error("Erro ao salvar evolução");
             }

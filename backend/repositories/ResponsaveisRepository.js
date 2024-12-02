@@ -19,8 +19,8 @@ class ResponsaveisRepository extends AbstractResponsaveisRepository {
             responsavel.Telefone_Pai
         ];
         try {
-            const resultado = await connection.query(sql, params);
-            return resultado[0].affectedRows > 0;
+            const [resultado] = await connection.query(sql, params);
+            return resultado.affectedRows > 0;
         } catch (error) {
             console.error("Erro ao adicionar responsável:", error);
             throw error;
