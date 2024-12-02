@@ -33,9 +33,9 @@ class PacientesService extends AbstractPacientesModel {
         }
     }
 
-    async deletarPaciente(prontuario) {
+    async deletarPaciente(prontuario, connection) {
         try {
-            const deletado = await this.pacientesRepository.deletarPaciente(prontuario);
+            const deletado = await this.pacientesRepository.deletarPaciente(prontuario, connection);
             if(!deletado) {
                 throw new Error("Erro ao deletar paciente na chamada ao repository");
             }

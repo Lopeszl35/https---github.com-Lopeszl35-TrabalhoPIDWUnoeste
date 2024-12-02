@@ -9,7 +9,7 @@ class EnderecosModel extends AbstractEnderecosModel {
 
     async adicionarEndereco(enderecoData, connection) {
         try {
-            const enderecoAdicionado = await this.enderencosRepository.adicionarEndereco(enderecoData, connection);
+            const enderecoAdicionado = await this.enderecosRepository.adicionarEndereco(enderecoData, connection);
             if (!enderecoAdicionado) {
                 throw new Error("Erro ao adicionar endereço na chamada ao repository");
             }

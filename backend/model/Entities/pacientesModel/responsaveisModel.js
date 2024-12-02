@@ -8,7 +8,7 @@ class ResponsaveisModel extends AbstractResponsaveisModel {
 
     async adicionarResponsavel(responsavelData, connection) {
         try {
-            const responsavelAdicionado = await this.ResponsaveisRepository.adicionarResponsavel(responsavelData, connection);
+            const responsavelAdicionado = await this.responsaveisRepository.adicionarResponsavel(responsavelData, connection);
             if (!responsavelAdicionado) {
                 throw new Error("Erro ao adicionar responsável na chamada ao repository");
             }

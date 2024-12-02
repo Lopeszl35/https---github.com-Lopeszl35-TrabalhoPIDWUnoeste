@@ -30,7 +30,7 @@ class DataBase {
             return rows;
         } catch (error) {
             console.error(`Erro ao executar comando SQL: ${sql}`, error);
-            throw new Error('Erro ao executar comando SQL');
+            throw error;
         } finally {
             connection.release();
         }

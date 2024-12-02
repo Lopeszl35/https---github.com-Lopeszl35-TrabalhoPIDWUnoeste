@@ -7,7 +7,7 @@ class PacientesControl extends AbstractPacientesControl {
         this.pacientesModel = pacientesModel;
         this.responsaveisModel = responsaveisModel;
         this.enderecosModel = enderecosModel;
-        this.transactionUtil = transactionUtil; // Utilitário para gerenciar transações
+        this.transactionUtil = transactionUtil;
     }
 
     async adicionarPaciente(req, res) {

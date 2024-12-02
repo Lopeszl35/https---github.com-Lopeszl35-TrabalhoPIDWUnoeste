@@ -20,7 +20,7 @@ class ResponsaveisRepository extends AbstractResponsaveisRepository {
         ];
         try {
             const [resultado] = await connection.query(sql, params);
-            return resultado[0].affectedRows > 0;
+            return resultado.affectedRows > 0;
         } catch (error) {
             console.error("Erro ao adicionar responsável:", error);
             throw error;
