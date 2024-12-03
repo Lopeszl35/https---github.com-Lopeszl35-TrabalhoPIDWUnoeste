@@ -35,9 +35,9 @@ class ProfissionalServicosModel extends AbstractProfissionalServicosModel {
     }
   }
 
-  async deletarRelacao(idProfissional, idServico) {
+  async deletarRelacao(idProfissional, idServico, connection) {
     try {
-      const relacaoDeletada = await this.profissionalServicosRepository.deletarRelacao(idProfissional, idServico);
+      const relacaoDeletada = await this.profissionalServicosRepository.deletarRelacao(idProfissional, idServico, connection);
       if (!relacaoDeletada) {
         throw new Error("Não foi possivel deletar a relação Error: ");
       }

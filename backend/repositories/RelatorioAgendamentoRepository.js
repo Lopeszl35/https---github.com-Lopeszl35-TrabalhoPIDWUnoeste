@@ -1,13 +1,12 @@
 const AbstractRelatorioAgendamentoRepository = require("./abstratos/AbstractRelatorioAgendamentoRepository");
 
-class RelatorioAgendamentoRepository extends AbstractRelatorioAgendamentoRepository  {
+class RelatorioAgendamentoRepository extends AbstractRelatorioAgendamentoRepository {
     constructor(database) {
         super();
         this.database = database;
     }
 
-    // repositories/AgendamentosRepository.js
-    async obterRelatorioAgendamentos({ data, paciente, profissional, servico }) {
+    async obterRelatorioAgendamentos({ data, paciente, profissional, servico, status, dataInicio, dataFim }) {
         let query = `
             SELECT 
                 a.ID_Agendamento AS id_agendamento,
@@ -41,12 +40,97 @@ class RelatorioAgendamentoRepository extends AbstractRelatorioAgendamentoReposit
             query += ' AND s.Nome_Servico LIKE ?';
             params.push(`%${servico}%`);
         }
+        if (status) {
+            query += ' AND a.Status = ?';
+            params.push(status);
+        }
+        if (dataInicio && dataFim) {
+            query += ' AND DATE(a.Data_Hora) BETWEEN ? AND ?';
+            params.push(dataInicio, dataFim);
+          }
 
         try {
             const resultados = await this.database.executaComando(query, params);
             return resultados;
         } catch (error) {
             console.error('Erro ao gerar relatório de agendamentos:', error);
+            throw error;
+        }
+    }
+
+    async obterEstatisticasAgendamentos() {
+        const query = `
+            SELECT 
+                a.Status AS status,
+                COUNT(a.ID_Agendamento) AS total
+            FROM Agendamentos a
+            GROUP BY a.Status
+        `;
+
+        try {
+            const resultados = await this.database.executaComando(query);
+            return resultados;
+        } catch (error) {
+            console.error('Erro ao obter estatísticas de agendamentos:', error);
+            throw error;
+        }
+    }
+
+    async obterDistribuicaoPorData() {
+        const query = `
+            SELECT 
+                DATE(a.Data_Hora) AS data,
+                COUNT(a.ID_Agendamento) AS total
+            FROM Agendamentos a
+            GROUP BY DATE(a.Data_Hora)
+            ORDER BY DATE(a.Data_Hora) ASC
+        `;
+    
+        try {
+            const resultados = await this.database.executaComando(query);
+            return resultados;
+        } catch (error) {
+            console.error('Erro ao obter distribuição de agendamentos por data:', error);
+            throw error;
+        }
+    }
+
+    async obterDistribuicaoPorProfissional() {
+        const query = `
+            SELECT 
+                pr.Nome_Completo AS profissional,
+                COUNT(a.ID_Agendamento) AS total
+            FROM Agendamentos a
+            JOIN Profissionais pr ON a.ID_Profissional = pr.ID_Profissional
+            GROUP BY pr.Nome_Completo
+            ORDER BY total DESC
+        `;
+
+        try {
+            const resultados = await this.database.executaComando(query);
+            return resultados;
+        } catch (error) {
+            console.error('Erro ao obter distribuição por profissional:', error);
+            throw error;
+        }
+    }
+
+    async obterDistribuicaoPorServico() {
+        const query = `
+            SELECT 
+                s.Nome_Servico AS servico,
+                COUNT(a.ID_Agendamento) AS total
+            FROM Agendamentos a
+            JOIN Servicos s ON a.ID_Servico = s.ID_Servico
+            GROUP BY s.Nome_Servico
+            ORDER BY total DESC
+        `;
+
+        try {
+            const resultados = await this.database.executaComando(query);
+            return resultados;
+        } catch (error) {
+            console.error('Erro ao obter distribuição por serviço:', error);
             throw error;
         }
     }
