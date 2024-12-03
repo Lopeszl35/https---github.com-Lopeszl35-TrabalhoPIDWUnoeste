@@ -3,24 +3,11 @@ const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 
 class RelatoriosPacientesRepository extends AbstractRelatoriosPacientesRepository {
-    constructor(db) {
+    constructor(database) {
         super();
-        this.db = db; // instância do banco de dados ou ORM
+        this.database = database;
     }
 
-    // Método para buscar pacientes no banco de dados
-    async obterPacientes(nome) {
-        try {
-            const query = nome
-                ? `SELECT * FROM pacientes WHERE nome LIKE '%${nome}%'`
-                : "SELECT * FROM pacientes";
-            const pacientes = await this.db.query(query);  // Ou db.pacientes.findAll() se estiver usando ORM
-            return pacientes;
-        } catch (error) {
-            console.error("Erro ao buscar pacientes: ", error);
-            throw new Error("Erro ao buscar pacientes");
-        }
-    }
 
     // Método para gerar o relatório Excel
     async gerarRelatorioExcel(pacientes) {

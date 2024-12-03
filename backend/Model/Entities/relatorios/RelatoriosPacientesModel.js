@@ -3,9 +3,9 @@ const { gerarRelatorioExcel, gerarRelatorioPdf } = require("../../../utils/relat
 const Paciente = require("../../../Model/Entities/pacientesModel/pacientesModel");
 
 class RelatoriosPacientesModel extends AbstractRelatorioPacientesModel {
-    constructor(db) {
-        super();
-        this.db = db;  // A conexão com o banco de dados será passada aqui
+    constructor(relatoriosPacientesRepository) {
+        super()
+        this.relatoriosPacientesRepository = relatoriosPacientesRepository;
     }
 
     // Implementação do método para gerar relatório em Excel
@@ -26,15 +26,6 @@ class RelatoriosPacientesModel extends AbstractRelatorioPacientesModel {
         }
     }
 
-    // Implementação do método para obter os dados dos pacientes (filtrados por nome, se necessário)
-    async obterPacientes(nome) {
-        try {
-            const pacientes = await Paciente.buscarPaciente(nome);  // Buscando os pacientes pelo nome, se houver filtro
-            return pacientes;
-        } catch (error) {
-            throw new Error("Erro ao obter pacientes: " + error.message);
-        }
-    }
 }
 
 module.exports = RelatoriosPacientesModel;
