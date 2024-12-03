@@ -6,8 +6,8 @@ class ErroSqlHandler {
         if (error.code === 'ER_BAD_NULL_ERROR') {
             return this.tratarErroCamposNulos(error, entidade);
         } 
-        if (error.message.includes('undefined')) {
-            return this.tratarErroCamposInvalidos(error, entidade);
+        if(error.code === 'ER_NO_SUCH_TABLE') {
+            return this.tratarErroTabelaNaoEncontrada(error, entidade);
         }
         throw error;
     }
@@ -72,7 +72,7 @@ class ErroSqlHandler {
             case 'agendamento':
                 if (error.message.includes('Data_Hora')) {
                     throw new Error('Data e hora nao podem ser nulas');
-                }
+                }   
                 if (error.message.includes('Prontuario')) {
                     throw new Error('Paciente deve ser informado para agendamento');
                 }
@@ -81,16 +81,25 @@ class ErroSqlHandler {
         }
     }
 
-    static tratarErroCamposInvalidos(error, entidade) {
+    static tratarErroTabelaNaoEncontrada(error, entidade) {
         switch (entidade) {
-            case 'responsavel':
-                if (error.message.includes('affectedRows')) {
-                    throw new Error('Erro ao processar operação em Responsável: operação não foi concluída corretamente.');
+            case 'profissional':
+                if (error.message.includes('Usuarios')) {
+                    throw new Error('Tabela Usuarios não encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Horarios')) {
+                    throw new Error('Tabela Horarios nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Agendamentos')) {
+                    throw new Error('Tabela Agendamentos nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Servicos')) {
+                    throw new Error('Tabela Servicos nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Profissional')) {
+                    throw new Error('Tabela Profissional nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
                 }
                 break;
-
-            default:
-                throw new Error(`Erro de campo inválido em ${entidade}: ${error.message}`);
         }
     }
 }

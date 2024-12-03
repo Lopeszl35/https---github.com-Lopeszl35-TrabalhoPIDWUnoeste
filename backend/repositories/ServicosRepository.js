@@ -55,7 +55,7 @@ class ServicosRepository extends AbstractServicosRepository {
     const params = [
       novoServico.Nome_Servico,
       novoServico.Descricao,
-      novoServico.Data_De_Cadastro,
+      novoServico.Data_De_Cadastro.split("T")[0],
       novoServico.Status,
     ];
     try {
@@ -76,7 +76,7 @@ class ServicosRepository extends AbstractServicosRepository {
     const params = [
       servico.Nome_Servico,
       servico.Descricao,
-      servico.Data_De_Cadastro,
+      servico.Data_De_Cadastro.split("T")[0],
       servico.Status,
       id,
     ];

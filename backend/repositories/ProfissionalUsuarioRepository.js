@@ -34,7 +34,7 @@ class ProfissionalUsuarioRepository extends AbstractProfissionalUsuarioRepositor
 
     async adicionarUsuarioProfissional(usuario, connection) {
         const sql = `
-            INSERT INTO Usuarios
+            INSERT INTO usuarios
             (Email, Senha, Tipo_Permissao)
             VALUES (?, ?, ?)
         `;
@@ -48,7 +48,7 @@ class ProfissionalUsuarioRepository extends AbstractProfissionalUsuarioRepositor
             const [resultado] = await connection.query(sql, params);
             return resultado.insertId;
         } catch (error) {
-            console.error("Erro ao adicionar usuario no repository:", error);
+            console.log("Erro ao adicionar usuario no repository:", error);
             throw error;
         }
     }
