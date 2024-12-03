@@ -7,7 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import NavBar from "./Componentes/NavBar/NavBar";
 import Home from "./Paginas/Home/Home";
 import Login from "./Componentes/Login/Login";
-import GerarRelatorios from "./Paginas/Relatorios/GerarRelatorios";
+import DashboardRelatorios from "./Paginas/Relatorios/DashboardRelatorios";
 import Pacientes from "./Paginas/Pacientes/Pacientes";
 import EvolucaoPaciente from "./Paginas/Pacientes/EvolucaoPaciente";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
@@ -60,7 +60,7 @@ function AppRouter() {
             <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="agendamentos" element={<AgendarConsultas />} />
-            <Route path="relatorios" element={<GerarRelatorios />} />
+            <Route path="DashboardRelatorios" element={<DashboardRelatorios />} />
             <Route path="*" element={<Navigate to="/home" />} /> {/* Redireciona qualquer rota desconhecida para Home */}
           </Route>
         )}
