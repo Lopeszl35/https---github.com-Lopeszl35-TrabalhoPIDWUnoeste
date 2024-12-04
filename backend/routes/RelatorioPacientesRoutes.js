@@ -9,11 +9,11 @@ const RelatorioPacientes = dependencyInjector.get(
 const router = express.Router();
 router.use(cors());
 
-router.get("/relatorio/pacientes/geralExecel", (req, res) => 
+router.get("/relatorio/pacientes/gerarExecel", (req, res) => 
     RelatorioPacientes.gerarRelatorioExcel(req, res)
 ); 
 
-router.get("/relatorio/pacientes/geralPDF", (req, res) => 
+router.get("/relatorio/pacientes/gerarPDF", (req, res) => 
     RelatorioPacientes.gerarRelatorioPDF(req, res)
 );
 
