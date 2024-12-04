@@ -9,18 +9,20 @@ class RelatoriosPacientesModel extends AbstractRelatorioPacientesModel {
     }
 
     // Implementação do método para gerar relatório em Excel
-    async gerarRelatorioExcel(pacientes) {
+    async gerarRelatorioExcel(res, pacientes) {
         try {
-            return await gerarRelatorioExcel(pacientes);
+            const relatorioExcel = await this.relatoriosPacientesRepository.gerarRelatorioExcel(res, pacientes);
+            console.log(relatorioExcel);
+            return relatorioExcel;
         } catch (error) {
             throw new Error("Erro ao gerar relatório Excel: " + error.message);
         }
     }
 
     // Implementação do método para gerar relatório em PDF
-    async gerarRelatorioPdf(pacientes) {
+    async gerarRelatorioPdf(res, pacientes) {
         try {
-            return await gerarRelatorioPdf(pacientes);
+            return await this.relatoriosPacientesRepository.gerarRelatorioPdf(res, pacientes);
         } catch (error) {
             throw new Error("Erro ao gerar relatório PDF: " + error.message);
         }

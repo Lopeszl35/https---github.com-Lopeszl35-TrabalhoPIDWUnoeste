@@ -10,69 +10,41 @@ class RelatoriosPacientesRepository extends AbstractRelatoriosPacientesRepositor
 
 
     // Método para gerar o relatório Excel
-    async gerarRelatorioExcel(pacientes) {
+    async gerarRelatorioPdf(res, pacientes) {
         try {
-            const workbook = new ExcelJS.Workbook();
-            const sheet = workbook.addWorksheet('Relatório de Pacientes');
+            // Configura o documento PDF
+            const doc = new PDFDocument({ margin: 30 });
             
-            // Definindo o cabeçalho
-            sheet.columns = [
-                { header: 'ID', key: 'id', width: 10 },
-                { header: 'Nome', key: 'nome', width: 30 },
-                { header: 'Idade', key: 'idade', width: 10 },
-                { header: 'Diagnóstico', key: 'diagnostico', width: 30 },
-                { header: 'Data de Cadastro', key: 'data_cadastro', width: 20 },
-            ];
-
-            // Adicionando os dados
-            pacientes.forEach(paciente => {
-                sheet.addRow({
-                    id: paciente.id,
-                    nome: paciente.nome,
-                    idade: paciente.idade,
-                    diagnostico: paciente.diagnostico,
-                    data_cadastro: paciente.data_cadastro,
-                });
-            });
-
-            // Gerando o arquivo Excel
-            const filePath = 'relatorio_pacientes.xlsx';
-            await workbook.xlsx.writeFile(filePath);
-            return filePath;
-        } catch (error) {
-            console.error("Erro ao gerar relatório Excel: ", error);
-            throw new Error("Erro ao gerar relatório Excel");
-        }
-    }
-
-    // Método para gerar o relatório PDF
-    async gerarRelatorioPdf(pacientes) {
-        try {
-            const doc = new PDFDocument();
-            const filePath = 'relatorio_pacientes.pdf';
-            
-            doc.pipe(fs.createWriteStream(filePath));
-
-            // Adicionando título
-            doc.fontSize(20).text('Relatório de Pacientes', { align: 'center' });
-
-            // Adicionando os pacientes ao relatório
+            // Configura os cabeçalhos da resposta HTTP
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader("Content-Disposition", "attachment; filename=relatorio_pacientes.pdf");
+    
+            // Envia o PDF diretamente como stream para o cliente
+            doc.pipe(res);
+    
+            // Adiciona o título
+            doc.fontSize(20).text("Relatório de Pacientes", { align: "center" }).moveDown(2);
+    
+            // Adiciona os dados dos pacientes
             pacientes.forEach((paciente, index) => {
-                doc.fontSize(12).text(`Paciente ${index + 1}:`);
-                doc.text(`ID: ${paciente.id}`);
-                doc.text(`Nome: ${paciente.nome}`);
-                doc.text(`Idade: ${paciente.idade}`);
-                doc.text(`Diagnóstico: ${paciente.diagnostico}`);
-                doc.text(`Data de Cadastro: ${paciente.data_cadastro}`);
-                doc.text('----------------------');
+                doc.fontSize(12).text(`Paciente ${index + 1}:`, { continued: true })
+                    .text(`ID: ${paciente.Prontuario}`, { align: "left" });
+                doc.text(`Nome: ${paciente.Nome_Completo}`);
+                doc.text(`Data de Nascimento: ${paciente.Data_De_Nascimento}`);
+                doc.text(`CPF: ${paciente.CPF}`);
+                doc.text(`RG: ${paciente.RG}`);
+                doc.text(`Email: ${paciente.Email}`);
+                if (paciente.Nome_Mae) doc.text(`Nome da Mãe: ${paciente.Nome_Mae}`);
+                if (paciente.Numero) doc.text(`Número: ${paciente.Numero}`);
+                if (paciente.Cidade) doc.text(`Cidade: ${paciente.Cidade}`);
+                doc.moveDown(1).text("----------------------").moveDown(1);
             });
-
-            // Finalizando o documento PDF
+    
+            // Finaliza o documento PDF
             doc.end();
-            return filePath;
         } catch (error) {
             console.error("Erro ao gerar relatório PDF: ", error);
-            throw new Error("Erro ao gerar relatório PDF");
+            res.status(500).json({ success: false, message: "Erro ao gerar relatório PDF" });
         }
     }
 }
