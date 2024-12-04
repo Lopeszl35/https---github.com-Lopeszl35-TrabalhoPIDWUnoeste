@@ -71,7 +71,7 @@ class RelatoriosPacientesRepository extends AbstractRelatoriosPacientesRepositor
             // Adiciona os dados dos pacientes
             pacientes.forEach((paciente, index) => {
                 doc.fontSize(12).text(`Paciente ${index + 1}:`, { continued: true })
-                    .text(`ID: ${paciente.Prontuario}`, { align: "left" });
+                    .text(`Prontuario: ${paciente.Prontuario}`, { align: "left" });
                 doc.text(`Nome: ${paciente.Nome_Completo}`);
                 doc.text(`Data de Nascimento: ${paciente.Data_De_Nascimento}`);
                 doc.text(`CPF: ${paciente.CPF}`);
