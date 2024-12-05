@@ -5,13 +5,6 @@ class AbstractRelatoriosPacientesModel {
         }
     }
 
-    async gerarRelatorioExcel(pacientes) {
-        throw new Error("Método não implementado");
-    }
-
-    async gerarRelatorioPdf(pacientes) {
-        throw new Error("Método não implementado");
-    }
 }
 
 module.exports = AbstractRelatoriosPacientesModel;

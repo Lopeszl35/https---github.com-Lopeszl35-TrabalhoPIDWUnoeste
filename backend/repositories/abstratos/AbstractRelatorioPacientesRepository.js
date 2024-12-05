@@ -5,15 +5,6 @@ class AbstractRelatoriosPacientesRepository {
         }
     }
 
-    // Método para gerar relatório em Excel
-    async gerarRelatorioExcel(pacientes) {
-        throw new Error("Método não implementado");
-    }
-
-    // Método para gerar relatório em PDF
-    async gerarRelatorioPdf(pacientes) {
-        throw new Error("Método não implementado");
-    }
 }
 
 module.exports = AbstractRelatoriosPacientesRepository;

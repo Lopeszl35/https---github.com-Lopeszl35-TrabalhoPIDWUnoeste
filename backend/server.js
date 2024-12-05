@@ -27,6 +27,7 @@ DependencyInjector.register("Database", database);
 const TransactionUtil = require("./utils/TransactionUtil");
 DependencyInjector.register("TransactionUtil", new TransactionUtil(database));
 
+
 // Registro de Repositórios
 const AgendamentoRepository = require("./repositories/AgendamentoRepository");
 const UsuariosRepository = require("./repositories/UsuariosRepository");
