@@ -5,11 +5,6 @@ class AbstractRelatoriosPacientesRepository {
         }
     }
 
-    // Método para buscar pacientes no banco de dados
-    async obterPacientes(nome) {
-        throw new Error("Método não implementado");
-    }
-
     // Método para gerar relatório em Excel
     async gerarRelatorioExcel(pacientes) {
         throw new Error("Método não implementado");

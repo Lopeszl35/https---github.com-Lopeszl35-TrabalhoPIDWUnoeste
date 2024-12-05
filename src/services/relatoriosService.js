@@ -1,37 +1,96 @@
-// services/relatoriosService.js
+const API_BASE_URL = 'http://localhost:3001';
+
 class RelatoriosService {
-    // Método para buscar todos os relatórios
-    async buscarRelatorios() {
-      try {
-        const response = await fetch('/api/relatorios'); // Endpoint para buscar os relatórios
+    // Obter agendamentos com filtros
+    async obterAgendamentos(filtros = {}) {
+        const token = localStorage.getItem('token');
+        const queryParams = new URLSearchParams(filtros).toString();
+        const response = await fetch(`${API_BASE_URL}/relatorio/agendamentos?${queryParams}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
         if (!response.ok) {
-          throw new Error('Erro ao buscar relatórios');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao obter os Agendamentos!');
         }
         const data = await response.json();
         return data;
-      } catch (error) {
-        throw new Error('Erro ao buscar relatórios');
-      }
     }
-  
-    // Método para exportar o relatório em formato CSV ou outro formato
-    async exportarRelatorio(idRelatorio) {
-      try {
-        const response = await fetch(`/api/relatorios/exportar/${idRelatorio}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/octet-stream',
-          },
+
+    // Obter estatísticas de agendamentos por status
+    async obterEstatisticasAgendamentos() {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/relatorio/agendamentos/estatisticas`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         });
-  
         if (!response.ok) {
-          throw new Error('Erro ao exportar relatório');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao obter as estatísticas de Agendamentos!');
         }
-        return response.blob(); // Retorna o arquivo como um blob para download
-      } catch (error) {
-        throw new Error('Erro ao exportar relatório');
-      }
+        const data = await response.json();
+        return data;
     }
-  }
-  
-  export default RelatoriosService;  
+
+    // Obter distribuição de agendamentos por data
+    async obterDistribuicaoPorData() {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/relatorio/agendamentos/distribuicao-por-data`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao obter a distribuição por data!');
+        }
+        const data = await response.json();
+        return data;
+    }
+
+    // Obter distribuição de agendamentos por profissional
+    async obterDistribuicaoPorProfissional() {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/relatorio/agendamentos/distribuicao-por-profissional`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao obter a distribuição por profissional!');
+        }
+        const data = await response.json();
+        return data;
+    }
+
+    // Obter distribuição de agendamentos por serviço
+    async obterDistribuicaoPorServico() {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/relatorio/agendamentos/distribuicao-por-servico`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao obter a distribuição por serviço!');
+        }
+        const data = await response.json();
+        return data;
+    }
+}
+
+export default RelatoriosService;

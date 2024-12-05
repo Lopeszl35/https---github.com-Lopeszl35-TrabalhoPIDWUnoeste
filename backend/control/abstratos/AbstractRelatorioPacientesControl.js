@@ -5,7 +5,6 @@ class AbstractRelatorioPacientesControl {
         }
     }
 
-    // Métodos abstratos para geração dos relatórios
     async gerarRelatorioExcel(req, res) {
         throw new Error("Método não implementado");
     }

@@ -5,10 +5,6 @@ class AbstractRelatoriosPacientesModel {
         }
     }
 
-    async obterPacientes(nome) {
-        throw new Error("Método não implementado");
-    }
-
     async gerarRelatorioExcel(pacientes) {
         throw new Error("Método não implementado");
     }
