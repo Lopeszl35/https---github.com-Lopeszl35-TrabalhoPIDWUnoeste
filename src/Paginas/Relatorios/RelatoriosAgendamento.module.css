@@ -1,43 +1,40 @@
-.container-dashboard {
+.containerDashboard {
     margin: 4em 0 0 6em;
     transition: margin 0.5s ease-in-out;
-}
-
-.container-dashboard-side-active {
+  }
+  
+  .containerDashboardSideActive {
     margin-left: 16em;
     transition: margin 0.5s ease-in-out;
-}
-
-.card-relatorio {
+  }
+  
+  .cardRelatorio {
     margin-bottom: 2em;
     border: 1px solid #ccc;
     padding: 1.5em;
     border-radius: 5px;
     background-color: #f8f9fa;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.table {
+  }
+  
+  .table {
     margin-top: 1em;
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #ffffff;
     overflow: hidden;
-}
-
-.table th, .table td {
+  }
+  
+  .table th,
+  .table td {
     text-align: center;
     vertical-align: middle;
     padding: 0.75em;
-}
-
-.table thead th {
+  }
+  
+  .table thead th {
     background-color: #f1f1f1;
     font-weight: bold;
-}
-
-.button-csv {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1em;
-}
+  }
+  
+  

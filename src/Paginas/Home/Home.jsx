@@ -64,7 +64,7 @@ function Home() {
                                 <Card.Text>
                                     Gere relatórios dos serviços oferecidos.
                                 </Card.Text>
-                                <Button as={Link} to='/DashboardRelatorios' variant="primary">Gerar</Button>
+                                <Button as={Link} to='/Relatorios' variant="primary">Gerar</Button>
                             </Card.Body>
                         </Card>
                     </Col>

@@ -12,13 +12,23 @@ import {
 } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import RelatoriosService from "../../services/relatoriosService";
-import "./DashboardRelatorios.css";
+import RelatoriosAgendamentoService from "../../services/relatoriosAgendamentoService";
+import styles from "./RelatoriosAgendamento.module.css"
 import { Bar } from "react-chartjs-2";
-import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Registrar as escalas e elementos necessários no Chart.js
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+const relatoriosAgendamentoService = new RelatoriosAgendamentoService();
 const relatoriosService = new RelatoriosService();
 
 function formatarDataHora(dataHora) {
@@ -57,7 +67,7 @@ function DashboardRelatorios() {
 
   useEffect(() => {
     if (ativo === "agendamentos") {
-      relatoriosService
+      relatoriosAgendamentoService
         .obterAgendamentos(filtros)
         .then((data) => {
           setRelatorioAgendamentos(data || []);
@@ -206,9 +216,7 @@ function DashboardRelatorios() {
 
   return (
     <div
-      className={`container-dashboard ${
-        show ? "container-dashboard-side-active" : ""
-      }`}
+      className={`${styles.containerDashboard} ${show ? styles.containerDashboardSideActive : ""}`}
     >
       <h1 className="text-center mb-4">Dashboard de Relatórios</h1>
       <Tabs
@@ -219,7 +227,7 @@ function DashboardRelatorios() {
       >
         <Tab eventKey="agendamentos" title="Relatório de Agendamentos">
           <Container>
-            <Card className="card-relatorio">
+            <Card className={`${styles.cardRelatorio}`}>
               <Form className="mb-4">
                 <Row>
                   <Col md={3}>
@@ -301,29 +309,79 @@ function DashboardRelatorios() {
               </Form>
               <h2 className="text-center mt-3">Agendamentos</h2>
               {renderTabela(relatorioAgendamentos, headersAgendamentos)}
-              <Button
-                variant="success"
-                className="mt-3 me-2"
-                onClick={handleGerarRelatorioExcel}
-              >
-                Baixar Relatório em Excel
-              </Button>
-              <Button
-                variant="primary"
-                className="mt-3"
-                onClick={handleGerarRelatorioPdf}
-              >
-                Baixar Relatório em PDF
-              </Button>
+              <div className="d-flex justify-content-center mt-3">
+                <Button
+                  variant="success"
+                  onClick={handleGerarRelatorioExcel}
+                >
+                  Baixar Relatório em Excel
+                </Button>
+                <Button
+                  variant="danger"
+                  className="ml-2"
+                  onClick={handleGerarRelatorioPdf}
+                >
+                  Baixar Relatório em PDF
+                </Button>
+              </div>
             </Card>
           </Container>
           <Container className="mt-4">
-            <Card className="card-relatorio">
+            <Card className={`${styles.cardRelatorio} mt-4`}>
               <h2 className="text-center">Gráficos de Análise</h2>
               {dadosGrafico ? (
                 <Bar data={dadosGrafico} />
               ) : (
                 <p className="text-center">Nenhum dado disponível para o gráfico.</p>
+              )}
+            </Card>
+            <Card className={`${styles.cardRelatorio} mt-4`}>
+              <h2 className="text-center">Comparação de Serviços</h2>
+              <Form>
+                <Row>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Serviço 1</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="servico1"
+                        placeholder="Serviço para comparar"
+                        value={servicosComparar.servico1}
+                        onChange={handleComparacaoChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Serviço 2</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="servico2"
+                        placeholder="Outro serviço para comparar"
+                        value={servicosComparar.servico2}
+                        onChange={handleComparacaoChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Form>
+              <Button
+                variant="primary"
+                className="mt-3"
+                onClick={() =>
+                  gerarGraficoComparacao(
+                    relatorioAgendamentos,
+                    servicosComparar.servico1,
+                    servicosComparar.servico2
+                  )
+                }
+              >
+                Comparar Serviços
+              </Button>
+              {graficoComparacao ? (
+                <Bar data={graficoComparacao} className="mt-4" />
+              ) : (
+                <p className="text-center mt-4">Nenhum dado disponível para comparação.</p>
               )}
             </Card>
           </Container>
