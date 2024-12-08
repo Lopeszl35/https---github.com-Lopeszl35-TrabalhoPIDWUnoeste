@@ -27,6 +27,7 @@ DependencyInjector.register("Database", database);
 const TransactionUtil = require("./utils/TransactionUtil");
 DependencyInjector.register("TransactionUtil", new TransactionUtil(database));
 
+
 // Registro de Repositórios
 const AgendamentoRepository = require("./repositories/AgendamentoRepository");
 const UsuariosRepository = require("./repositories/UsuariosRepository");
@@ -37,8 +38,8 @@ const ServicosRepository = require('./repositories/ServicosRepository');
 const ProfissionaisRepository = require('./repositories/ProfissionaisRepository');
 const ProfissionalUsuarioRepository = require('./repositories/ProfissionalUsuarioRepository');
 const ProfissionalServicosRepository = require('./repositories/ProfissionalServicosRepository');
-const pacientesReportRepository = require('./repositories/PacientesReportRepository');
 const RelatorioAgendamentoRepository = require('./repositories/RelatorioAgendamentoRepository');
+const RelatorioPacientesRepository = require('./repositories/RelatorioPacientesRepository');
 
 
 DependencyInjector.register("AgendamentoRepository",new AgendamentoRepository(database));
@@ -50,22 +51,23 @@ DependencyInjector.register('ServicosRepository', new ServicosRepository(databas
 DependencyInjector.register('ProfissionaisRepository', new ProfissionaisRepository(database));
 DependencyInjector.register('ProfissionalUsuarioRepository', new ProfissionalUsuarioRepository(database));
 DependencyInjector.register('ProfissionalServicosRepository', new ProfissionalServicosRepository(database));
-DependencyInjector.register('pacientesReportRepository', new pacientesReportRepository(database));
 DependencyInjector.register('RelatorioAgendamentoRepository', new RelatorioAgendamentoRepository(database));
+DependencyInjector.register('RelatorioPacientesRepository', new RelatorioPacientesRepository(database));
 
 
 // Registro de Models
 const AgendamentoModel = require("./Model/Entities/agendamentoModel/AgendamentoModel");
 const UsuariosModel = require("./Model/Entities/usuariosModel/UsuariosModel");
-const PacientesModel = require('./Model/Entities/pacientesModel/PacientesModel');
+const PacientesModel = require('./Model/Entities/pacientesModel/pacientesModel');
 const ResponsaveisModel = require('./Model/Entities/pacientesModel/responsaveisModel');
 const EnderecosModel = require('./Model/Entities/pacientesModel/enderecosModel');
-const ServicosModel = require('./Model/Entities/servicosModel/ServicosModel')
+const ServicosModel = require('./Model/Entities/servicosModel/servicosModel')
 const ProfissionaisModel = require('./Model/Entities/profissionaisModel/ProfissionaisModel');
 const ProfissionalUsuarioModel = require('./Model/Entities/profissionaisModel/ProfissionalUsuarioModel');
 const ProfissionalServicosModel = require('./Model/Entities/profissionaisModel/ProfissionalServicosModel');
-const pacientesReportService = require('./Services/PacientesReportService');
+const RelatoriosModel = require('./Model/Entities/relatorios/RelatoriosModel');
 const RelatorioAgendamentoModel = require('./Model/Entities/relatorios/RelatorioAgendamentoModel');
+const RelatoriosPacientesModel = require('./Model/Entities/relatorios/RelatoriosPacientesModel');
 
 
 DependencyInjector.register("AgendamentoModel",new AgendamentoModel(
@@ -107,14 +109,19 @@ DependencyInjector.register('ProfissionalServicosModel', new ProfissionalServico
   )
 );
 
-DependencyInjector.register('PacientesReportService', new pacientesReportService(
-  DependencyInjector.get('pacientesReportRepository'),
-  database
-));
-
 DependencyInjector.register('RelatorioAgendamentoModel', new RelatorioAgendamentoModel(
   DependencyInjector.get('RelatorioAgendamentoRepository')
 ));
+
+DependencyInjector.register('RelatoriosPacientesModel', new RelatoriosPacientesModel (
+  DependencyInjector.get('RelatorioPacientesRepository')
+));
+
+DependencyInjector.register('RelatoriosModel', new RelatoriosModel(
+  DependencyInjector.get('PacientesRepository'),
+  DependencyInjector.get('AgendamentoRepository')
+))
+
 
 
 // Registro de Controladores
@@ -124,8 +131,9 @@ const PacientesControl = require('./control/pacientesControl');
 const ServicoControl = require('./control/servicoControl');
 const ProfissionaisControl = require('./control/ProfissionaisControl');
 const ProfissionalServicosControl = require('./control/ProfissionalServicosControl');
-const PacientesReportController = require('./controller/PacientesReportController');
+const RelatoriosControl = require('./control/RelatoriosControl');
 const RelatorioAgendamentoControl = require('./control/RelatorioAgendamentoControl');
+const RelatorioPacientesControl = require('./control/RelatorioPacientesControl');
 
 
 
@@ -155,12 +163,15 @@ DependencyInjector.register('ProfissionalServicosControl', new ProfissionalServi
   DependencyInjector.get('ProfissionalServicosModel'),
   DependencyInjector.get('TransactionUtil'))
 );
-DependencyInjector.register('PacientesReportController', new PacientesReportController(
-  DependencyInjector.get('PacientesReportService')
-));
+DependencyInjector.register('RelatoriosControl', new RelatoriosControl(
+  DependencyInjector.get('RelatoriosModel'))
+)
 DependencyInjector.register('RelatorioAgendamentoControl', new RelatorioAgendamentoControl(
   DependencyInjector.get('RelatorioAgendamentoModel'),
-  DependencyInjector.get('TransactionUtil')
+));
+DependencyInjector.register('RelatorioPacientesControl', new RelatorioPacientesControl(
+  DependencyInjector.get('RelatoriosPacientesModel'),
+  DependencyInjector.get('PacientesModel'),
 ));
 
 
@@ -194,8 +205,8 @@ const PacientesRoutes = require('./routes/pacientesRoutes');
 const ServicosRoutes = require('./routes/servicosRoutes');
 const ProfissionaisRoutes = require('./routes/ProfissionaisRoutes');
 const ProfissionalServicosRoutes = require('./routes/ProfissionaisServicosRoutes');
-const PacientesReportRoutes = require('./routes/PacientesReportRoutes');
 const RelatorioAgendamentosRoutes = require('./routes/RelatorioAgendamentosRoutes');
+const RelatoriosPacientesRoutes = require('./routes/RelatorioPacientesRoutes');
 
 
 app.use(loginRoute);
@@ -205,8 +216,8 @@ app.use(verifyToken, PacientesRoutes);
 app.use(verifyToken, ServicosRoutes);
 app.use(verifyToken, ProfissionaisRoutes);
 app.use(verifyToken, ProfissionalServicosRoutes);
-app.use(verifyToken, PacientesReportRoutes);
 app.use(verifyToken, RelatorioAgendamentosRoutes);
+app.use(verifyToken, RelatoriosPacientesRoutes);
 
 
 // Inicialização do Servidor

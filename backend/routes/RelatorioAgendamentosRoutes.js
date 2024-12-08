@@ -34,4 +34,12 @@ router.get("/relatorio/agendamentos/distribuicao-por-servico", (req, res) =>
     RelatorioAgendamento.distribuicaoPorServico(req, res)
 );
 
+router.get("/relatorio/gerarExcel", (req, res) => 
+    RelatorioControl.gerarRelatorioExcel(req, res)
+); 
+
+router.get("/relatorio/gerarPdf", (req, res) => 
+    RelatorioControl.gerarRelatorioPdf(req, res)
+);
+
 module.exports = router;

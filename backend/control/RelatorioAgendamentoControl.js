@@ -34,6 +34,10 @@ class RelatorioAgendamentoControl extends AbstractRelatorioAgendamentoControl {
     }
 
     async estatisticasAgendamentos(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         try {
             const result = await this.relatorioAgendamentoModel.obterEstatisticasAgendamentos();
             return res.status(200).json(result);
@@ -44,6 +48,10 @@ class RelatorioAgendamentoControl extends AbstractRelatorioAgendamentoControl {
     }
 
     async distribuicaoPorData(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         try {
             const result = await this.relatorioAgendamentoModel.obterDistribuicaoPorData();
             return res.status(200).json(result);
@@ -54,6 +62,10 @@ class RelatorioAgendamentoControl extends AbstractRelatorioAgendamentoControl {
     }
 
     async distribuicaoPorProfissional(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         try {
             const result = await this.relatorioAgendamentoModel.obterDistribuicaoPorProfissional();
             return res.status(200).json(result);
@@ -64,6 +76,10 @@ class RelatorioAgendamentoControl extends AbstractRelatorioAgendamentoControl {
     }
 
     async distribuicaoPorServico(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         try {
             const result = await this.relatorioAgendamentoModel.obterDistribuicaoPorServico();
             return res.status(200).json(result);

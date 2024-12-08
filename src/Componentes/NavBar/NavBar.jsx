@@ -74,7 +74,7 @@ function NavBar() {
           </Link>
         </li>
         <li className="nav-link">
-          <Link to="/DashboardRelatorios">
+          <Link to="/Relatorios">
             <BsFileText />
             <span className="mx-2">Relatórios</span>
           </Link>

@@ -10,13 +10,25 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { FaFileCsv } from "react-icons/fa";
 import { useOutletContext } from "react-router-dom";
 import RelatoriosService from "../../services/relatoriosService";
-import "./DashboardRelatorios.css";
-import Chart from "chart.js/auto";
+import RelatoriosAgendamentoService from "../../services/relatoriosAgendamentoService";
+import styles from "./RelatoriosAgendamento.module.css"
 import { Bar } from "react-chartjs-2";
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
+// Registrar as escalas e elementos necessários no Chart.js
+Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const relatoriosAgendamentoService = new RelatoriosAgendamentoService();
 const relatoriosService = new RelatoriosService();
 
 function formatarDataHora(dataHora) {
@@ -46,17 +58,16 @@ function DashboardRelatorios() {
     paciente: "",
     profissional: "",
     servico: "",
-    status: "", // Adicionando filtro de status
+    status: "",
   });
   const [servicosComparar, setServicosComparar] = useState({
     servico1: "",
     servico2: "",
   });
 
-  // Atualiza os dados com base nos filtros
   useEffect(() => {
     if (ativo === "agendamentos") {
-      relatoriosService
+      relatoriosAgendamentoService
         .obterAgendamentos(filtros)
         .then((data) => {
           setRelatorioAgendamentos(data || []);
@@ -66,7 +77,6 @@ function DashboardRelatorios() {
     }
   }, [ativo, filtros]);
 
-  // Gera o gráfico geral de agendamentos
   const gerarDadosGrafico = (dados) => {
     if (!Array.isArray(dados) || dados.length === 0) {
       setDadosGrafico(null);
@@ -95,7 +105,6 @@ function DashboardRelatorios() {
     });
   };
 
-  // Gera o gráfico de comparação entre dois serviços
   const gerarGraficoComparacao = (dados, servico1, servico2) => {
     if (!Array.isArray(dados) || dados.length === 0) {
       setGraficoComparacao(null);
@@ -126,7 +135,6 @@ function DashboardRelatorios() {
     });
   };
 
-  // Renderiza a tabela de dados
   const renderTabela = (dados, headers) => (
     <Table striped bordered hover className="table">
       <thead>
@@ -172,7 +180,6 @@ function DashboardRelatorios() {
     "observacoes",
   ];
 
-  // Atualiza os filtros de consulta
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;
     setFiltros((prevFiltros) => ({
@@ -189,11 +196,27 @@ function DashboardRelatorios() {
     }));
   };
 
+  const handleGerarRelatorioExcel = async () => {
+    try {
+      await relatoriosService.gerarRelatorioExcel("agendamentos");
+    } catch (error) {
+      console.error("Erro ao gerar relatório Excel:", error);
+      alert("Erro ao gerar relatório Excel!");
+    }
+  };
+
+  const handleGerarRelatorioPdf = async () => {
+    try {
+      await relatoriosService.gerarRelatorioPdf("agendamentos");
+    } catch (error) {
+      console.error("Erro ao gerar relatório PDF:", error);
+      alert("Erro ao gerar relatório PDF!");
+    }
+  };
+
   return (
     <div
-      className={`container-dashboard ${
-        show ? "container-dashboard-side-active" : ""
-      }`}
+      className={`${styles.containerDashboard} ${show ? styles.containerDashboardSideActive : ""}`}
     >
       <h1 className="text-center mb-4">Dashboard de Relatórios</h1>
       <Tabs
@@ -204,7 +227,7 @@ function DashboardRelatorios() {
       >
         <Tab eventKey="agendamentos" title="Relatório de Agendamentos">
           <Container>
-            <Card className="card-relatorio">
+            <Card className={`${styles.cardRelatorio}`}>
               <Form className="mb-4">
                 <Row>
                   <Col md={3}>
@@ -286,10 +309,25 @@ function DashboardRelatorios() {
               </Form>
               <h2 className="text-center mt-3">Agendamentos</h2>
               {renderTabela(relatorioAgendamentos, headersAgendamentos)}
+              <div className="d-flex justify-content-center mt-3">
+                <Button
+                  variant="success"
+                  onClick={handleGerarRelatorioExcel}
+                >
+                  Baixar Relatório em Excel
+                </Button>
+                <Button
+                  variant="danger"
+                  className="ml-2"
+                  onClick={handleGerarRelatorioPdf}
+                >
+                  Baixar Relatório em PDF
+                </Button>
+              </div>
             </Card>
           </Container>
           <Container className="mt-4">
-            <Card className="card-relatorio">
+            <Card className={`${styles.cardRelatorio} mt-4`}>
               <h2 className="text-center">Gráficos de Análise</h2>
               {dadosGrafico ? (
                 <Bar data={dadosGrafico} />
@@ -297,7 +335,7 @@ function DashboardRelatorios() {
                 <p className="text-center">Nenhum dado disponível para o gráfico.</p>
               )}
             </Card>
-            <Card className="card-relatorio mt-4">
+            <Card className={`${styles.cardRelatorio} mt-4`}>
               <h2 className="text-center">Comparação de Serviços</h2>
               <Form>
                 <Row>
@@ -345,13 +383,6 @@ function DashboardRelatorios() {
               ) : (
                 <p className="text-center mt-4">Nenhum dado disponível para comparação.</p>
               )}
-            </Card>
-          </Container>
-        </Tab>
-        <Tab eventKey="outros" title="Outros Relatórios (Futuro)">
-          <Container>
-            <Card className="card-relatorio">
-              <h2 className="text-center">Relatórios adicionais serão adicionados aqui.</h2>
             </Card>
           </Container>
         </Tab>

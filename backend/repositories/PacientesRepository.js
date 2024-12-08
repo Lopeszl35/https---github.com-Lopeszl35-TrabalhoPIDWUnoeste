@@ -158,7 +158,6 @@ class PacienteRepository extends AbstractPacienteRepository {
         try {
             const result = await this.database.executaComando(sql, params);
             console.log('result', result);
-            
             return result;
         } catch (error) {
             throw error;
