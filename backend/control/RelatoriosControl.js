@@ -17,9 +17,9 @@ class RelatoriosControl extends AbstractRelatoriosControl {
             }
 
             const dados = await this.relatoriosModel.obterDadosRelatorio(tipo);
-            console.log('dados', dados);
+            
             const campos = RelatorioConfigFactory.getConfig(tipo).campos;
-            console.log('campos', campos);
+            
             const buffer = await RelatorioGenerator.gerarExcel(campos, dados);
 
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -40,9 +40,9 @@ class RelatoriosControl extends AbstractRelatoriosControl {
             }
 
             const dados = await this.relatoriosModel.obterDadosRelatorio(tipo);
-            console.log('dados', dados);
+
             const campos = RelatorioConfigFactory.getConfig(tipo).campos;
-            console.log('campos', campos);
+    
 
             res.setHeader("Content-Type", "application/pdf");
             res.setHeader("Content-Disposition", `attachment; filename=relatorio_${tipo}.pdf`);
