@@ -7,13 +7,15 @@ class PacienteRepository extends AbstractPacienteRepository {
     }
 
     async adicionarPaciente(paciente, connection) {
+        console.log("Paciente: ", paciente);
         const sql = `
-            INSERT INTO Pacientes (Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email)
-            VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Pacientes (Nome_Completo, Data_De_Nascimento, Sexo, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email, autorizacaoImagem, Raca)
+            VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
         `;
         const params = [
             paciente.Nome_Completo,
             paciente.Data_De_Nascimento,
+            paciente.Sexo,
             paciente.CPF,
             paciente.RG,
             paciente.CartaoSUS,
@@ -21,6 +23,8 @@ class PacienteRepository extends AbstractPacienteRepository {
             paciente.Ano_Escolar,
             paciente.Periodo,
             paciente.Email,
+            paciente.autorizacaoImagem,
+            paciente.Raca
         ];
         try {
             const [resultado] = await connection.query(sql, params);
@@ -32,14 +36,16 @@ class PacienteRepository extends AbstractPacienteRepository {
     }
 
     async atualizarPaciente(paciente, connection) {
+        console.log("Paciente: ", paciente);
         const sql = `
             UPDATE Pacientes
-            SET Nome_Completo = ?, Data_De_Nascimento = ?, CPF = ?, RG = ?, CartaoSUS = ?, Escola = ?, Ano_Escolar = ?, Periodo = ?, Email = ?
+            SET Nome_Completo = ?, Data_De_Nascimento = ?, Sexo = ?, CPF = ?, RG = ?, CartaoSUS = ?, Escola = ?, Ano_Escolar = ?, Periodo = ?, Email = ?, Raca = ?
             WHERE Prontuario = ?
         `;
         const params = [
             paciente.Nome_Completo,
             paciente.Data_De_Nascimento,
+            paciente.Sexo,
             paciente.CPF,
             paciente.RG,
             paciente.CartaoSUS,
@@ -47,6 +53,7 @@ class PacienteRepository extends AbstractPacienteRepository {
             paciente.Ano_Escolar,
             paciente.Periodo,
             paciente.Email,
+            paciente.Raca,
             paciente.Prontuario
         ];
         try {
@@ -105,10 +112,12 @@ class PacienteRepository extends AbstractPacienteRepository {
                 p.Nome_Completo,
                 p.Email,
                 p.Data_De_Nascimento,
+                p.Sexo,
                 p.CPF,
                 p.RG,
                 p.CartaoSUS,
                 p.Escola,
+                p.Raca,
                 p.Ano_Escolar,
                 p.Periodo,
                 r.Nome_Mae,

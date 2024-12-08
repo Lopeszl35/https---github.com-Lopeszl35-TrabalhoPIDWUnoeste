@@ -128,6 +128,7 @@ function RelatoriosPacientes() {
           <th>Cidade</th>
           <th>Estado</th>
           <th>Sexo</th>
+          <th>Idade</th>
         </tr>
       </thead>
       <tbody>
@@ -143,6 +144,7 @@ function RelatoriosPacientes() {
               <td>{item.cidade}</td>
               <td>{item.estado}</td>
               <td>{item.sexo}</td>
+              <td>{item.Idade}</td>
             </tr>
           ))
         )}

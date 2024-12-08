@@ -54,6 +54,7 @@ class PacientesService extends AbstractPacientesModel {
             return pacientes;
         } catch (error) {
             console.error("Erro ao obter pacientes:", error);
+            ErroSqlHandler.tratarErroSql(error, "paciente");
             throw error;
         }
     }
@@ -67,6 +68,7 @@ class PacientesService extends AbstractPacientesModel {
             return paciente;
         } catch (error) {
             console.error("Erro ao obter dados do paciente:", error);
+            ErroSqlHandler.tratarErroSql(error, "paciente");
             throw error;
         }
     }
@@ -80,6 +82,7 @@ class PacientesService extends AbstractPacientesModel {
             return pacientes;
         } catch (error) {
             console.error("Erro ao buscar pacientes:", error);
+            ErroSqlHandler.tratarErroSql(error, "paciente");
             throw error;
         }
     }
@@ -93,6 +96,7 @@ class PacientesService extends AbstractPacientesModel {
             return evolucaoSalva;
         } catch (error) {
             console.error("Erro ao salvar evolução:", error);
+            ErroSqlHandler.tratarErroSql(error, "paciente");
             throw error;
         }
     }
@@ -106,6 +110,7 @@ class PacientesService extends AbstractPacientesModel {
             return evolucoes;
         } catch (error) {
             console.error("Erro ao obter evoluções do paciente:", error);
+            ErroSqlHandler.tratarErroSql(error, "paciente");
             throw error;
         }
     }
