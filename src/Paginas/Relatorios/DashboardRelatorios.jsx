@@ -10,12 +10,14 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { FaFileCsv } from "react-icons/fa";
 import { useOutletContext } from "react-router-dom";
 import RelatoriosService from "../../services/relatoriosService";
 import "./DashboardRelatorios.css";
-import Chart from "chart.js/auto";
 import { Bar } from "react-chartjs-2";
+import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+
+// Registrar as escalas e elementos necessários no Chart.js
+Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const relatoriosService = new RelatoriosService();
 
@@ -46,14 +48,13 @@ function DashboardRelatorios() {
     paciente: "",
     profissional: "",
     servico: "",
-    status: "", // Adicionando filtro de status
+    status: "",
   });
   const [servicosComparar, setServicosComparar] = useState({
     servico1: "",
     servico2: "",
   });
 
-  // Atualiza os dados com base nos filtros
   useEffect(() => {
     if (ativo === "agendamentos") {
       relatoriosService
@@ -66,7 +67,6 @@ function DashboardRelatorios() {
     }
   }, [ativo, filtros]);
 
-  // Gera o gráfico geral de agendamentos
   const gerarDadosGrafico = (dados) => {
     if (!Array.isArray(dados) || dados.length === 0) {
       setDadosGrafico(null);
@@ -95,7 +95,6 @@ function DashboardRelatorios() {
     });
   };
 
-  // Gera o gráfico de comparação entre dois serviços
   const gerarGraficoComparacao = (dados, servico1, servico2) => {
     if (!Array.isArray(dados) || dados.length === 0) {
       setGraficoComparacao(null);
@@ -126,7 +125,6 @@ function DashboardRelatorios() {
     });
   };
 
-  // Renderiza a tabela de dados
   const renderTabela = (dados, headers) => (
     <Table striped bordered hover className="table">
       <thead>
@@ -172,7 +170,6 @@ function DashboardRelatorios() {
     "observacoes",
   ];
 
-  // Atualiza os filtros de consulta
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;
     setFiltros((prevFiltros) => ({
@@ -187,6 +184,24 @@ function DashboardRelatorios() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleGerarRelatorioExcel = async () => {
+    try {
+      await relatoriosService.gerarRelatorioExcel("agendamentos");
+    } catch (error) {
+      console.error("Erro ao gerar relatório Excel:", error);
+      alert("Erro ao gerar relatório Excel!");
+    }
+  };
+
+  const handleGerarRelatorioPdf = async () => {
+    try {
+      await relatoriosService.gerarRelatorioPdf("agendamentos");
+    } catch (error) {
+      console.error("Erro ao gerar relatório PDF:", error);
+      alert("Erro ao gerar relatório PDF!");
+    }
   };
 
   return (
@@ -286,6 +301,20 @@ function DashboardRelatorios() {
               </Form>
               <h2 className="text-center mt-3">Agendamentos</h2>
               {renderTabela(relatorioAgendamentos, headersAgendamentos)}
+              <Button
+                variant="success"
+                className="mt-3 me-2"
+                onClick={handleGerarRelatorioExcel}
+              >
+                Baixar Relatório em Excel
+              </Button>
+              <Button
+                variant="primary"
+                className="mt-3"
+                onClick={handleGerarRelatorioPdf}
+              >
+                Baixar Relatório em PDF
+              </Button>
             </Card>
           </Container>
           <Container className="mt-4">
@@ -296,62 +325,6 @@ function DashboardRelatorios() {
               ) : (
                 <p className="text-center">Nenhum dado disponível para o gráfico.</p>
               )}
-            </Card>
-            <Card className="card-relatorio mt-4">
-              <h2 className="text-center">Comparação de Serviços</h2>
-              <Form>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Serviço 1</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="servico1"
-                        placeholder="Serviço para comparar"
-                        value={servicosComparar.servico1}
-                        onChange={handleComparacaoChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>Serviço 2</Form.Label>
-                      <Form.Control
-                        type="text"
-                        name="servico2"
-                        placeholder="Outro serviço para comparar"
-                        value={servicosComparar.servico2}
-                        onChange={handleComparacaoChange}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Form>
-              <Button
-                variant="primary"
-                className="mt-3"
-                onClick={() =>
-                  gerarGraficoComparacao(
-                    relatorioAgendamentos,
-                    servicosComparar.servico1,
-                    servicosComparar.servico2
-                  )
-                }
-              >
-                Comparar Serviços
-              </Button>
-              {graficoComparacao ? (
-                <Bar data={graficoComparacao} className="mt-4" />
-              ) : (
-                <p className="text-center mt-4">Nenhum dado disponível para comparação.</p>
-              )}
-            </Card>
-          </Container>
-        </Tab>
-        <Tab eventKey="outros" title="Outros Relatórios (Futuro)">
-          <Container>
-            <Card className="card-relatorio">
-              <h2 className="text-center">Relatórios adicionais serão adicionados aqui.</h2>
             </Card>
           </Container>
         </Tab>

@@ -1,20 +1,24 @@
 const express = require("express");
 const cors = require("cors");
-
 const dependencyInjector = require("../utils/DependencyInjector");  
-const RelatorioPacientes = dependencyInjector.get(
+
+const RelatorioPacientesControl = dependencyInjector.get(
     "RelatorioPacientesControl"
+);
+
+RelatorioControl = dependencyInjector.get(
+    "RelatoriosControl"
 );
 
 const router = express.Router();
 router.use(cors());
 
-router.get("/relatorio/pacientes/gerarExecel", (req, res) => 
-    RelatorioPacientes.gerarRelatorioExcel(req, res)
+router.get("/relatorio/gerarExcel", (req, res) => 
+    RelatorioControl.gerarRelatorioExcel(req, res)
 ); 
 
-router.get("/relatorio/pacientes/gerarPDF", (req, res) => 
-    RelatorioPacientes.gerarRelatorioPDF(req, res)
+router.get("/relatorio/gerarPdf", (req, res) => 
+    RelatorioControl.gerarRelatorioPdf(req, res)
 );
 
 

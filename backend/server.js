@@ -65,6 +65,7 @@ const ServicosModel = require('./Model/Entities/servicosModel/servicosModel')
 const ProfissionaisModel = require('./Model/Entities/profissionaisModel/ProfissionaisModel');
 const ProfissionalUsuarioModel = require('./Model/Entities/profissionaisModel/ProfissionalUsuarioModel');
 const ProfissionalServicosModel = require('./Model/Entities/profissionaisModel/ProfissionalServicosModel');
+const RelatoriosModel = require('./Model/Entities/relatorios/RelatoriosModel');
 const RelatorioAgendamentoModel = require('./Model/Entities/relatorios/RelatorioAgendamentoModel');
 const RelatoriosPacientesModel = require('./Model/Entities/relatorios/RelatoriosPacientesModel');
 
@@ -116,6 +117,11 @@ DependencyInjector.register('RelatoriosPacientesModel', new RelatoriosPacientesM
   DependencyInjector.get('RelatorioPacientesRepository')
 ));
 
+DependencyInjector.register('RelatoriosModel', new RelatoriosModel(
+  DependencyInjector.get('PacientesRepository'),
+  DependencyInjector.get('AgendamentoRepository')
+))
+
 
 
 // Registro de Controladores
@@ -125,6 +131,7 @@ const PacientesControl = require('./control/pacientesControl');
 const ServicoControl = require('./control/servicoControl');
 const ProfissionaisControl = require('./control/ProfissionaisControl');
 const ProfissionalServicosControl = require('./control/ProfissionalServicosControl');
+const RelatoriosControl = require('./control/RelatoriosControl');
 const RelatorioAgendamentoControl = require('./control/RelatorioAgendamentoControl');
 const RelatorioPacientesControl = require('./control/RelatorioPacientesControl');
 
@@ -156,6 +163,9 @@ DependencyInjector.register('ProfissionalServicosControl', new ProfissionalServi
   DependencyInjector.get('ProfissionalServicosModel'),
   DependencyInjector.get('TransactionUtil'))
 );
+DependencyInjector.register('RelatoriosControl', new RelatoriosControl(
+  DependencyInjector.get('RelatoriosModel'))
+)
 DependencyInjector.register('RelatorioAgendamentoControl', new RelatorioAgendamentoControl(
   DependencyInjector.get('RelatorioAgendamentoModel'),
 ));

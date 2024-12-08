@@ -1,8 +1,31 @@
 const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 
+// Função para formatar data e hora
+function formatarDataHora(dataHora) {
+    if (!dataHora) return "N/A";
+    
+    // Certifique-se de que dataHora é um objeto Date válido
+    const dateObj = new Date(dataHora);
+
+    // Formate a data no formato brasileiro numérico
+    const data = dateObj.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+
+    const hora = dateObj.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    return `${data} ${hora}`;
+}
+
+
 class RelatorioGenerator {
-    static async gerarExcel(res, campos, dados) {
+    static async gerarExcel(campos, dados) {
         const workbook = new ExcelJS.Workbook();
         const sheet = workbook.addWorksheet("Relatório");
 
@@ -12,26 +35,20 @@ class RelatorioGenerator {
             width: campo.width || 15,
         }));
 
-        dados.forEach(item => sheet.addRow(item));
+        // Formate os campos de data/hora antes de adicionar as linhas
+        const dadosFormatados = dados.map(item => ({
+            ...item,
+            data_hora: item.data_hora ? formatarDataHora(item.data_hora) : "Data não informada",
+        }));
 
-        res.setHeader(
-            "Content-Type",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
-        res.setHeader(
-            "Content-Disposition",
-            "attachment; filename=relatorio.xlsx"
-        );
+        dadosFormatados.forEach(item => sheet.addRow(item));
 
-        await workbook.xlsx.write(res);
-        res.end();
+        return await workbook.xlsx.writeBuffer();
     }
 
     static gerarPdf(res, campos, dados) {
+        const PDFDocument = require("pdfkit");
         const doc = new PDFDocument();
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader("Content-Disposition", "attachment; filename=relatorio.pdf");
-
         doc.pipe(res);
 
         doc.fontSize(20).text("Relatório", { align: "center" }).moveDown(2);
@@ -39,7 +56,11 @@ class RelatorioGenerator {
         dados.forEach((item, index) => {
             doc.fontSize(12).text(`Registro ${index + 1}:`);
             campos.forEach(campo => {
-                doc.text(`${campo.header}: ${item[campo.key] || "N/A"}`);
+                const valor =
+                    campo.key === "data_hora"
+                        ? formatarDataHora(item[campo.key])
+                        : item[campo.key] || "Dado não informado";
+                doc.text(`${campo.header}: ${valor}`);
             });
             doc.moveDown(1);
         });
