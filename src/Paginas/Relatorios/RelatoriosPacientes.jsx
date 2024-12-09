@@ -115,7 +115,7 @@ function RelatoriosPacientes() {
       ],
     });
   };
-  
+
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;
     setFiltros((prev) => ({
@@ -139,7 +139,7 @@ function RelatoriosPacientes() {
       <tbody>
         {dados.length === 0 ? (
           <tr>
-            <td colSpan="5">Nenhum dado encontrado.</td>
+            <td colSpan="5" className="text-danger">Nenhum dado encontrado.</td>
           </tr>
         ) : (
           dados.map((item, index) => (
@@ -256,7 +256,7 @@ function RelatoriosPacientes() {
         {dadosGrafico ? (
           <Bar data={dadosGrafico} />
         ) : (
-          <p className="text-center">Nenhum dado disponível para o gráfico.</p>
+          <p className="text-center text-danger">Nenhum dado disponível para o gráfico.</p>
         )}
       </Card>
     </Container>
