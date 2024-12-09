@@ -37,6 +37,7 @@ function RelatoriosPacientes() {
     cidade: "",
     estado: "",
     sexo: "",
+    idade: "",
     idadeMin: "",
     idadeMax: "",
   });
@@ -62,40 +63,44 @@ function RelatoriosPacientes() {
       setDadosGrafico(null);
       return;
     }
-
+  
     let agrupados = {};
     let label = "Pacientes";
-
-    // Decidir o agrupamento com base no filtro aplicado
-    if (filtros.cidade) {
+  
+    if (filtros.idadeMin && filtros.idadeMax) {
+      const idadeMin = parseInt(filtros.idadeMin, 10);
+      const idadeMax = parseInt(filtros.idadeMax, 10);
+  
+      // Contar pacientes na faixa etária para o gráfico
+      const totalPacientes = dados.filter(
+        (paciente) => paciente.idade >= idadeMin && paciente.idade <= idadeMax
+      ).length;
+  
+      agrupados = { [`Entre ${idadeMin} e ${idadeMax}`]: totalPacientes };
+      label = `Pacientes entre ${idadeMin} e ${idadeMax} anos`;
+    } else if (filtros.cidade) {
       agrupados = dados.reduce((acc, curr) => {
         acc[curr.cidade] = (acc[curr.cidade] || 0) + 1;
         return acc;
       }, {});
       label = "Pacientes por Cidade";
-    } else if (filtros.nome) {
-      agrupados = dados.reduce((acc, curr) => {
-        acc[curr.nome] = (acc[curr.nome] || 0) + 1;
-        return acc;
-      }, {});
-      label = "Pacientes por Nome";
-    } else if (filtros.idadeMin && filtros.idadeMax) {
-      agrupados = dados.reduce((acc, curr) => {
-        acc[curr.nome] = (acc[curr.nome] || 0) + 1;
-        return acc;
-      }, {});
-      label = `Pacientes entre ${filtros.idadeMin} e ${filtros.idadeMax} anos`;
-    } else {
+    } else if (filtros.estado) {
       agrupados = dados.reduce((acc, curr) => {
         acc[curr.estado] = (acc[curr.estado] || 0) + 1;
         return acc;
       }, {});
       label = "Pacientes por Estado";
+    } else {
+      agrupados = dados.reduce((acc, curr) => {
+        acc[curr.sexo] = (acc[curr.sexo] || 0) + 1;
+        return acc;
+      }, {});
+      label = "Pacientes por Sexo";
     }
-
+  
     const labels = Object.keys(agrupados);
     const valores = Object.values(agrupados);
-
+  
     setGraficoLabel(label);
     setDadosGrafico({
       labels,
@@ -110,7 +115,7 @@ function RelatoriosPacientes() {
       ],
     });
   };
-
+  
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;
     setFiltros((prev) => ({
@@ -144,7 +149,7 @@ function RelatoriosPacientes() {
               <td>{item.cidade}</td>
               <td>{item.estado}</td>
               <td>{item.sexo}</td>
-              <td>{item.Idade}</td>
+              <td>{item.idade}</td>
             </tr>
           ))
         )}

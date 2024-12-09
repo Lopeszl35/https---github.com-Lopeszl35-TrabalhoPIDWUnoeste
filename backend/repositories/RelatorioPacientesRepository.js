@@ -12,6 +12,7 @@ class RelatorioPacienteRepository extends AbstractRelatorioPacienteRepository {
             SELECT 
                 p.Prontuario AS prontuario,
                 p.Nome_Completo AS nome,
+                p.Idade AS idade,
                 p.Data_De_Nascimento AS data_nascimento,
                 p.CPF AS cpf,
                 e.Logradouro AS logradouro,
