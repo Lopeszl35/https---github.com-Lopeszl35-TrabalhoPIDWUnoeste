@@ -18,7 +18,8 @@ class PacientesService {
               }
     
             if (!response.ok) {
-                throw new Error('Erro ao obter os Pacientes!');
+                const errors = await response.json();
+                throw new Error(errors.message || 'Erro ao obter os pacientes!');
             } else {
                 const dados = await response.json();
                 return dados;
@@ -40,7 +41,8 @@ class PacientesService {
                 }
             });
             if (!response.ok) {
-                throw new Error('Erro ao obter o Paciente!');  
+                const errors = await response.json();
+                throw new Error(errors.message || 'Erro ao obter os dados completos do paciente!');  
             } else {
                 const dados = await response.json();
                 return dados;
@@ -61,11 +63,6 @@ class PacientesService {
             },
             body: JSON.stringify(dadosPaciente),
         });
-
-        if (response.status === 400) {
-            const errorData = await response.json();
-            throw new Error(errorData.message);
-        }  
 
         if (!response.ok) {
             const errorData = await response.json();
@@ -89,7 +86,7 @@ class PacientesService {
         });
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`Erro ao atualizar o paciente: ${JSON.stringify(errorData)}`);
+            throw new Error(errorData.message || 'Erro ao atualizar o Paciente!');
         }
         const data = await response.json();
         return data;
@@ -109,7 +106,8 @@ class PacientesService {
             }
             }); 
             if (!response.ok) {
-                throw new Error('Erro ao excluir o paciente');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao excluir o Paciente!');
             }
             const data = await response.json();
             return data;

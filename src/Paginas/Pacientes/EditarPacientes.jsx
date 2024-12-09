@@ -1,7 +1,7 @@
 import { Container } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useOutletContext, useParams, useNavigate, Link } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaRegSave } from "react-icons/fa";
 import React, { useEffect, useState } from 'react';
 import "./CadastrarPacientes.css";
 import PacientesService from "../../services/pacientesService";
@@ -16,12 +16,17 @@ function EditarPacientes() {
     "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
   ];
 
+  const racas = ["", "Branco", "Negro", "Pardo", "Amarelo", "Indígena"];
+
+
   const [pacienteInfo, setPacienteInfo] = useState({
     Prontuario: '',
     Nome_Completo: '', 
     Data_De_Nascimento: '', 
     CPF: '', 
     RG: '',
+    Sexo: '',
+    Raca: '',
     Nome_Mae: '', 
     Telefone_Mae: '',
     Nome_Pai: '',
@@ -43,17 +48,22 @@ function EditarPacientes() {
   });
 
   const [erros, setErros] = useState({});
+  const [backendError, setBackendError] = useState("");
+
 
   useEffect(() => {
     const fetchPaciente = async () => {
       try {
         const paciente = await pacientesService.obterDadosCompletosDoPaciente(prontuario);
+        
         setPacienteInfo({
           Prontuario: paciente.Prontuario || '',
           Nome_Completo: paciente.Nome_Completo || '',
           Data_De_Nascimento: paciente.Data_De_Nascimento ? paciente.Data_De_Nascimento.split('T')[0] : '',
           CPF: paciente.CPF || '',
           RG: paciente.RG || '',
+          Sexo: paciente.Sexo || '',
+          Raca: paciente.Raca || '',
           Nome_Mae: paciente.Nome_Mae || '',
           Telefone_Mae: paciente.Telefone_Mae || '',
           Nome_Pai: paciente.Nome_Pai || '',
@@ -74,7 +84,11 @@ function EditarPacientes() {
           CartaoSUS: paciente.CartaoSUS || '',
         });
       } catch (error) {
-        console.error('Erro ao obter paciente:', error);
+        if (error.message) {
+          setBackendError(error.message);
+        } else {
+          setBackendError("Erro ao obter dados do paciente");
+        }
       }
     };
     fetchPaciente();
@@ -107,6 +121,14 @@ function EditarPacientes() {
 
     if (!pacienteInfo.Nome_Pai) {
       newErros.Nome_Pai = 'Nome do pai é obrigatório';
+    }
+
+    if (!pacienteInfo.Sexo) {
+      newErros.Sexo = 'Sexo é obrigatório';
+    }
+
+    if (!pacienteInfo.Raca) {
+      newErros.Raca = 'Raça é obrigatória';
     }
 
     if (!pacienteInfo.Data_De_Nascimento) {
@@ -147,6 +169,7 @@ function EditarPacientes() {
 
  const handleSubmit = async (e) => {
   e.preventDefault();
+  setBackendError("");
   if (validate()) {
     try {
       // Organizar dados separadamente
@@ -155,6 +178,8 @@ function EditarPacientes() {
         Data_De_Nascimento: pacienteInfo.Data_De_Nascimento,
         CPF: pacienteInfo.CPF,
         RG: pacienteInfo.RG,
+        Sexo: pacienteInfo.Sexo,
+        Raca: pacienteInfo.Raca,
         CartaoSUS: pacienteInfo.CartaoSUS,
         Email: pacienteInfo.Email,
         Escola: pacienteInfo.Escola,
@@ -184,10 +209,14 @@ function EditarPacientes() {
       await pacientesService.atualizar(prontuario, pacienteAtualizado);
       navigate('/pacientes');
     } catch (error) {
-      console.error('Erro ao atualizar paciente:', error);
+      if (error.message) {
+        setBackendError(error.message);
+      } else {
+        setBackendError("Erro ao atualizar o paciente. Tente novamente mais tarde.");
+      }
     }
   }
-};
+};  
 
 
   return (
@@ -199,6 +228,39 @@ function EditarPacientes() {
           <label htmlFor="Nome_Completo">Nome completo:</label>
           <input type="text" id="Nome_Completo" name="Nome_Completo" value={pacienteInfo.Nome_Completo} onChange={handleInputChange} />
           {erros.Nome_Completo && <p className="erros">{erros.Nome_Completo}</p>}
+
+            <div className="form-group">
+              <label htmlFor="Sexo">Sexo:</label>
+              <select
+                id="Sexo"
+                name="Sexo"
+                value={pacienteInfo.Sexo}
+                onChange={handleInputChange}
+              >
+                <option value="">Selecione</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+              </select>
+            {erros.Sexo && <p className="erros">{erros.Sexo}</p>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="Raca">Raça:</label>
+            <select
+              id="Raca"
+              name="Raca"
+              value={pacienteInfo.Raca}
+              onChange={handleInputChange}
+            >
+              {racas.map((raca, index) => (
+                <option key={index} value={raca}>
+                  {raca}
+                </option>
+              ))}
+            </select>
+          {erros.Raca && <p className="erros">{erros.Raca}</p>}
+        </div>
 
           <div className="row">
             <div className="form-group col-md-6">
@@ -332,15 +394,19 @@ function EditarPacientes() {
               <input type="text" id="Periodo" name="Periodo" value={pacienteInfo.Periodo} onChange={handleInputChange} />
             </div>
           </div>
-          <Link to={"/pacientes"}>
-              <Button variant="secondary" className="me-2">
-                <FaArrowLeft className="me-2" />
-                Voltar
+          <div className="d-flex justify-content-end mt-3">
+              <Link to={"/pacientes"}>
+                <Button variant="secondary" className="me-2">
+                  <FaArrowLeft className="me-2" />
+                  Voltar
+                </Button>
+              </Link>
+              <Button variant="success" type="submit">
+                <FaRegSave className="me-2" />
+                Salvar
               </Button>
-          </Link>
-          <div className="botao">
-            <button type="submit">Salvar</button>
-          </div>
+            </div>
+            {backendError && <p className="text-danger mt-3">{backendError}</p>}
         </form>
       </Container>
     </div>

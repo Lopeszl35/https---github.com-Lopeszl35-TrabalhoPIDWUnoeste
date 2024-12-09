@@ -14,11 +14,15 @@ function CadastrarPacientes() {
   const estados = [
     "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
   ];
+  const racas = ["", "Branco", "Negro", "Pardo", "Amarelo", "Indígeno"];
+  const sexos = ["", "Masculino", "Feminino", "Outro"];
   const [pacienteInfo, setPacienteInfo] = useState({
     Nome_Completo: '',
     Data_De_Nascimento: '', 
     CPF: '', 
     RG: '',
+    Sexo: '',
+    Raca: '',
     Nome_Mae: '', 
     Telefone_Mae: '',
     Nome_Pai: '',
@@ -103,8 +107,8 @@ function CadastrarPacientes() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      const { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email } = pacienteInfo;
-      const paciente = { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email };
+      const { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email, autorizacaoImagem, Sexo, Raca } = pacienteInfo;
+      const paciente = { Nome_Completo, Data_De_Nascimento, CPF, RG, CartaoSUS, Escola, Ano_Escolar, Periodo, Email, autorizacaoImagem, Sexo, Raca };
 
       const { Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai } = pacienteInfo;
       const responsavel = { Nome_Mae, Telefone_Mae, Nome_Pai, Telefone_Pai };
@@ -134,6 +138,26 @@ function CadastrarPacientes() {
           <label htmlFor="Nome_Completo">Nome completo:</label>
           <input type="text" id="Nome_Completo" name="Nome_Completo" value={pacienteInfo.Nome_Completo} onChange={handleInputChange} />
           {erros.Nome_Completo && <p className="erros">{erros.Nome_Completo}</p>}
+
+          <div className="form-group">
+            <label htmlFor="Sexo">Sexo:</label>
+            <select id="Sexo" name="Sexo" value={pacienteInfo.Sexo} onChange={handleInputChange}>
+              {sexos.map((sexo, index) => (
+                <option key={index} value={sexo}>{sexo}</option>
+              ))}
+            </select>
+            {erros.Sexo && <p className="erros">{erros.Sexo}</p>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="Raca">Raça:</label>
+            <select id="Raca" name="Raca" value={pacienteInfo.Raca} onChange={handleInputChange}>
+              {racas.map((raca, index) => (
+                <option key={index} value={raca}>{raca}</option>
+              ))}
+            </select>
+            {erros.Raca && <p className="erros">{erros.Raca}</p>}
+          </div>
 
           <div className="row">
             <div className="form-group col-md-3">

@@ -1,0 +1,18 @@
+.containerRelatoriosPacientes {
+  margin: 4em 0 0 6em;
+  transition: margin 0.5s ease-in-out;
+}
+
+.containerRelatoriosPacientesActive {
+  margin-left: 16em;
+  transition: margin 0.5s ease-in-out;
+}
+
+.cardRelatorio {
+  margin-bottom: 2em;
+  border: 1px solid #ccc;
+  padding: 1.5em;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

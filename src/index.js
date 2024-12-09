@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import NavBar from "./Componentes/NavBar/NavBar";
 import Home from "./Paginas/Home/Home";
 import Login from "./Componentes/Login/Login";
-import DashboardRelatorios from "./Paginas/Relatorios/DashboardRelatorios";
+import Relatorios from "./Paginas/Relatorios/Relatorios";
+import RelatoriosAgendamento from "./Paginas/Relatorios/RelatoriosAgendamento";
+import RelatoriosPacientes from "./Paginas/Relatorios/RelatoriosPacientes";
 import Pacientes from "./Paginas/Pacientes/Pacientes";
 import EvolucaoPaciente from "./Paginas/Pacientes/EvolucaoPaciente";
 import Profissionais from "./Paginas/Profissionais/Profissionais";
@@ -60,8 +61,10 @@ function AppRouter() {
             <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
             <Route path="agendamentos" element={<AgendarConsultas />} />
-            <Route path="DashboardRelatorios" element={<DashboardRelatorios />} />
-            <Route path="*" element={<Navigate to="/home" />} /> {/* Redireciona qualquer rota desconhecida para Home */}
+            <Route path="relatorios" element={<Relatorios />} />
+            <Route path="RelatoriosAgendamento" element={<RelatoriosAgendamento />} />
+            <Route path="RelatoriosPacientes" element={<RelatoriosPacientes />} />
+           <Route path="*" element={<Navigate to="/home" />} /> {/* Redireciona qualquer rota desconhecida para Home */}
           </Route>
         )}
 

@@ -6,8 +6,14 @@ class ErroSqlHandler {
         if (error.code === 'ER_BAD_NULL_ERROR') {
             return this.tratarErroCamposNulos(error, entidade);
         } 
-        if(error.code === 'ER_NO_SUCH_TABLE') {
+        if (error.code === 'ER_NO_SUCH_TABLE') {
             return this.tratarErroTabelaNaoEncontrada(error, entidade);
+        }
+        if (error.code === 'WARN_DATA_TRUNCATED') {
+            return this.tratarErroTruncamentoDeDados(error, entidade);
+        }
+        if (error.code === 'ER_BAD_FIELD_ERROR') {
+            return this.tratarErroCamposInvalidos(error, entidade);
         }
         throw error;
     }
@@ -19,7 +25,7 @@ class ErroSqlHandler {
                     throw new Error('CPF já cadastrado para Paciente');
                 } else if (error.message.includes('RG')) {
                     throw new Error('RG já cadastrado para Paciente');
-                } else if (error.message.includes('unique_cartao_sus')) {
+                } else if (error.message.includes('CartaoSUS')) {
                     throw new Error('Cartão SUS já cadastrado para Paciente');
                 } else if (error.message.includes('Email')) {
                     throw new Error('Email já cadastrado para Paciente');
@@ -71,10 +77,20 @@ class ErroSqlHandler {
 
             case 'agendamento':
                 if (error.message.includes('Data_Hora')) {
-                    throw new Error('Data e hora nao podem ser nulas');
+                    throw new Error('Data e hora não podem ser nulas');
                 }   
                 if (error.message.includes('Prontuario')) {
                     throw new Error('Paciente deve ser informado para agendamento');
+                }
+                break;
+            case 'servicos':
+                if (error.message.includes('Sexo')) {
+                    throw new Error('Sexo não pode ser nulo, informe o sexo do paciente, contate o desenvolvedor');
+                }
+                break;
+            case 'paciente':
+                if (error.message.includes('Sexo')) {
+                    throw new Error('Sexo não pode ser nulo, informe o sexo do paciente, contate o desenvolvedor');
                 }
                 break;
 
@@ -102,6 +118,41 @@ class ErroSqlHandler {
                 break;
         }
     }
+
+    static tratarErroTruncamentoDeDados(error, entidade) {
+        switch (entidade) {
+            case 'paciente':
+                if (error.message.includes('Sexo')) {
+                    throw new Error('Sexo truncado para Paciente, Por Favor informe o sexo completo, Masculino ou Feminino.');
+                }
+        }
+    }
+
+    static tratarErroCamposInvalidos(error, entidade) {
+        switch (entidade) {
+            case 'paciente':
+                if (error.message.includes('Sexo')) {
+                    throw new Error('Tabela Sexo nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Cidade')) {
+                    throw new Error('Tabela Cidade nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Estado')) {
+                    throw new Error('Tabela Estado nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Bairro')) {
+                    throw new Error('Tabela Bairro nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Rua')) {
+                    throw new Error('Tabela Rua nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+                if (error.message.includes('Raça')) {
+                    throw new Error('Tabela Raça nao encontrada no banco de dados. Entre em contato com o desenvolvedor.');
+                }
+        }
+    }
+
+
 }
 
 module.exports = ErroSqlHandler;
