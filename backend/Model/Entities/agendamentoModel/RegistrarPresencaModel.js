@@ -7,9 +7,6 @@ class RegistrarPresencaModel extends AbstractRegistrarPresencaModel {
     }
 
     async bucarAgendamentoPorData(data) {
-        if(!data) {
-            throw new Error("Data nao informada");
-        }
         try {
             const consultas = await this.agendamentoRepository.buscarAgendamentoPorData(data);
             if (!consultas) {
