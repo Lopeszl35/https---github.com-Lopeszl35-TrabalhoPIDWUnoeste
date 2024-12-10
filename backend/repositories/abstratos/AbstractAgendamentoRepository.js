@@ -44,15 +44,25 @@ class AbstractAgendamentoRepository {
     throw new Error("Metodo não implementado");
   }
 
+  //Métodos para relatório
+  async obterDadosAgendamentosParaRelatorio() {
+    throw new Error("Método não implementado");
+  }
+
+  // Métodos para função registrar presença
   async buscarConsultaPorData(prontuario, data) {
     throw new Error("Metodo nao implementado");
   }
 
-  /* implementar posteriormente
-  async obterAgendamentosPendentes() {
-    throw new Error("Metodo nao implementado");
-  } 
-  */
+  async registrarPresenca(idAgendamento, data) {
+    throw new Error("Método não implementado");
+  }
+
+  async registrarAusencia(Idagendamento, motivo) {
+    throw new Error("Método nnão implementado")
+  }
+
+  
 
 }
 
