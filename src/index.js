@@ -19,6 +19,7 @@ import ProfissionaisPorServico from "./Paginas/Gerenciar-Servicos/ProfissionaisP
 import ServicosNovo from "./Paginas/Gerenciar-Servicos/ServicosNovo";
 import CadastrarPacientes from "./Paginas/Pacientes/CadastrarPacientes";
 import EditarPacientes from "./Paginas/Pacientes/EditarPacientes";
+import RegistrarPresenca from "./Paginas/Agendamentos/RegistrarPresenca";
 import AgendarConsultas from "./Paginas/Agendamentos/AgendaConsulta";
 import { AuthProvider, useAuth } from "./context/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
@@ -60,6 +61,7 @@ function AppRouter() {
             <Route path="servicos" element={<Servicos />} />
             <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
             <Route path="servicos/cadastro" element={<ServicosNovo />} />
+            <Route path="registrarAgendamentos" element={<RegistrarPresenca />} />
             <Route path="agendamentos" element={<AgendarConsultas />} />
             <Route path="relatorios" element={<Relatorios />} />
             <Route path="RelatoriosAgendamento" element={<RelatoriosAgendamento />} />

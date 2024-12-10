@@ -100,24 +100,6 @@ class AgendamentosControl extends AbstractAgendamentoControl {
     }
   }
 
-  // Arquiva uma consulta
-  async arquivarConsulta(req, res) {
-    try {
-      const { id } = req.params;
-
-      const result = await this.transactionUtil.executeTransaction(async (connection) => {
-        // Arquiva a consulta no banco de dados
-        const agendamento = await this.agendamentoModel.arquivarAgendamento(id, connection);
-        return agendamento;
-      });
-
-      res.status(200).json(result);
-    } catch (error) {
-      console.error("Erro ao arquivar a consulta:", error);
-      res.status(400).json({ message: error.message });
-    }
-  }
-
   // Obtém consultas que não estão arquivadas
   async obterConsultasNaoArquivadas(req, res) {
     try {
@@ -130,7 +112,7 @@ class AgendamentosControl extends AbstractAgendamentoControl {
   }
 
   // Busca consultas por data para um paciente específico
-  async buscarConsultaPorData(req, res) {
+  async buscarConsultaPacientePorData(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -139,7 +121,7 @@ class AgendamentosControl extends AbstractAgendamentoControl {
     const { prontuario, data } = req.query;
 
     try {
-      const consultas = await this.agendamentoModel.buscarConsultaPorData(prontuario, data);
+      const consultas = await this.agendamentoModel.buscarConsultaPacientePorData(prontuario, data);
       res.status(200).json(consultas);
     } catch (error) {
       console.error("Erro ao buscar consultas por data:", error);

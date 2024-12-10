@@ -11,7 +11,7 @@ router.use(cors());
 
 // Rota para buscar consulta de paciente por data
 router.get('/agendamentos/buscar', (req, res) => 
-    AgendamentoControl.buscarConsultaPorData(req, res)
+    AgendamentoControl.buscarConsultaPacientePorData(req, res)
 );
 
 // Rota para obter consulta do paciente por prontuário
@@ -32,11 +32,6 @@ router.get('/agendamentos', (req, res) =>
 // Rota para criar novo agendamento
 router.post('/agendamentos', (req, res) => 
     AgendamentoControl.criarAgendamento(req, res)
-);
-
-// Rota para arquivar consulta
-router.put('/agendamentos/:id/arquivar', (req, res) => 
-    AgendamentoControl.arquivarConsulta(req, res)
 );
 
 // Rota para editar consulta

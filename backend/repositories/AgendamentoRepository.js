@@ -142,55 +142,6 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     return result.length > 0 ? result[0] : null;
   }
 
-  async arquivarConsulta(idAgendamento, connection) {
-    const sql = `
-            UPDATE Agendamentos 
-            SET Arquivado = TRUE, Status = CASE WHEN Status = 'Pendente' THEN 'Cancelado' ELSE Status END
-            WHERE ID_Agendamento = ? AND (Status = 'Concluído' OR Status = 'Cancelado')
-        `;
-    const params = [idAgendamento];
-
-    let result;
-    try {
-        if(connection) {
-           [result] = await connection.query(sql, params);
-        } else {
-            result = await this.database.executaComandoNonQuery(sql, params);
-        }
-      if (result.affectedRows === 0) {
-        throw new Error("Consulta não encontrada ou já arquivada");
-      }
-      return { message: "Consulta arquivada com sucesso" };
-    } catch (error) {
-      console.error("Erro ao arquivar consulta:", error);
-      throw new Error("Erro ao arquivar consulta");
-    }
-  }
-
-  async desarquivarConsulta(idAgendamento, connection) {
-    const sql = `
-            UPDATE Agendamentos 
-            SET Arquivado = FALSE, Status = CASE WHEN Status = 'Cancelado' THEN 'Pendente' ELSE Status END
-            WHERE ID_Agendamento = ? AND (Status = 'Pendente' OR Status = 'Confirmado')
-        `;
-    const params = [idAgendamento];
-
-    let result;
-    try {
-        if(connection) {
-            [result] = await connection.query(sql, params);
-        } else {
-            result = await this.database.executaComandoNonQuery(sql, params);
-        }
-      if (result.affectedRows === 0) {
-        throw new Error("Consulta não encontrada ou não arquivada");
-      }
-      return { message: "Consulta desarquivada com sucesso" };
-    } catch (error) {
-      console.error("Erro ao desarquivar consulta:", error);
-      throw new Error("Erro ao desarquivar consulta");
-    }
-  }
 
   async obterConsultasNaoArquivadas() {
     try {
@@ -206,7 +157,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     }
   }
 
-  async buscarConsultaPorData(prontuario, data) {
+  async buscarConsultaPacientePorData(prontuario, data) {
     const sql = `
     SELECT 
       a.ID_Agendamento,
@@ -230,7 +181,6 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       AND DATE(CONVERT_TZ(a.Data_Hora, '+00:00', '-03:00')) = DATE(?)
   `;
     const params = [prontuario, data];
-    console.log('params', params);
     try {
       const result = await this.database.executaComando(sql, params);
       return result;
@@ -240,6 +190,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     } 
   }
 
+  // Metodos relacionados ao relatorio
   async obterDadosAgendamentosParaRelatorio() {
     try {
       const sql = `
@@ -268,11 +219,50 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     }
   }
 
-  /* implementar posteriormente
-  async obterAgendamentosPendentes() {
+    // Métodos relacionados a registro de presença
+    async buscarConsultaPorData(data) {
+      const sql = `
+        SELECT * FROM Agendamentos WHERE DATE(Data_Hora) = DATE(?)
+      `
+      try {
+        const result = await this.database.executaComando(sql, [data]);
+        return result;
+      } catch (error) {
+        console.error("Erro ao buscar consulta por data:", error);
+        throw new Error("Erro ao buscar consulta por data");
+      }
+    }
+
+    async registrarPresenca(idAgendamento, observacoes) {
+      const sql = `
+        UPDATE Agendamentos
+        SET Status = 'Concluído', Observacoes = ?, Arquivado = TRUE
+        WHERE ID_Agendamento = ?
+      `
+      try {
+        const result = await this.database.executaComandoNonQuery(sql, [observacoes, idAgendamento]);
+        return result;
+      } catch (error) {
+        console.error("Erro ao registrar presença:", error);
+        throw new Error("Erro ao registrar presença");
+      }
+    }
+
+    async registrarAusencia(idAgendamento, motivo) {
+      const sql = `
+        UPDATE Agendamentos
+        SET Status = 'Cancelado', Observacoes = ?, Arquivado = TRUE
+        WHERE ID_Agendamento = ?
+      `
+      try {
+        const result = await this.database.executaComandoNonQuery(sql, [motivo, idAgendamento]);
+        return result;
+      } catch (error) {
+        console.error("Erro ao registrar ausência:", error);
+        throw new Error("Erro ao registrar ausência");
+      }
+    }
     
-  } 
-  */
 
 
 }

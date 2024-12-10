@@ -95,43 +95,11 @@ class AgendamentoModel extends AbstractAgendamentoModel {
         dataHora,
         status,
         observacoes
-    }
-        agendamentoAtualizado = await this.agendamentoRepository.editarAgendamento(novoAgendamento, connection);
-      // Se o status atualizado é "Concluído" ou "Cancelado", arquive o agendamento
-      if (status === "Concluído" || status === "Cancelado") {
-        await this.agendamentoRepository.arquivarConsulta(idAgendamento, connection);
       }
-      else if (status === "Pendente" || status === "Confirmado") {
-        await this.agendamentoRepository.desarquivarConsulta(idAgendamento, connection);
-      }
+      agendamentoAtualizado = await this.agendamentoRepository.editarAgendamento(novoAgendamento, connection);
       return agendamentoAtualizado;
     } catch (error) {
       throw new Error(`Erro ao editar agendamento: ${error.message}`);
-    }
-  }
-
-  async arquivarAgendamento(idAgendamento, connection) {
-    try {
-      // Verifica se o agendamento existe
-      const consulta = await this.agendamentoRepository.buscarConsultaPorId(idAgendamento);
-      if (!consulta) {
-        throw new Error(
-          "Nenhum agendamento encontrado para este paciente para este serviço nesta data"
-        );
-      }
-
-      // Verifica se o status é "Concluído" ou "Cancelado"
-      if (consulta.Status !== "Concluído" && consulta.Status !== "Cancelado") {
-        throw new Error(
-          "Apenas consultas concluídas ou canceladas podem ser arquivadas."
-        );
-      }
-
-      // Arquiva o agendamento
-      const resultado = await this.agendamentoRepository.arquivarConsulta(idAgendamento, connection);
-      return resultado;
-    } catch (error) {
-      throw new Error(`Erro ao deletar agendamento: ${error.message}`);
     }
   }
 
@@ -147,9 +115,9 @@ class AgendamentoModel extends AbstractAgendamentoModel {
     }
   }
 
-  async buscarConsultaPorData(prontuario, data) {
+  async buscarConsultaPacientePorData(prontuario, data) {
     try {
-        const consultas = await this.agendamentoRepository.buscarConsultaPorData(prontuario, data);
+        const consultas = await this.agendamentoRepository.buscarConsultaPacientePorData(prontuario, data);
         if (!consultas) {
             throw new Error("Nenhum agendamento encontrado");
         }
