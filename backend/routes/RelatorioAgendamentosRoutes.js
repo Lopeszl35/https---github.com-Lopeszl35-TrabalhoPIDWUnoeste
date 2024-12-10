@@ -6,6 +6,10 @@ const RelatorioAgendamento = dependencyInjector.get(
     "RelatorioAgendamentoControl"
 );
 
+const RelatoriosControl = dependencyInjector.get(
+    "RelatoriosControl"
+);
+
 const router = express.Router();
 router.use(cors());
 
@@ -35,11 +39,11 @@ router.get("/relatorio/agendamentos/distribuicao-por-servico", (req, res) =>
 );
 
 router.get("/relatorio/gerarExcel", (req, res) => 
-    RelatorioControl.gerarRelatorioExcel(req, res)
+    RelatoriosControl.gerarRelatorioExcel(req, res)
 ); 
 
 router.get("/relatorio/gerarPdf", (req, res) => 
-    RelatorioControl.gerarRelatorioPdf(req, res)
+    RelatoriosControl.gerarRelatorioPdf(req, res)
 );
 
 module.exports = router;

@@ -57,6 +57,7 @@ DependencyInjector.register('RelatorioPacientesRepository', new RelatorioPacient
 
 // Registro de Models
 const AgendamentoModel = require("./Model/Entities/agendamentoModel/AgendamentoModel");
+const RegistrarPresencaModel = require("./Model/Entities/agendamentoModel/RegistrarPresencaModel");
 const UsuariosModel = require("./Model/Entities/usuariosModel/UsuariosModel");
 const PacientesModel = require('./Model/Entities/pacientesModel/pacientesModel');
 const ResponsaveisModel = require('./Model/Entities/pacientesModel/responsaveisModel');
@@ -73,6 +74,10 @@ const RelatoriosPacientesModel = require('./Model/Entities/relatorios/Relatorios
 DependencyInjector.register("AgendamentoModel",new AgendamentoModel(
     DependencyInjector.get("AgendamentoRepository")
   ));
+
+DependencyInjector.register("RegistrarPresencaModel", new RegistrarPresencaModel(
+  DependencyInjector.get("AgendamentoRepository")
+));
 
 DependencyInjector.register("UsuariosModel", new UsuariosModel(
     DependencyInjector.get("UsuariosRepository")
