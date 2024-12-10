@@ -196,21 +196,37 @@ function DashboardRelatorios() {
     }));
   };
 
-  const handleGerarRelatorioExcel = async () => {
+  const handleGerarRelatorio = async (tipo) => {
     try {
-      await relatoriosService.gerarRelatorioExcel("agendamentos");
-    } catch (error) {
-      console.error("Erro ao gerar relatório Excel:", error);
-      alert("Erro ao gerar relatório Excel!");
-    }
-  };
+      const filtrosQuery = new URLSearchParams(filtros).toString();
+      const response = await fetch(
+        `http://localhost:3001/relatorio/gerar${tipo === "pdf" ? "Pdf" : "Excel"}?${filtrosQuery}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-  const handleGerarRelatorioPdf = async () => {
-    try {
-      await relatoriosService.gerarRelatorioPdf("agendamentos");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Erro ao gerar relatório ${tipo.toUpperCase()}!`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `relatorio.${tipo}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      alert(`Relatório ${tipo.toUpperCase()} gerado com sucesso!`);
     } catch (error) {
-      console.error("Erro ao gerar relatório PDF:", error);
-      alert("Erro ao gerar relatório PDF!");
+      console.error(`Erro ao gerar relatório ${tipo}:`, error);
+      alert(`Erro ao gerar relatório ${tipo.toUpperCase()}!`);
     }
   };
 
@@ -310,19 +326,12 @@ function DashboardRelatorios() {
               <h2 className="text-center mt-3">Agendamentos</h2>
               {renderTabela(relatorioAgendamentos, headersAgendamentos)}
               <div className="d-flex justify-content-center mt-3">
-                <Button
-                  variant="success"
-                  onClick={handleGerarRelatorioExcel}
-                >
-                  Baixar Relatório em Excel
-                </Button>
-                <Button
-                  variant="danger"
-                  className="ml-2"
-                  onClick={handleGerarRelatorioPdf}
-                >
-                  Baixar Relatório em PDF
-                </Button>
+                <Button variant="success" onClick={() => handleGerarRelatorio("excel")}>
+        Baixar Relatório em Excel
+      </Button>
+      <Button variant="danger" onClick={() => handleGerarRelatorio("pdf")}>
+        Baixar Relatório em PDF
+      </Button>
               </div>
             </Card>
           </Container>

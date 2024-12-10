@@ -91,6 +91,44 @@ class RelatorioAgendamentoService {
         const data = await response.json();
         return data;
     }
+
+       // Baixar relatório em PDF
+       async gerarRelatorioPdf(filtros = {}) {
+        const token = localStorage.getItem('token');
+        const queryParams = new URLSearchParams(filtros).toString();
+        const response = await fetch(`${API_BASE_URL}/relatorio/gerarPdf?${queryParams}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao gerar o relatório em PDF!');
+        }
+        const blob = await response.blob();
+        return blob;
+    }
+
+    // Baixar relatório em Excel
+    async gerarRelatorioExcel(filtros = {}) {
+        const token = localStorage.getItem('token');
+        const queryParams = new URLSearchParams(filtros).toString();
+        const response = await fetch(`${API_BASE_URL}/relatorio/gerarExcel?${queryParams}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erro ao gerar o relatório em Excel!');
+        }
+        const blob = await response.blob();
+        return blob;
+    }
 }
 
 export default RelatorioAgendamentoService;
