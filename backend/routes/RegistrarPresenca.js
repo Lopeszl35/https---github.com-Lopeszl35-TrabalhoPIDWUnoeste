@@ -16,17 +16,17 @@ router.get("/agendamento/buscarAgendamento", (req, res) =>
 );
 
 // Rota para registrar presença em consulta
-router.update("/agendamento/registrarPresenca", (req, res) => 
+router.patch("/agendamento/registrarPresenca", (req, res) => 
     RegistrarPresencaControl.registrarPresenca(req, res)
 );
 
 // Rota para registra ausência em consulta
-router.update("/agendamento/registrarAusencia", (req, res) =>
+router.patch("/agendamento/registrarAusencia", (req, res) =>
     RegistrarPresencaControl.registrarAusencia(req, res)
 );
 
 // Rota para cancelar agendamento
-router.update("/agendamento/cancelarAgendamento", (req, res) => 
+router.patch("/agendamento/cancelarAgendamento", (req, res) => 
     RegistrarPresencaControl.cancelarAgendamento(req, res)
 )
 
