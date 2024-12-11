@@ -7,7 +7,7 @@ class RegistrarPresencaControl extends AbstractRegistrarPresenca {
         this.registrarPresencaModel = registrarPresencaModel;
     }
 
-    async buscarAgendamentoPorData(data) {
+    async buscarAgendamentoPorData(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({errors: errors.array()});
@@ -21,7 +21,7 @@ class RegistrarPresencaControl extends AbstractRegistrarPresenca {
             return res.status(200).json(result);
         } catch (error) {
             console.error("Erro ao obter agendamentos para data informada, Erro: ", error.message)
-            throw error;
+            return res.status(500).json({message: error.message})
         }
     }
 
@@ -39,9 +39,46 @@ class RegistrarPresencaControl extends AbstractRegistrarPresenca {
            return res.status(200).json(result);
         } catch (error) {
             console.error("Erro ao registrar presença", error.message);
-            throw error;
+            return res.status(500).json({message: error.message})
         }
     }
+
+    async registrarAusencia(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json({errors: errors.array()});
+        }
+        const { idAgendamento, motivo } = req.query
+        if(!motivo) {
+            throw new Error("Motivo da ausência deve ser informado");
+        }
+        try {
+            const result = await this.registrarPresencaModel.registrarAusencia(idAgendamento, motivo);
+            res.status(200).json(result);
+        } catch (error) {
+            console.error("Erro ao registrar ausência, Erro: ", error.message)
+            res.status(500).json({message: error.message});
+        }
+    }
+
+    async cancelarAgendamento(req, res) {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            res.status(400).json({errors: errors.array()});
+        }
+        const { idAgendamento, motivo } = req.query;
+        if(!motivo) {
+            throw new Error("Motivo do cancelamento deve ser informado");
+        }
+        try {
+            const result = await this.registrarPresencaModel.cancelarAgendamento(idAgendamento, motivo);
+            res.status(200).json(result)
+        } catch (error) {
+            console.error("Erro ao cancelar agendamento Erro: ", error.message);
+            res.status(500).json({message: error.message});
+        }
+    }
+
 }
 
 module.exports = RegistrarPresencaControl;

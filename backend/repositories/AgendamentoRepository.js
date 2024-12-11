@@ -229,7 +229,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
         return result;
       } catch (error) {
         console.error("Erro ao buscar consulta por data:", error);
-        throw new Error("Erro ao buscar consulta por data");
+        throw error;
       }
     }
 
@@ -244,7 +244,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
         return result;
       } catch (error) {
         console.error("Erro ao registrar presença:", error);
-        throw new Error("Erro ao registrar presença");
+        throw error;
       }
     }
 
@@ -259,11 +259,25 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
         return result;
       } catch (error) {
         console.error("Erro ao registrar ausência:", error);
-        throw new Error("Erro ao registrar ausência");
+        throw error;
       }
     }
     
+    async cancelarAgendamento(idAgendamento, motivo) {
+      const sql = `
+        UPDATE Agendamentos
+        SET Status = 'Cancelado', Observacoes = ?, Arquivado = TRUE
+        WHERE ID_Agendamento = ?
+      `
+      try {
+        const result = await this.database.executaComandoNonQuery(sql, [motivo, idAgendamento]);
+        return result;
+      } catch (error) {
+        console.error("Erro ao registrar ausência:", error);
+        throw error;
+      }
 
+    }
 
 }
 

@@ -71,6 +71,7 @@ class AgendamentoModel extends AbstractAgendamentoModel {
       novoAgendamento.id = agendamentoId;
       return novoAgendamento;
     } catch (error) {
+      ErroSqlHandler.tratarErroSql(error, 'agendamento');
       throw error;
     }
   }
@@ -99,6 +100,7 @@ class AgendamentoModel extends AbstractAgendamentoModel {
       agendamentoAtualizado = await this.agendamentoRepository.editarAgendamento(novoAgendamento, connection);
       return agendamentoAtualizado;
     } catch (error) {
+      ErroSqlHandler.tratarErroSql(error, 'agendamento');
       throw new Error(`Erro ao editar agendamento: ${error.message}`);
     }
   }

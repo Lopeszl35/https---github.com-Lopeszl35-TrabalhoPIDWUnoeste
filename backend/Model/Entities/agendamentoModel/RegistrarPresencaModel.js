@@ -29,6 +29,26 @@ class RegistrarPresencaModel extends AbstractRegistrarPresencaModel {
         }
     }
 
+    async registrarAusencia(idAgendamento, motivo) {
+        try {
+            const resposta = await this.agendamentoRepository.registrarAusencia(idAgendamento, motivo);
+            return resposta;
+        } catch (error) {
+            ErroSqlHandler.tratarErroSql(error, 'agendamento');
+            throw error;
+        }
+    }
+
+    async cancelarAgendamento(idAgendamento, motivo) {
+        try {
+            const resposta = await this.agendamentoRepository.cancelarAgendamento(idAgendamento, motivo);
+            return resposta;
+        } catch (error) {
+            ErroSqlHandler.tratarErroSql(error, 'agendamento');
+            throw error;
+        }
+    }
+
 }
 
 module.exports = RegistrarPresencaModel;

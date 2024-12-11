@@ -13,6 +13,14 @@ class AbstractRegistrarPresencaModel {
         throw new Error("Método não implementado");
     }
 
+    async registrarAusencia(idAgendamento, motivo) {
+        throw new Error("Método deve ser implementado");
+    }
+
+    async cancelarAgendamento(idAgendamento, motivo) {
+        throw new Error("Método deve ser implementado");
+    }
+
 }
 
 module.exports = AbstractRegistrarPresencaModel;

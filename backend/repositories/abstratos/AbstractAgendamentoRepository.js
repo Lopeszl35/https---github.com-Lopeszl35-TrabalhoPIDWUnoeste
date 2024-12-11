@@ -54,7 +54,7 @@ class AbstractAgendamentoRepository {
     throw new Error("Metodo nao implementado");
   }
 
-  async registrarPresenca(idAgendamento, data) {
+  async registrarPresenca(idAgendamento, motivo) {
     throw new Error("Método não implementado");
   }
 
@@ -62,7 +62,9 @@ class AbstractAgendamentoRepository {
     throw new Error("Método nnão implementado")
   }
 
-  
+  async cancelarAgendamento(idAgendamento, motivo) {
+    throw new Error("Método não implementado");
+  }
 
 }
 

@@ -131,6 +131,7 @@ DependencyInjector.register('RelatoriosModel', new RelatoriosModel(
 
 // Registro de Controladores
 const AgendamentoControl = require("./control/AgendamentosControl");
+const RegistrarPresencaControl = require("./control/RegistrarPresencaControl")
 const UsuariosControl = require("./control/UsuariosControl");
 const PacientesControl = require('./control/pacientesControl');
 const ServicoControl = require('./control/servicoControl');
@@ -146,6 +147,9 @@ DependencyInjector.register("AgendamentoControl",new AgendamentoControl(
   DependencyInjector.get("AgendamentoModel"),
   DependencyInjector.get("TransactionUtil"))
 );
+DependencyInjector.register("RegistrarPresencaControl", new RegistrarPresencaControl(
+  DependencyInjector.get("RegistrarPresencaModel")
+));
 DependencyInjector.register("UsuariosControl",new UsuariosControl(
     DependencyInjector.get("UsuariosModel"))
 );
