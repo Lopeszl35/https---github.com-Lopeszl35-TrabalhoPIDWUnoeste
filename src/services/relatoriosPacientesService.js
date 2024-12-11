@@ -100,6 +100,7 @@ class RelatoriosPacientesService {
         }
         return await response.json();
     }
+
 }
 
 export default RelatoriosPacientesService;
