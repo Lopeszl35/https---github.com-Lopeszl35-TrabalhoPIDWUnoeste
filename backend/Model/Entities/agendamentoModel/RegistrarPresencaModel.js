@@ -1,18 +1,30 @@
 const AbstractRegistrarPresencaModel = require("../../abstratos/AbstractRegistrarPresencaModel");
 const ErroSqlHandler = require("../../../utils/ErroSqlHandler");
+const moment = require('moment-timezone');
 class RegistrarPresencaModel extends AbstractRegistrarPresencaModel {
     constructor(agendamentoRepository) {
         super();
         this.agendamentoRepository = agendamentoRepository;
     }
 
-    async bucarAgendamentoPorData(data) {
+    async buscarAgendamentoPorData(data) {
         try {
             const agendamentos = await this.agendamentoRepository.buscarAgendamentoPorData(data);
             if (!agendamentos) {
                 throw new Error("Nenhum agendamento encontrado");
             }
-            return agendamentos;
+
+            // Ajusta o campo Data_Hora e separa em Data e Hora
+            const agendamentosAjustados = agendamentos.map((agendamento) => {
+                const dataHoraLocal = moment(agendamento.Data_Hora).tz('America/Sao_Paulo');
+                return {
+                    ...agendamento,
+                    Data: dataHoraLocal.format('YYYY-MM-DD'),
+                    Hora: dataHoraLocal.format('HH:mm:ss'),
+                };
+            });
+
+            return agendamentosAjustados;
         } catch (error) {
             console.log("Erro ao buscar agendamento por data", error);
             throw error;

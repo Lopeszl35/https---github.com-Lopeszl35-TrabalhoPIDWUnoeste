@@ -208,6 +208,7 @@ app.use(
 
 // Rotas
 const AgendamentoRoutes = require("./routes/AgendamentosRoutes");
+const RegistrarPresencaRoutes = require("./routes/RegistrarPresencaRoutes")
 const UsuariosRoutes = require("./routes/usuariosRoutes");
 const loginRoute = require("./routes/loginRoute");
 const PacientesRoutes = require('./routes/pacientesRoutes');
@@ -221,6 +222,7 @@ const RelatoriosPacientesRoutes = require('./routes/RelatorioPacientesRoutes');
 app.use(loginRoute);
 app.use(verifyToken, UsuariosRoutes);
 app.use(verifyToken, AgendamentoRoutes);
+app.use(verifyToken, RegistrarPresencaRoutes);
 app.use(verifyToken, PacientesRoutes);
 app.use(verifyToken, ServicosRoutes);
 app.use(verifyToken, ProfissionaisRoutes);

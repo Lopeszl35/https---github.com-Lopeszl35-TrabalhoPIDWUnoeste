@@ -4,7 +4,7 @@ class RegistrarPresencaService {
 
     async  buscarAgendamentoPorData(data) {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}/agendamento/buscarPorData?data=${data}`,
+        const response = await fetch(`${API_BASE_URL}/agendamento/buscarAgendamento?data=${data}`,
             {
                 method: 'GET',
                 headers: {
@@ -85,3 +85,5 @@ class RegistrarPresencaService {
     }
 
 }
+
+export default RegistrarPresencaService;

@@ -220,9 +220,13 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
   }
 
     // Métodos relacionados a registro de presença
-    async buscarConsultaPorData(data) {
+    async buscarAgendamentoPorData(data) {
       const sql = `
-        SELECT * FROM Agendamentos WHERE DATE(Data_Hora) = DATE(?)
+        SELECT a.ID_Agendamento, a.Data_Hora, a.ID_Servico, a.Status, a.Observacoes,
+        p.Nome_Completo AS Paciente
+        FROM Agendamentos a
+        JOIN Pacientes p ON a.Prontuario = p.Prontuario
+        WHERE DATE(Data_Hora) = DATE(?)
       `
       try {
         const result = await this.database.executaComando(sql, [data]);

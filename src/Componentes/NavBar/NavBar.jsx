@@ -1,6 +1,7 @@
 import "./NavBar.css";
 import { Link, Outlet } from "react-router-dom";
 import { FaUser, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
+import { MdOutlineFactCheck } from "react-icons/md";
 import { BsFileText } from "react-icons/bs";
 import { MdOutlineMedicalServices } from "react-icons/md";
 import { TbUserHeart } from "react-icons/tb";
@@ -69,7 +70,8 @@ function NavBar() {
         </li>
         <li className="nav-link">
           <Link to="/registrarAgendamentos">
-          <span className="mx-2">Registrar Presença Agendamento</span>
+          <MdOutlineFactCheck />
+          <span className="mx-2">Registrar Presença</span>
           </Link>
         </li>
         <li className="nav-link">

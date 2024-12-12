@@ -14,6 +14,7 @@ class RegistrarPresencaControl extends AbstractRegistrarPresenca {
         }
         const { data } = req.query
         try {
+            console.log("data: ", data)
             if (!data) {
                 throw new Error("Data não informada");
             }
