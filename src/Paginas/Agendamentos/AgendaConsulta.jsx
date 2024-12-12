@@ -159,6 +159,7 @@ function AgendarConsultas() {
       try {
         setLoading(true);
         await agendamentoService.criarAgendamento(agendamento);
+        console.log("Agendamento criado:", agendamento);
         setSuccessMessage("Agendamento criado com sucesso!");
         setSelectedPaciente("");
         setSelectedServico("");

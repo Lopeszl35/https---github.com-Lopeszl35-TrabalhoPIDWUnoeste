@@ -74,6 +74,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
   }
 
   async criarAgendamento(agendamento, idHorarioProfissional, connection) {
+    console.log("DataHora recebido no repositório:", agendamento.dataHora);
     const sqlAgendamento = `
             INSERT INTO Agendamentos (Prontuario, ID_Profissional, ID_Servico, Data_Hora, Status, Observacoes, arquivado)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -99,7 +100,7 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
       return { id: resultAgendamento.insertId, message: "Agendamento criado com sucesso" };
     } catch (error) {
       console.error("Erro ao criar agendamento no banco de dados:", error);
-      throw new Error("Erro ao criar agendamento no banco de dados");
+      throw error;
     }
   }
 

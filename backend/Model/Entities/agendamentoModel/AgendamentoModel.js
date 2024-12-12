@@ -55,7 +55,7 @@ class AgendamentoModel extends AbstractAgendamentoModel {
         throw new Error(
           "Já existe um agendamento para este paciente para este serviço nesta data"
         );
-      }
+      }6
 
       // Cria o novo agendamento
       const novoAgendamento = {

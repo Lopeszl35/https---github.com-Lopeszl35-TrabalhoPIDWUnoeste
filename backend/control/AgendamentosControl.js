@@ -1,5 +1,6 @@
 const AbstractAgendamentoControl = require("./abstratos/AbstractAgendamentoControl");
 const { validationResult } = require("express-validator");
+const { formatDateForDatabase } = require("../utils/dateFormatter");
 
 class AgendamentosControl extends AbstractAgendamentoControl {
   constructor(agendamentoModel, transactionUtil) {
@@ -45,6 +46,9 @@ class AgendamentosControl extends AbstractAgendamentoControl {
       status,
       idHorarioProfissional,
     } = req.body;
+    console.log("DataHora recebido no controlador:", dataHora);
+
+    const dataHoraFormatada = formatDateForDatabase(dataHora);
 
     try {
       const result = await this.transactionUtil.executeTransaction(async (connection) => {
@@ -53,7 +57,7 @@ class AgendamentosControl extends AbstractAgendamentoControl {
           prontuario,
           idProfissional,
           idServico,
-          dataHora,
+          dataHoraFormatada,
           observacoes,
           status,
           idHorarioProfissional,
