@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Form, Container, Button, Row, Col, Alert, Table } from "react-bootstrap";
 import RegistrarPresensaService from "../../services/RegistrarPresencaService";
+import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import styles from "./RegistrarPresenca.module.css";
 const registrarPresencaService = new RegistrarPresensaService();
 
@@ -106,9 +107,24 @@ function RegistrarPresenca() {
   };
 
   const isFutureDate = (date) => {
+    /*
+    const today = new Date(date);
+    const consultaDate = new Date(date);*/
+    const timeZone = 'America/Sao_Paulo';
+
     const today = new Date();
+    const todayUtcDate = zonedTimeToUtc(today, timeZone);
+    const todayLocalDate = utcToZonedTime(todayUtcDate, timeZone);
+
+
     const consultaDate = new Date(date);
-    return consultaDate > today;
+    const consultaUtcDate = zonedTimeToUtc(consultaDate, timeZone);
+    const consultaLocalDate = utcToZonedTime(consultaUtcDate, timeZone);
+
+    console.log("Data da consulta:", consultaLocalDate);
+    console.log("Data atual:", todayLocalDate);
+    
+    return consultaLocalDate > todayLocalDate;
   };
 
   return (

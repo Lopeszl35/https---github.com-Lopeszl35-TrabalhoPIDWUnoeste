@@ -2,7 +2,7 @@ const API_BASE_URL = 'http://localhost:3001'
 
 class RegistrarPresencaService {
 
-    async  buscarAgendamentoPorData(data) {
+    async buscarAgendamentoPorData(data) {
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE_URL}/agendamento/buscarAgendamento?data=${data}`,
             {
