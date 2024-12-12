@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { useOutletContext } from "react-router-dom";
 import RelatoriosPacientesService from "../../services/relatoriosPacientesService";
+import RelatoriosService from "../../services/relatoriosService";
 import styles from "./RelatoriosPacientes.module.css";
 import { Bar } from "react-chartjs-2";
 import {
@@ -26,6 +27,7 @@ import {
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const relatoriosPacientesService = new RelatoriosPacientesService();
+const relatoriosService = new RelatoriosService();
 
 function RelatoriosPacientes() {
   const { show } = useOutletContext();
@@ -63,19 +65,18 @@ function RelatoriosPacientes() {
       setDadosGrafico(null);
       return;
     }
-  
+
     let agrupados = {};
     let label = "Pacientes";
-  
+
     if (filtros.idadeMin && filtros.idadeMax) {
       const idadeMin = parseInt(filtros.idadeMin, 10);
       const idadeMax = parseInt(filtros.idadeMax, 10);
-  
-      // Contar pacientes na faixa etária para o gráfico
+
       const totalPacientes = dados.filter(
         (paciente) => paciente.idade >= idadeMin && paciente.idade <= idadeMax
       ).length;
-  
+
       agrupados = { [`Entre ${idadeMin} e ${idadeMax}`]: totalPacientes };
       label = `Pacientes entre ${idadeMin} e ${idadeMax} anos`;
     } else if (filtros.cidade) {
@@ -97,10 +98,10 @@ function RelatoriosPacientes() {
       }, {});
       label = "Pacientes por Sexo";
     }
-  
+
     const labels = Object.keys(agrupados);
     const valores = Object.values(agrupados);
-  
+
     setGraficoLabel(label);
     setDadosGrafico({
       labels,
@@ -139,7 +140,7 @@ function RelatoriosPacientes() {
       <tbody>
         {dados.length === 0 ? (
           <tr>
-            <td colSpan="5" className="text-danger">Nenhum dado encontrado.</td>
+            <td colSpan="6" className="text-danger">Nenhum dado encontrado.</td>
           </tr>
         ) : (
           dados.map((item, index) => (
@@ -156,6 +157,24 @@ function RelatoriosPacientes() {
       </tbody>
     </Table>
   );
+
+  const handleGerarRelatorioExcel = async () => {
+    try {
+      await relatoriosService.gerarRelatorioExcel("pacientes");
+    } catch (error) {
+      console.error("Erro ao gerar relatório Excel:", error);
+      alert("Erro ao gerar relatório Excel!");
+    }
+  };
+
+  const handleGerarRelatorioPdf = async () => {
+    try {
+      await relatoriosService.gerarRelatorioPdf("pacientes");
+    } catch (error) {
+      console.error("Erro ao gerar relatório PDF:", error);
+      alert("Erro ao gerar relatório PDF!");
+    }
+  };
 
   return (
     <Container
@@ -250,6 +269,14 @@ function RelatoriosPacientes() {
         </Form>
         <h2 className="text-center">Tabela de Pacientes</h2>
         {renderTabela(relatorioPacientes)}
+        <div className="d-flex justify-content-center mt-3">
+          <Button variant="success" onClick={handleGerarRelatorioExcel}>
+            Baixar Relatório em Excel
+          </Button>
+          <Button variant="danger" className="ml-2" onClick={handleGerarRelatorioPdf}>
+            Baixar Relatório em PDF
+          </Button>
+        </div>
       </Card>
       <Card className={`${styles.cardRelatorio} mt-4`}>
         <h2 className="text-center">{graficoLabel}</h2>
