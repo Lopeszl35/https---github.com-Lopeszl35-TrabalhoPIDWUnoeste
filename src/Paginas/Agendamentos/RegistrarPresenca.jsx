@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Form, Container, Button, Row, Col, Alert, Table } from "react-bootstrap";
 import RegistrarPresensaService from "../../services/RegistrarPresencaService";
-import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
 import styles from "./RegistrarPresenca.module.css";
 const registrarPresencaService = new RegistrarPresensaService();
 
@@ -107,26 +106,17 @@ function RegistrarPresenca() {
   };
 
   const isFutureDate = (date) => {
-    /*
-    const today = new Date(date);
-    const consultaDate = new Date(date);*/
-    const timeZone = 'America/Sao_Paulo';
-
+    // Converta a string da data em um objeto Date no fuso horário local
+    const consultaDate = new Date(`${date}T00:00:00`);
     const today = new Date();
-    const todayUtcDate = zonedTimeToUtc(today, timeZone);
-    const todayLocalDate = utcToZonedTime(todayUtcDate, timeZone);
-
-
-    const consultaDate = new Date(date);
-    const consultaUtcDate = zonedTimeToUtc(consultaDate, timeZone);
-    const consultaLocalDate = utcToZonedTime(consultaUtcDate, timeZone);
-
-    console.log("Data da consulta:", consultaLocalDate);
-    console.log("Data atual:", todayLocalDate);
-    
-    return consultaLocalDate > todayLocalDate;
+  
+    // Define as horas para 0 para comparar apenas a data
+    consultaDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+  
+    return consultaDate > today;
   };
-
+  
   return (
     <Container
       className={`${styles.registrarPresencaContainer} ${
