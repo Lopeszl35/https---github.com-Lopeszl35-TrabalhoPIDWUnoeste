@@ -29,7 +29,11 @@ class AbstractPacientesModel {
         throw new Error("Metodo não implementado");
     }
 
-    async salvarEvolucao(evolucao) {
+    async salvarEvolucao(evolucao, connection) {
+        throw new Error("Metodo não implementado");
+    }
+
+    async deletarEvolucao(idEvolucao, connection) {
         throw new Error("Metodo não implementado");
     }
 

@@ -30,6 +30,11 @@ router.delete('/pacientes/excluir/:prontuario', (req, res) =>
     PacientesControl.deletarPaciente(req, res)
 );
 
+// Rota para excluir evelução do paciente
+router.delete('/evolucoes/excluir/:id', (req, res) => 
+    PacientesControl.deletarEvolucao(req, res)
+);
+
 // Rota para obter todos os pacientes
 router.get('/pacientes', (req, res) => 
     PacientesControl.obterPacientes(req, res)

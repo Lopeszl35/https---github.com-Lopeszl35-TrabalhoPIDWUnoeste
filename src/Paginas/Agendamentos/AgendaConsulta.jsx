@@ -30,12 +30,40 @@ function AgendarConsultas() {
   const [idHorarioProfissional, setIdHorarioProfissional] = useState(null);
   const [selectedPaciente, setSelectedPaciente] = useState("");
   const [selectedServico, setSelectedServico] = useState("");
-  const [selectedProfissional, setSelectedProfissional] = useState("");
+  const [selectedProfissional, setSelectedProfissional] =useState("");
   const [observacoes, setObservacoes] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  const fetchHorarios = async () => {
+    setLoading(true);
+    try {
+      const horariosOriginais = await profissionaisService.obterHorariosProfissional(selectedProfissional);
+
+      const horariosFormatados = horariosOriginais.map((item) => {
+        const date = item.Data.split("T")[0];
+        const startDate = moment(`${date}T${item.HorarioInicio}`).toDate();
+        const endDate = moment(`${date}T${item.HorarioTermino}`).toDate();
+
+        return {
+          title: item.Disponivel ? "Disponível" : "Indisponível",
+          start: startDate,
+          end: endDate,
+          disponivel: item.Disponivel,
+          idHorarioProfissional: item.ID_Horario,
+        };
+      });
+
+      setHorarios(horariosFormatados);
+    } catch (error) {
+      console.error("Erro ao obter horários:", error);
+      setErrors({ profissional: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchPacientes = async () => {
@@ -87,36 +115,8 @@ function AgendarConsultas() {
   }, [selectedServico]);
 
   useEffect(() => {
-    async function fetchHorarios() {
-      setLoading(true);
-      try {
-        const horariosOriginais = await profissionaisService.obterHorariosProfissional(selectedProfissional);
-
-        const horariosFormatados = horariosOriginais.map((item) => {
-          const date = item.Data.split("T")[0];
-          const startDate = moment(`${date}T${item.HorarioInicio}`).toDate();
-          const endDate = moment(`${date}T${item.HorarioTermino}`).toDate();
-
-          return {
-            title: item.Disponivel ? "Disponível" : "Indisponível",
-            start: startDate,
-            end: endDate,
-            disponivel: item.Disponivel,
-            idHorarioProfissional: item.ID_Horario,
-          };
-        });
-
-        setHorarios(horariosFormatados);
-      } catch (error) {
-        console.error("Erro ao obter horários:", error);
-        setErrors({ profissional: error.message });
-      } finally {
-        setLoading(false);
-      }
-    }
-
     if (selectedProfissional) {
-      fetchHorarios();
+      fetchHorarios(); // Chama fetchHorarios quando o profissional é alterado
     }
   }, [selectedProfissional]);
 
@@ -161,11 +161,18 @@ function AgendarConsultas() {
         await agendamentoService.criarAgendamento(agendamento);
         console.log("Agendamento criado:", agendamento);
         setSuccessMessage("Agendamento criado com sucesso!");
+
+        // Reseta os campos
         setSelectedPaciente("");
         setSelectedServico("");
         setSelectedProfissional("");
         setObservacoes("");
         setSelectedEvent(null);
+
+        // Atualiza os horários
+        if (selectedProfissional) {
+          await fetchHorarios();
+        }
       } catch (error) {
         console.error("Erro ao criar agendamento:", error);
         alert("Erro ao criar agendamento: " + error.message);

@@ -127,12 +127,24 @@ const handleSearchAvaliacoes = async (prontuario) => {
         setAvaliacao("");
         setObservacoes("");
         alert("Evolução salva com sucesso!");
+        await handleSearchAvaliacoes(selectedPaciente.Prontuario);
       } catch (error) {
         console.error("Erro ao salvar evolução: ", error);
         alert("Erro ao salvar evolução: " + error.message);
       }
     } else {
       alert("Por favor, selecione um agendamento e preencha a avaliação.");
+    }
+  };
+
+  const handleDeleteEvolucao = async (idEvolucao) => {
+    try {
+      await pacientesService.deletarEvolucao(idEvolucao);
+      setEvolucoes(evolucoes.filter((evolucao) => evolucao.ID_Evolucao !== idEvolucao));
+      alert("Evolução excluida com sucesso!");
+    } catch (error) {
+      console.error("Erro ao excluir evolução: ", error);
+      alert("Erro ao excluir evolução: " + error.message);
     }
   };
 
@@ -323,6 +335,9 @@ const handleSearchAvaliacoes = async (prontuario) => {
                 </div>
                 <Button variant="info" size="sm" onClick={() => handleShowEvolucao(evolucao)}>
                   Detalhes
+                </Button>
+                <Button variant="danger" size="sm" onClick={() => handleDeleteEvolucao(evolucao)}>
+                  Excluir
                 </Button>
               </ListGroup.Item>
             ))

@@ -154,6 +154,28 @@ class PacientesService {
         }
     }
 
+    async deletarEvolucao(id) {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${API_BASE_URL}/evolucoes/deletar/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao deletar a evolução!');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.log("Erro ao deletar evolução:", error);
+            throw error;
+        }
+    }
+
     async buscarEvolucaoPaciente(prontuario) {
         const token = localStorage.getItem('token');
         try {

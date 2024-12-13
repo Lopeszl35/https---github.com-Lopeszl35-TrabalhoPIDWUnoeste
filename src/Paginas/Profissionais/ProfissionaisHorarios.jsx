@@ -25,22 +25,29 @@ function ProfissionaisHorarios() {
     horarioFinal: "",
   });
 
+  // Função reutilizável para buscar horários do profissional
+  const fetchHorarios = async () => {
+    try {
+      const horariosCadastrados = await profissionaisService.obterHorariosProfissional(idProfissional);
+      const eventosFormatados = horariosCadastrados.map((item) => ({
+        title: item.Disponivel ? "Horário Disponível" : "Horário Indisponível",
+        start: `${item.Data.split("T")[0]}T${item.HorarioInicio}`,
+        end: `${item.Data.split("T")[0]}T${item.HorarioTermino}`,
+        color: item.Disponivel ? "green" : "red",
+      }));
+      setHorarios(eventosFormatados);
+    } catch (error) {
+      console.error("Erro ao carregar horários:", error);
+    }
+  };
+
+  // Carregar dados do profissional e horários ao montar o componente
   useEffect(() => {
     async function fetchProfissional() {
       try {
         const profissionalData = await profissionaisService.obterPorId(idProfissional);
         setProfissional(profissionalData);
-
-        const horariosCadastrados = await profissionaisService.obterHorariosProfissional(idProfissional);
-        console.log("Horarios cadastrados:", horariosCadastrados);
-        const eventosFormatados = horariosCadastrados.map((item) => ({
-          title: item.Disponivel ? "Horário Disponível" : "Horário Indisponível",
-          start: `${item.Data.split("T")[0]}T${item.HorarioInicio}`,
-          end: `${item.Data.split("T")[0]}T${item.HorarioTermino}`,
-          color: item.Disponivel ? "green" : "red",
-        }));
-        setHorarios(eventosFormatados);
-        console.log("Horarios:", eventosFormatados);
+        await fetchHorarios();
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       }
@@ -59,10 +66,11 @@ function ProfissionaisHorarios() {
       try {
         const novoHorario = { data: form.data, horaInicio: form.horarioInicial, horaFim: form.horarioFinal };
         await profissionaisService.cadastrarHorarioProfissional(idProfissional, novoHorario);
-        setHorarios((prevHorarios) => [
-          ...prevHorarios,
-          { title: "Horário Disponível", start: `${form.data}T${form.horarioInicial}T${form.horarioFinal}`}
-        ]);
+
+        // Atualizar os horários cadastrados
+        await fetchHorarios();
+
+        // Limpar o formulário e exibir mensagem de sucesso
         setForm({ data: "", horarioInicial: "", horarioFinal: "" });
         setShowMensagem(true);
       } catch (error) {

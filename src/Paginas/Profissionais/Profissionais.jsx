@@ -168,7 +168,7 @@ function Profissionais() {
               <Accordion>
                 {currentProfissionais.length <= 0 ? (
                   <Accordion.Item eventKey="0">
-                    <Accordion.Header>Nenhum profissional encontrado</Accordion.Header>
+                    <Accordion.Header className='text-danger'>Nenhum profissional encontrado</Accordion.Header>
                   </Accordion.Item>
                 ) : (
                   currentProfissionais.map((profissional) => (

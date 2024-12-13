@@ -197,6 +197,19 @@ class PacienteRepository extends AbstractPacienteRepository {
         }
     }
 
+    async deletarEvolucao(idEvolucao, connection) {
+        const sql = `
+            DELETE FROM evolucoesPacientes
+            WHERE ID_Evolucao = ?
+        `;
+        try {
+            const [result] = await connection.query(sql, [idEvolucao]);
+            return result.affectedRows > 0;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async obterEvolucoesDoPaciente(prontuario) {
         const sql = `
             SELECT 

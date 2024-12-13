@@ -33,6 +33,10 @@ class AbstractPacientesController {
         throw new Error("Metodo não implementado");
     }
 
+    async deletarEvolucao(req, res) {
+        throw new Error("Metodo não implementado");
+    }
+
     async obterEvolucoesDoPaciente(req, res) {
         throw new Error("Metodo não implementado");
     }

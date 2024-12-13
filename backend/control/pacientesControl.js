@@ -161,6 +161,26 @@ class PacientesControl extends AbstractPacientesControl {
         }
     }
 
+    async deletarEvolucao(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        try {
+            const { evolucaoId } = req.params;
+
+            const result = await this.transactionUtil.executeTransaction(async (connection) => {
+                return await this.pacientesModel.deletarEvolucao(evolucaoId, connection);
+            });
+
+            res.status(200).json(result);
+        } catch (error) {
+            console.error('Erro ao excluir a evolução do Paciente:', error);
+            res.status(500).json({ message: error.message });
+        }
+    }
+
     async obterEvolucoesDoPaciente(req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

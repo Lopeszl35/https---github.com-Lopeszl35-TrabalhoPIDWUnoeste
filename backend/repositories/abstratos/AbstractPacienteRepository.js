@@ -33,6 +33,10 @@ class AbstractPacienteRepository {
         throw new Error("Metodo não implementado");
     }
 
+    async deletarEvolucao(idEvolucao) {
+        throw new Error("Metodo não implementado");
+    }
+
     async obterEvolucoesDoPaciente(prontuario) {
         throw new Error("Metodo não implementado");
     }

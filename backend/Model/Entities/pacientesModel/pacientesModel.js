@@ -101,6 +101,20 @@ class PacientesService extends AbstractPacientesModel {
         }
     }
 
+    async deletarEvolucao(idEvolucao, connection) {
+        try {
+            const evolucaoDeletada = await this.pacientesRepository.deletarEvolucao(idEvolucao, connection);
+            if (!evolucaoDeletada) {
+                throw new Error("Erro ao deletar evolução");
+            }
+            return evolucaoDeletada;
+        } catch (error) {
+            console.error("Erro ao deletar evolução:", error);
+            ErroSqlHandler.tratarErroSql(error, "paciente");
+            throw error;
+        }
+    }
+
     async obterEvolucoesDoPaciente(prontuario) {
         try {
             const evolucoes = await this.pacientesRepository.obterEvolucoesDoPaciente(prontuario);
