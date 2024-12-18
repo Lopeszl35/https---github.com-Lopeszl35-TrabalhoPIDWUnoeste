@@ -129,9 +129,9 @@ function NavBar() {
               </Link>
             </li>
             <li className="nav-link">
-              <Link to="/pacientes/CadastrarPacientes">
+              <Link to="/pacientes">
                 <TbUserHeart />
-                <span className="mx-2">Cadastrar Pacientes</span>
+                <span className="mx-2">Ver Pacientes</span>
               </Link>
             </li>
             <li className="nav-link">

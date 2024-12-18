@@ -55,6 +55,7 @@ function AppRouter() {
              <Route element={<RoleBasedRoute allowedRoles={["admin", "usuarioPadrao"]} />}>
               <Route path="registrarAgendamentos" element={<RegistrarPresenca />} />
               <Route path="agendamentos" element={<AgendarConsultas />} />
+              <Route path="pacientes" element={<Pacientes />} />
               <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
               <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
               <Route path="Profissionais" element={<Profissionais />} />

@@ -128,7 +128,7 @@ function Pacientes() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </Form>
-                <Button className="button-cadastro-paciente mt-3" as={Link} to="/pacientes/CadastrarPacientes">
+                <Button className="button-cadastro-paciente mb-4" as={Link} to="/pacientes/CadastrarPacientes">
                   <CiCirclePlus /> Cadastrar Paciente
                 </Button>
               </Col>
