@@ -24,7 +24,7 @@ function NavBar() {
             <Nav className="me-auto gap-3">
               <Nav.Link as={Link} to="/">
                 <FaUser className="m-2" />
-                <span>Olá, {user?.nome || "Usuário"}</span>
+                Olá, <strong>{user?.nome || "Usuário"}</strong> - Perfil: <strong>{user?.tipoPermissao}</strong>
               </Nav.Link>
             </Nav>
             <Button variant="outline-light" onClick={logout}>
