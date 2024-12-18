@@ -3,7 +3,7 @@ import { Accordion, Card, Col, Container, Form, Row, Button, Pagination, Modal, 
 import { useOutletContext, Link, useNavigate } from "react-router-dom";
 import { CiCirclePlus } from "react-icons/ci";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import "./Pacientes.css";
+import styles from "./Pacientes.module.css";
 import PacientesService from "../../services/pacientesService";
 
 const pacientesService = new PacientesService();
@@ -96,7 +96,7 @@ function Pacientes() {
 
   return (
     <div>
-      <Container className={`container-pacientes ${show ? "container-pacientes-active" : ""}`}>
+      <Container className={`${styles.containerPacientes } ${show ? styles.containerPacientesActive : '' }` }>
         <Card className="card-lista-pacientes">
           <Card.Body>
             <Row>

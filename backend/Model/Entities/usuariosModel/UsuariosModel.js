@@ -9,7 +9,8 @@ class UsuariosModel extends AbstractUsuariosModel {
     this.UsuarioRepository = UsuarioRepository;
   }
 
-  async adicionarUsuario(email, senha, tipoPermissao, connection) {
+  async adicionarUsuario(email, senha, nome, tipoPermissao, connection) {
+    console.log(`Usuario: Nome: ${nome} Email: ${email} Senha: ${senha} Permissão: ${tipoPermissao}`);
     try {
       const salt = await bycrypt.genSalt(10);
       const senhaHash = await bycrypt.hash(senha, salt);
@@ -17,9 +18,11 @@ class UsuariosModel extends AbstractUsuariosModel {
       const novoUsuarioModel = {
         Email: email,
         Senha: senhaHash,
+        nomeUsuario: nome,
         Tipo_Permissao: tipoPermissao,
       };
-      const novoUsuairo = await this.UsuarioRepository.adicionarUsuario(novoUsuarioModel);
+      console.log("novoUsuarioModel", novoUsuarioModel);
+      const novoUsuairo = await this.UsuarioRepository.adicionarUsuario(novoUsuarioModel, connection);
       if (!novoUsuairo) {
         throw new Error("Erro ao adicionar usuario");
       }
@@ -48,7 +51,7 @@ class UsuariosModel extends AbstractUsuariosModel {
             expiresIn: 86400,
           }
         );
-        return { token };
+        return { token, user: usuario.Nome, tipoPermissao: usuario.Tipo_Permissao };
       }
     } catch (error) {
       throw error;

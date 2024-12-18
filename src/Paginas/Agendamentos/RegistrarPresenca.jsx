@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { Form, Container, Button, Row, Col, Alert, Table } from "react-bootstrap";
+import { Form, Container, Button, Row, Col, Alert, Accordion, Card } from "react-bootstrap";
 import RegistrarPresensaService from "../../services/RegistrarPresencaService";
 import styles from "./RegistrarPresenca.module.css";
-const registrarPresencaService = new RegistrarPresensaService();
+
+const registrarPresensaService = new RegistrarPresensaService();
 
 function RegistrarPresenca() {
   const { show } = useOutletContext();
@@ -21,14 +22,13 @@ function RegistrarPresenca() {
 
   useEffect(() => {
     const dataAtual = new Date().toISOString().split("T")[0];
-    console.log("Data atual:", dataAtual);
     setDataConsulta(dataAtual);
     buscarAgendamentos(dataAtual);
   }, []);
+
   const buscarAgendamentos = async (data) => {
     try {
-      const resultado = await registrarPresencaService.buscarAgendamentoPorData(data);
-      console.log("Agendamentos encontrados:", resultado);
+      const resultado = await registrarPresensaService.buscarAgendamentoPorData(data);
       if (!Array.isArray(resultado)) {
         throw new Error("Resposta inválida do servidor");
       }
@@ -41,88 +41,74 @@ function RegistrarPresenca() {
         setShowAlert(false);
       }
     } catch (error) {
-      console.error("Erro ao buscar agendamentos:", error.message);
-      setAlertMessage("Erro ao buscar agendamentos Erro: " + error.message);
+      setAlertMessage("Erro ao buscar agendamentos: " + error.message);
       setShowAlert(true);
       setAgendamentos([]);
     }
   };
-  
 
   const salvarPresenca = async () => {
     try {
-      const presenca = await registrarPresencaService.registrarPresenca(selectedAgendamento.ID_Agendamento, observacoesPresenca);
-      console.log("Presença registrada:", presenca);
+      await registrarPresensaService.registrarPresenca(selectedAgendamento.ID_Agendamento, observacoesPresenca);
       setAlertMessage("Presença registrada com sucesso");
       setShowAlert(true);
+      setSelectedAgendamento(null);
+      setCurrentAction("");
       await buscarAgendamentos(dataConsulta);
     } catch (error) {
-      console.error("Erro ao registrar presença:", error);
-      setAlertMessage("Erro ao registrar presença Erro: " + error.message);
+      setAlertMessage("Erro ao registrar presença: " + error.message);
       setShowAlert(true);
     }
   };
 
   const salvarAusencia = async () => {
- 
     if (!motivoAusencia) {
       setAlertMessage("Motivo deve ser informado para registrar ausência");
       setShowAlert(true);
       return;
     }
     try {
-      await registrarPresencaService.registrarAusencia(selectedAgendamento.ID_Agendamento, motivoAusencia);
+      await registrarPresensaService.registrarAusencia(selectedAgendamento.ID_Agendamento, motivoAusencia);
       setAlertMessage("Ausência registrada com sucesso");
       setShowAlert(true);
+      setSelectedAgendamento(null);
+      setCurrentAction("");
       await buscarAgendamentos(dataConsulta);
-      /*const desejaReagendar = window.confirm("Deseja reagendar a consulta?");
-      if (desejaReagendar) {
-        navigate(`/agendamento?paciente=${selectedAgendamento.paciente}`);
-      }*/
     } catch (error) {
-      console.error("Erro ao registrar ausência:", error);
-      setAlertMessage("Erro ao registrar ausência Erro: " + error.message);
+      setAlertMessage("Erro ao registrar ausência: " + error.message);
       setShowAlert(true);
     }
   };
 
-  const cancelarConsulta = () => {
+  const cancelarConsulta = async () => {
     if (!motivoCancelamento) {
       setAlertMessage("Motivo deve ser informado para cancelar a consulta");
       setShowAlert(true);
       return;
     }
     try {
-      registrarPresencaService.cancelarAgendamento(selectedAgendamento.ID_Agendamento, motivoCancelamento);
+      await registrarPresensaService.cancelarAgendamento(selectedAgendamento.ID_Agendamento, motivoCancelamento);
       setAlertMessage("Consulta cancelada com sucesso");
       setShowAlert(true);
-      buscarAgendamentos(dataConsulta);
+      setSelectedAgendamento(null);
+      setCurrentAction("");
+      await buscarAgendamentos(dataConsulta);
     } catch (error) {
-      console.error("Erro ao cancelar consulta:", error);
-      setAlertMessage("Erro ao cancelar consulta Erro: " + error.message);
+      setAlertMessage("Erro ao cancelar consulta: " + error.message);
       setShowAlert(true);
-      buscarAgendamentos(dataConsulta);
     }
   };
 
   const isFutureDate = (date) => {
-    // Converta a string da data em um objeto Date no fuso horário local
     const consultaDate = new Date(`${date}T00:00:00`);
     const today = new Date();
-  
-    // Define as horas para 0 para comparar apenas a data
     consultaDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
-  
     return consultaDate > today;
   };
-  
+
   return (
-    <Container
-      className={`${styles.registrarPresencaContainer} ${
-        show ? styles.registrarPresencaContainerActive : ""
-      }`}
-    >
+    <Container className={`${styles.registrarPresencaContainer} ${show ? styles.registrarPresencaContainerActive : ""}`}>
       <h1 className="text-center">Registrar Presença</h1>
       {showAlert && <Alert variant="warning">{alertMessage}</Alert>}
 
@@ -145,35 +131,21 @@ function RegistrarPresenca() {
       </Form>
 
       <h2 className="mt-4">Consultas</h2>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Paciente</th>
-            <th>Horário</th>
-            <th>Data</th>
-            <th>Status</th>
-            <th>Observação</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {agendamentos.length === 0 ? (
-            <tr>
-              <td colSpan="6" className="text-center text-danger">
-                Nenhuma consulta encontrada.
-              </td>
-            </tr>
-          ) : (
-            agendamentos.map((agendamento) => (
-              <tr key={agendamento.id}>
-                <td>{agendamento.ID_Agendamento}</td>
-                <td>{agendamento.Paciente}</td>
-                <td>{agendamento.Hora}</td>
-                <td>{agendamento.Data}</td>
-                <td>{agendamento.Status}</td>
-                <td>{agendamento.Observacoes}</td>
-                <td>
+      <Accordion>
+        {agendamentos.length === 0 ? (
+          <Alert variant="danger">Nenhuma consulta encontrada.</Alert>
+        ) : (
+          agendamentos.map((agendamento, index) => (
+            <Accordion.Item eventKey={index} key={agendamento.ID_Agendamento}>
+              <Accordion.Header>
+                {agendamento.Paciente} - {agendamento.Data} às {agendamento.Hora}
+              </Accordion.Header>
+              <Accordion.Body>
+                <p><strong>Serviço:</strong> {agendamento.Nome_Servico}</p>
+                <p><strong>Profissional:</strong> {agendamento.Profissional}</p>
+                <p><strong>Status:</strong> {agendamento.Status}</p>
+                <p><strong>Observações:</strong> {agendamento.Observacoes}</p>
+                <div className="d-flex gap-2">
                   {isFutureDate(agendamento.Data) ? (
                     <Button
                       variant="danger"
@@ -188,7 +160,6 @@ function RegistrarPresenca() {
                     <>
                       <Button
                         variant="success"
-                        className="me-2"
                         onClick={() => {
                           setSelectedAgendamento(agendamento);
                           setCurrentAction("presence");
@@ -207,19 +178,16 @@ function RegistrarPresenca() {
                       </Button>
                     </>
                   )}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </Table>
+                </div>
+              </Accordion.Body>
+            </Accordion.Item>
+          ))
+        )}
+      </Accordion>
 
       {selectedAgendamento && currentAction === "presence" && (
         <div className="mt-4">
           <h3>Registrar Presença</h3>
-          <p>
-            <strong>Paciente:</strong> {selectedAgendamento.paciente}
-          </p>
           <Form.Group>
             <Form.Label>Observações</Form.Label>
             <Form.Control
@@ -238,9 +206,6 @@ function RegistrarPresenca() {
       {selectedAgendamento && currentAction === "absence" && (
         <div className="mt-4">
           <h3>Registrar Ausência</h3>
-          <p>
-            <strong>Paciente:</strong> {selectedAgendamento.paciente}
-          </p>
           <Form.Group>
             <Form.Label>Motivo da Ausência</Form.Label>
             <Form.Control
@@ -259,9 +224,6 @@ function RegistrarPresenca() {
       {selectedAgendamento && currentAction === "cancel" && (
         <div className="mt-4">
           <h3>Cancelar Consulta</h3>
-          <p>
-            <strong>Paciente:</strong> {selectedAgendamento.paciente}
-          </p>
           <Form.Group>
             <Form.Label>Motivo do Cancelamento</Form.Label>
             <Form.Control
@@ -271,7 +233,7 @@ function RegistrarPresenca() {
               onChange={(e) => setMotivoCancelamento(e.target.value)}
             />
           </Form.Group>
-          <Button variant="danger" className="mt-3" onClick={cancelarConsulta}>
+          <Button variant="secondary" className="mt-3" onClick={cancelarConsulta}>
             Confirmar Cancelamento
           </Button>
         </div>

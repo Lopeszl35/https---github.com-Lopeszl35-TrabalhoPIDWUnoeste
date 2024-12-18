@@ -12,6 +12,7 @@ export const AuthService = {
       });
 
       const data = await response.json();
+      console.log("Login Data:", data);
       if (response.ok) {
         localStorage.setItem('token', data.token); // Salva o token JWT
         return data;

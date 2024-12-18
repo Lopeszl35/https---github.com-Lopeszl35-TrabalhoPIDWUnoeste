@@ -137,6 +137,11 @@ const handleSearchAvaliacoes = async (prontuario) => {
     }
   };
 
+  const handleClearSearch = () => {
+    setSearchFields({ Nome_Completo: "", Prontuario: "", CPF: "", RG: "", Email: "" });
+    setPacientes([]);
+  }
+
   const handleDeleteEvolucao = async (idEvolucao) => {
     try {
       await pacientesService.deletarEvolucao(idEvolucao);
@@ -173,9 +178,12 @@ const handleSearchAvaliacoes = async (prontuario) => {
             </Form.Group>
           </Col>
         ))}
-        <Col md={4} className="d-flex align-items-center mt-2">
+        <Col md={4} className="d-flex align-items-center mt-2 gap-2">
           <Button variant="primary" onClick={handleSearchPaciente}>
             Buscar Paciente
+          </Button>
+          <Button variant="dark" onClick={handleClearSearch} className="ml-2">
+            Limpar Busca
           </Button>
         </Col>
       </Row>
@@ -200,7 +208,7 @@ const handleSearchAvaliacoes = async (prontuario) => {
 
       {/* Informações do paciente selecionado */}
       {selectedPaciente && (
-        <Card className="mb-4">
+        <Card className="mb-4 text-info">
           <Card.Header>Informações do Paciente Selecionado</Card.Header>
           <Card.Body>
             <Row>

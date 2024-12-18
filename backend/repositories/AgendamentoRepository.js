@@ -223,10 +223,12 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     // Métodos relacionados a registro de presença
     async buscarAgendamentoPorData(data) {
       const sql = `
-        SELECT a.ID_Agendamento, a.Data_Hora, a.ID_Servico, a.Status, a.Observacoes,
+        SELECT a.ID_Agendamento, a.Data_Hora, a.ID_Servico, a.Status, a.Observacoes, s.Nome_Servico, pr.Nome_Completo AS Profissional,
         p.Nome_Completo AS Paciente
         FROM Agendamentos a
         JOIN Pacientes p ON a.Prontuario = p.Prontuario
+        JOIN Servicos s ON a.ID_Servico = s.ID_Servico
+        JOIN Profissionais pr ON a.ID_Profissional = pr.ID_Profissional
         WHERE DATE(Data_Hora) = DATE(?)
       `
       try {

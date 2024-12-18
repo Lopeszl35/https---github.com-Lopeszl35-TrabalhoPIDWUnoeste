@@ -151,7 +151,8 @@ DependencyInjector.register("RegistrarPresencaControl", new RegistrarPresencaCon
   DependencyInjector.get("RegistrarPresencaModel")
 ));
 DependencyInjector.register("UsuariosControl",new UsuariosControl(
-    DependencyInjector.get("UsuariosModel"))
+    DependencyInjector.get("UsuariosModel"),
+    DependencyInjector.get("TransactionUtil"))
 );
 DependencyInjector.register('PacientesControl', new PacientesControl(
   DependencyInjector.get('PacientesModel'),

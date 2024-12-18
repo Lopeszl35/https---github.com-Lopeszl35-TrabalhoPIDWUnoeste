@@ -7,8 +7,8 @@ class UsuariosRepository extends AbstractUsuariosRepository {
   }
 
   async adicionarUsuario(usuario, connection) {
-    const sql = `INSERT INTO usuarios (Email, Senha, Tipo_Permissao) VALUES (?, ?, ?)`;
-    const params = [usuario.Email, usuario.Senha, usuario.Tipo_Permissao];
+    const sql = `INSERT INTO usuarios (Email, Senha, Tipo_Permissao, Nome) VALUES (?, ?, ?, ?)`;
+    const params = [usuario.Email, usuario.Senha, usuario.Tipo_Permissao, usuario.nomeUsuario];
     try {
       const [result] = await connection.query(sql, params);
       return result.affectedRows > 0;

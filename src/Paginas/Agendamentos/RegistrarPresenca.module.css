@@ -1,5 +1,9 @@
 .registrarPresencaContainer {
-    margin: 4em 0 0 6em;
+    margin: 7em 0 0 6em;
+    border: solid 1px #ccc;
+    border-radius: 10px;
+    background-color: #f1f0f0;
+    padding: 1em;
 }
 
 .registrarPresencaContainerActive {

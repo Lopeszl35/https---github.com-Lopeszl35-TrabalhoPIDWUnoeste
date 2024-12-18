@@ -15,7 +15,7 @@ router.get('/usuarios', (req, res) =>
 );
 
 // Rota para adicionar um novo usuário
-router.post('/usuarios/registrar', (req, res) => 
+router.post('/usuarios/cadastrar', (req, res) => 
     UsuariosControl.adicionarUsuario(req, res)
 );
 

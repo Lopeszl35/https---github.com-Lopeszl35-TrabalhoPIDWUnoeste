@@ -12,7 +12,7 @@ import { useAuth } from "../../context/AuthProvider"; // Importa o contexto de a
 
 function NavBar() {
   const [show, setShow] = useState(true);
-  const { logout } = useAuth(); // Obtém a função logout do contexto
+  const { logout, user } = useAuth(); // Obtém o usuário e a função logout do contexto
 
   const handleShow = () => setShow(!show);
 
@@ -24,7 +24,7 @@ function NavBar() {
             <Nav className="me-auto gap-3">
               <Nav.Link as={Link} to="/">
                 <FaUser className="m-2" />
-                <span>Perfil Usuário</span>
+                <span>Olá, {user?.nome || "Usuário"}</span> {/* Saudação com o nome */}
               </Nav.Link>
             </Nav>
             <Button variant="outline-light" onClick={logout}>
@@ -44,34 +44,54 @@ function NavBar() {
             <span className="mx-2">Inicio</span>
           </Link>
         </li>
-        <li className="nav-link">
-          <Link to="/pacientes">
-            <TbUserHeart />
-            <span className="mx-2">Pacientes</span>
-          </Link>
-        </li>
-        <li className="nav-link">
-          <Link to="/evoluirPacientes">
-            <TbUserHeart />
-            <span className="mx-2">Evoluir Pacientes</span>
-          </Link>
-        </li>
-        <li className="nav-link">
-          <Link to="/Profissionais">
-            <LiaUserLockSolid />
-            <span className="mx-2">Profissionais</span>
-          </Link>
-        </li>
-        <li className="nav-link">
-          <Link to="/servicos">
-            <MdOutlineMedicalServices />
-            <span className="mx-2">Áreas de Serviços</span>
-          </Link>
-        </li>
+
+        {/* Links exibidos somente para Admin */}
+        {user?.tipoPermissao === "admin" && (
+          <>
+            <li className="nav-link">
+              <Link to="usuarios/cadastrar">
+                <FaUser />
+                <span className="mx-2">Cadastrar Usuários</span>
+              </Link>
+            </li>
+            <li className="nav-link">
+              <Link to="/Profissionais">
+                <LiaUserLockSolid />
+                <span className="mx-2">Profissionais</span>
+              </Link>
+            </li>
+            <li className="nav-link">
+              <Link to="/servicos">
+                <MdOutlineMedicalServices />
+                <span className="mx-2">Áreas de Serviços</span>
+              </Link>
+            </li>
+          </>
+        )}
+
+        {/* Links para Profissionais de Saúde */}
+        {user?.tipoPermissao === "profissionalSaude" && (
+          <>
+            <li className="nav-link">
+              <Link to="/pacientes">
+                <TbUserHeart />
+                <span className="mx-2">Pacientes</span>
+              </Link>
+            </li>
+            <li className="nav-link">
+              <Link to="/evoluirPacientes">
+                <TbUserHeart />
+                <span className="mx-2">Evoluir Pacientes</span>
+              </Link>
+            </li>
+          </>
+        )}
+
+        {/* Links comuns para todos */}
         <li className="nav-link">
           <Link to="/registrarAgendamentos">
-          <MdOutlineFactCheck />
-          <span className="mx-2">Registrar Presença</span>
+            <MdOutlineFactCheck />
+            <span className="mx-2">Registrar Presença</span>
           </Link>
         </li>
         <li className="nav-link">
@@ -86,8 +106,13 @@ function NavBar() {
             <span className="mx-2">Relatórios</span>
           </Link>
         </li>
+
         <div className="logo-container">
-          <img src="./img/Login/Logo-removebg-preview.png" alt="LogoCareConnect" className="logo" />
+          <img
+            src="./img/Login/Logo-removebg-preview.png"
+            alt="LogoCareConnect"
+            className="logo"
+          />
         </div>
       </div>
 
