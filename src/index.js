@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "./context/AuthProvider";
 import NavBar from "./Componentes/NavBar/NavBar";
 import Home from "./Paginas/Home/Home";
 import Login from "./Componentes/Login/Login";
+import CadastrarUsuario from "./Paginas/CadastrarUsuario/CadastrarUsuario";
 import Relatorios from "./Paginas/Relatorios/Relatorios";
 import RelatoriosAgendamento from "./Paginas/Relatorios/RelatoriosAgendamento";
 import RelatoriosPacientes from "./Paginas/Relatorios/RelatoriosPacientes";
@@ -50,29 +51,36 @@ function AppRouter() {
             <Route index element={<Navigate to="/home" />} />
             <Route path="home" element={<Home />} />
 
-            {/* Admin - Acesso total */}
-            <Route element={<RoleBasedRoute allowedRoles={["admin"]} />}>
-              <Route path="usuarios/cadastrar" element={<CadastrarProfissionais />} />
-              <Route path="servicos/cadastro" element={<ServicosNovo />} />
-              <Route path="relatorios" element={<Relatorios />} />
-              <Route path="RelatoriosAgendamento" element={<RelatoriosAgendamento />} />
-              <Route path="RelatoriosPacientes" element={<RelatoriosPacientes />} />
-            </Route>
-
-            {/* Profissional de Saúde */}
-            <Route element={<RoleBasedRoute allowedRoles={["profissionalSaude", "admin"]} />}>
-              <Route path="servicos" element={<Servicos />} />
-              <Route path="pacientes" element={<Pacientes />} />
-              <Route path="evoluirPacientes" element={<EvolucaoPaciente />} />
-            </Route>
-
-            {/* Usuário Padrão */}
-            <Route element={<RoleBasedRoute allowedRoles={["usuarioPadrao", "admin"]} />}>
+             {/* Rotas compartilhadas entre Admin e Usuário Padrão */}
+             <Route element={<RoleBasedRoute allowedRoles={["admin", "usuarioPadrao"]} />}>
               <Route path="registrarAgendamentos" element={<RegistrarPresenca />} />
               <Route path="agendamentos" element={<AgendarConsultas />} />
               <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
               <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
               <Route path="Profissionais" element={<Profissionais />} />
+              <Route path="profissionais/horarios/:idProfissional" element={<ProfissionaisHorarios />} />
+              <Route path="servicos" element={<Servicos />} />
+              <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
+            </Route>
+
+            {/* Rotas compartilhadas entre Admin e Profissional de Saúde */}
+            <Route element={<RoleBasedRoute allowedRoles={["admin", "profissionalSaude"]} />}>
+              <Route path="servicos" element={<Servicos />} />
+              <Route path="pacientes" element={<Pacientes />} />
+              <Route path="evoluirPacientes" element={<EvolucaoPaciente />} />
+            </Route>
+
+            {/* Rotas exclusivas para Admin */}
+            <Route element={<RoleBasedRoute allowedRoles={["admin"]} />}>
+              <Route path="usuarios/cadastrar" element={<CadastrarUsuario />} />
+              <Route path="servicos/cadastro" element={<ServicosNovo />} />
+              <Route path="relatorios" element={<Relatorios />} />
+              <Route path="RelatoriosAgendamento" element={<RelatoriosAgendamento />} />
+              <Route path="RelatoriosPacientes" element={<RelatoriosPacientes />} />
+              <Route path="pacientes/CadastrarPacientes" element={<CadastrarPacientes />} />
+              <Route path="pacientes/EditarPacientes/:prontuario" element={<EditarPacientes />} />
+              <Route path="Profissionais" element={<Profissionais />} />
+              <Route path="/Profissionais/CadastrarProfissionais" element={<CadastrarProfissionais />} />
               <Route path="profissionais/horarios/:idProfissional" element={<ProfissionaisHorarios />} />
               <Route path="servicos/:idServico/profissionais" element={<ProfissionaisPorServico />} />
             </Route>

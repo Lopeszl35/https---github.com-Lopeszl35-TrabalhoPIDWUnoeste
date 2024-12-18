@@ -6,6 +6,9 @@ const RoleBasedRoute = ({ allowedRoles }) => {
   const { user } = useAuth();
   const outletContext = useOutletContext();
 
+  console.log("User Permissao:", user?.tipoPermissao); // Log para debug
+  console.log("Allowed Roles:", allowedRoles);
+
   if (!user) {
     return <Navigate to="/" />;
   }

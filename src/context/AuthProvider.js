@@ -30,6 +30,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, senha) => {
     try {
       const data = await AuthService.login(email, senha);
+      //Certifique-se de que o backend retorna `data.user` e `data.tipoPermissao`
+      console.log("Dados recebidos no login:", data);
+
       // Salva os dados do usuário no localStorage
       localStorage.setItem("user", JSON.stringify({ nome: data.user, tipoPermissao: data.tipoPermissao }));
       setUser({ nome: data.user, tipoPermissao: data.tipoPermissao });
