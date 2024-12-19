@@ -191,35 +191,6 @@ class AgendamentoRepository extends AbstractAgendamentoRepository {
     } 
   }
 
-  // Metodos relacionados ao relatorio
-  async obterDadosAgendamentosParaRelatorio() {
-    try {
-      const sql = `
-        SELECT 
-          a.ID_Agendamento AS id_agendamento,
-          a.Data_Hora AS data_hora,
-          p.Nome_Completo AS paciente,
-          pr.Nome_Completo AS profissional,
-          s.Nome_Servico AS servico,
-          a.Status AS status,
-          a.Observacoes AS observacoes
-        FROM 
-          Agendamentos a
-        JOIN 
-          Pacientes p ON a.Prontuario = p.Prontuario
-        JOIN 
-          Profissionais pr ON a.ID_Profissional = pr.ID_Profissional
-        JOIN 
-          Servicos s ON a.ID_Servico = s.ID_Servico
-      `;
-      const result = await this.database.executaComando(sql);
-      return result;
-    } catch (error) {
-      console.error("Erro ao obter dados de agendamentos para relatório:", error);
-      throw error;
-    }
-  }
-
     // Métodos relacionados a registro de presença
     async buscarAgendamentoPorData(data) {
       const sql = `

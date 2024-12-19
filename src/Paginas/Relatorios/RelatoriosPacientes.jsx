@@ -160,7 +160,7 @@ function RelatoriosPacientes() {
 
   const handleGerarRelatorioExcel = async () => {
     try {
-      await relatoriosService.gerarRelatorioExcel("pacientes");
+      await relatoriosService.gerarRelatorioExcel("pacientes", filtros);
     } catch (error) {
       console.error("Erro ao gerar relatório Excel:", error);
       alert("Erro ao gerar relatório Excel!");
@@ -169,7 +169,7 @@ function RelatoriosPacientes() {
 
   const handleGerarRelatorioPdf = async () => {
     try {
-      await relatoriosService.gerarRelatorioPdf("pacientes");
+      await relatoriosService.gerarRelatorioPdf("pacientes", filtros);
     } catch (error) {
       console.error("Erro ao gerar relatório PDF:", error);
       alert("Erro ao gerar relatório PDF!");

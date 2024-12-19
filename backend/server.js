@@ -123,8 +123,8 @@ DependencyInjector.register('RelatoriosPacientesModel', new RelatoriosPacientesM
 ));
 
 DependencyInjector.register('RelatoriosModel', new RelatoriosModel(
-  DependencyInjector.get('PacientesRepository'),
-  DependencyInjector.get('AgendamentoRepository')
+  DependencyInjector.get('RelatorioPacientesRepository'),
+  DependencyInjector.get('RelatorioAgendamentoRepository')
 ))
 
 

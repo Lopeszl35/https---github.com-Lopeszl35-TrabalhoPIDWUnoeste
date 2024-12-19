@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+--Descrição do grupo--
+O grupo com os integrantes a baixo foi responsavel pelo projeto do sistema CareConnect feito para a AOPDown, que recebe pessoas com sindrome de down, o programa fornece opções de CRUD para pacientes, profissionais, serviços e horarios de profissionais, junto com funcionalidades funcionais de agendamento de consultas, registro de presença para consultas e evolução de pacientes
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+--Nome dos integrantes--
+Nome: Rafael Amaro Lopes RA: 10482223463
+Nome: CAIO BASSO RIGAZZO RA: 10482314110
+PEDRO LEVI DIAS ROSA PAULA RA: 10482429029
 
-## Available Scripts
+--Descrição do Projeto--
+    O CareConnect é uma solução tecnológica que centraliza e organiza as operações do centro de convivência. Ele permite que profissionais, administradores e pacientes interajam de maneira eficiente em um ambiente digital seguro. O sistema é projetado para atender às necessidades específicas da instituição, garantindo controle sobre os atendimentos e promovendo uma melhor experiência para todos os usuários.
 
-In the project directory, you can run:
+    Funcionalidades Implementadas
+    Gestão de Pacientes:
 
-### `npm start`
+    Cadastro, edição e exclusão de pacientes.
+    Acompanhamento de histórico clínico com anotações feitas por profissionais durante consultas.
+    Avaliação de evolução do paciente ao longo do tempo.
+    Gestão de Profissionais de Saúde:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    Cadastro e gerenciamento de profissionais, incluindo suas especialidades e registros profissionais.
+    Controle de horários de atendimento.
+    Agendamento de Consultas:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    Registro de agendamentos e consultas realizadas.
+    Controle da presença de pacientes para consultas.
+    Permissão para profissionais e usuários padrão visualizarem e gerenciarem seus agendamentos.
+    Gestão de Serviços:
 
-### `npm test`
+    Visualização e gerenciamento de áreas de serviços oferecidos pela instituição.
+    Cadastro e vínculo de profissionais aos serviços oferecidos.
+    Relatórios:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    Geração de relatórios mensais sobre frequência, consultas realizadas e áreas de atendimento.
+    Relatórios específicos sobre pacientes e agendamentos, acessíveis para usuários com permissões adequadas.
+    Controle de Permissões e Autenticação:
 
-### `npm run build`
+    Sistema baseado em tipos de usuário: Admin, Profissional de Saúde, e Usuário Padrão.
+    Controle de acesso a rotas e funcionalidades com base nas permissões atribuídas.
+    Login seguro com autenticação baseada em tokens.
+    Perfil de Usuários
+    Administrador (Admin):
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    Acesso irrestrito a todas as funcionalidades do sistema.
+    Cadastro e gerenciamento de usuários, profissionais, serviços e relatórios.
+    Profissional de Saúde:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    Acesso às áreas de pacientes, evolução de pacientes e visualização de serviços.
+    Possibilidade de registrar anotações nos históricos de pacientes.
+    Usuário Padrão:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    Acesso às funcionalidades de registrar presença, agendar consultas, visualizar e editar pacientes, relatórios e visualizar serviços e profissionais.
 
-### `npm run eject`
+--Tecnologias Utilizadas--
+    Frontend:
+    React.js
+    React Router Dom (Gerenciamento de Rotas)
+    Bootstrap e CSS Modules (Estilização)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    Backend:
+    Node.js com Express
+    MySQL (Gerenciamento de Banco de Dados)
+    JWT (JSON Web Token) para autenticação
+    Validação de dados com Express Validator
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    Outros:
+    React Context API para gerenciamento de estado global.
+    Fetch API para integração com o backend.'
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+--Como Rodar o Projeto--
+Pré-requisitos
+Node.js instalado
+MySQL configurado
+Clonar o repositório para o seu ambiente local
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+--Configuração--
+Configure as variáveis de ambiente no backend:
 
-## Learn More
+Banco de dados MySQL
+JWT_SECRET
+Inicialize o banco de dados executando os scripts SQL fornecidos.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Rodar o Projeto
+BackeEnd:
+npm run dev com noodmon ou npm start
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+FrontEnd:
+npm start
 
-### Code Splitting
+--Estrutura do Projeto--
+A arquitetura do projeto segue o padrão MVC (Model-View-Controller) com separação entre o frontend e backend.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Backend:
+Localizado na pasta backend, desenvolvido com Node.js e Express, utilizando as seguintes camadas:
+Model: Define a estrutura dos dados e integração com o banco de dados.
+Control: Controladores responsáveis pelas regras de negócio.
+Routes: Define as rotas e endpoints da API.
+Middleware: Implementa autenticação com JWT e validações.
+Utils: Utilitários como controle de transações.
+Repositories: Gerenciamento direto de dados.
+Principais Arquivos:
+server.js: Inicialização do servidor e configuração principal.
+routes: Rotas protegidas com controle de permissões.
+middleware: Validação e segurança (hash de senha e JWT).
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Frontend:
+Localizado na pasta src, desenvolvido com React.js e organizado nos seguintes diretórios:
+Componentes: Contém componentes reutilizáveis como NavBar, formulários e botões.
+Paginas: Contém páginas principais do sistema:
+Home, Login, Relatórios, Pacientes, Profissionais, Serviços, Agendamentos, etc.
+Context: Implementa Context API para gerenciamento de autenticação e estado global.
+Services: Serviços para comunicação com o backend, como APIs de login, usuários e profissionais.
+Routes: Configuração das rotas com permissões diferenciadas utilizando o RoleBasedRoute.

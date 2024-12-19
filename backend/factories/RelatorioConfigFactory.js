@@ -1,17 +1,22 @@
+const { header } = require("express-validator");
+
 class RelatorioConfigFactory {
     static getConfig(tipo) {
         switch (tipo) {
             case "pacientes":
                 return {
                     campos: [
-                        { header: "Prontuario", key: "Prontuario", width: 15 },
-                        { header: "Nome", key: "Nome_Completo", width: 30 },
-                        { header: "Data de Nascimento", key: "Data_De_Nascimento", width: 20 },
-                        { header: "CPF", key: "CPF", width: 15 },
-                        { header: "RG", key: "RG", width: 15 },
-                        { header: "Email", key: "Email", width: 25 },
-                        { header: "Logradouro", key: "Logradouro", width: 20},
-                        { header: "Cidade", key: "Cidade", width: 20},
+                        { header: "Prontuario", key: "prontuario", width: 15 },
+                        { header: "Nome", key: "nome", width: 30 },
+                        { header: "Idade", key: "idade", width: 15 },
+                        { header: "Data de Nascimento", key: "data_nascimento", width: 20 },
+                        { header: "Sexo", key: "sexo", width: 15 },
+                        { header: "CPF", key: "cpf", width: 15 },
+                        { header: "RG", key: "rg", width: 15 },
+                        { header: "Email", key: "email", width: 25 },
+                        { header: "Logradouro", key: "logradouro", width: 20},
+                        { header: "Cidade", key: "cidade", width: 20},
+                        { header: "Estado", key: "estado", width: 20},
                     ],
                 };
             case "agendamentos":

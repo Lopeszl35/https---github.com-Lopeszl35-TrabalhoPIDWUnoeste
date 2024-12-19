@@ -1,19 +1,20 @@
 const AbstractRelatoriosModel = require('../../abstratos/AbstractRelatoriosModel');
 
 class RelatoriosModel extends AbstractRelatoriosModel {
-    constructor(pacientesRepository, agendamentoRepository) {
+    constructor(RelatorioPacientesRepository, RelatorioAgendamentoRepository) {
         super();
-        this.pacientesRepository = pacientesRepository;
-        this.agendamentoRepository = agendamentoRepository;
+        this.RelatorioPacientesRepository = RelatorioPacientesRepository;
+        this.RelatorioAgendamentoRepository = RelatorioAgendamentoRepository;
     }
 
-    async obterDadosRelatorio(tipo) {
+    async obterDadosRelatorio(tipo, filtros) {
+        console.log("Filtros recebidos no Model:", filtros);
         switch (tipo) {
             case 'pacientes':
-                const pacientes = await this.pacientesRepository.obterPacientes();
+                const pacientes = await this.RelatorioPacientesRepository.baixarRelatorioPacientes(filtros);
                 return pacientes;
             case 'agendamentos':
-                return await this.agendamentoRepository.obterDadosAgendamentosParaRelatorio();
+                return await this.RelatorioAgendamentoRepository.obterDadosAgendamentosParaRelatorio(filtros);
             default:
                 throw new Error(`Tipo de relatório "${tipo}" não suportado.`);
         }

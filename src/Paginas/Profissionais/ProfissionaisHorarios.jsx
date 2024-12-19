@@ -30,7 +30,7 @@ function ProfissionaisHorarios() {
     try {
       const horariosCadastrados = await profissionaisService.obterHorariosProfissional(idProfissional);
       const eventosFormatados = horariosCadastrados.map((item) => ({
-        title: item.Disponivel ? "Horário Disponível" : "Horário Indisponível",
+        title: item.Disponivel ? "Horário Disponível" : "Horário Agendado",
         start: `${item.Data.split("T")[0]}T${item.HorarioInicio}`,
         end: `${item.Data.split("T")[0]}T${item.HorarioTermino}`,
         color: item.Disponivel ? "green" : "red",

@@ -6,6 +6,63 @@ class RelatorioPacienteRepository extends AbstractRelatorioPacienteRepository {
         this.database = database;
     }
 
+    async baixarRelatorioPacientes(filtros = {}) {
+        console.log("Filtros recebidos no repository:", filtros);
+        try {
+            const { nome, cidade, estado, sexo, idadeMin, idadeMax } = filtros.filtros || {};
+            let query = `
+                SELECT  
+                    p.Prontuario AS prontuario,
+                    p.Nome_Completo AS nome,
+                    p.Idade AS idade,
+                    p.Data_De_Nascimento AS data_nascimento,
+                    p.CPF AS cpf,
+                    p.RG AS rg,
+                    p.Sexo AS sexo,
+                    p.Email AS email,
+                    e.Logradouro AS logradouro,
+                    e.Cidade AS cidade,
+                    e.Estado AS estado
+                FROM Pacientes p
+                LEFT JOIN Enderecos e ON p.Prontuario = e.Prontuario
+                WHERE 1=1
+            `;
+
+            const params = [];
+            if (nome) {
+                query += ' AND LOWER(p.Nome_Completo) LIKE LOWER(?)';
+                params.push(`%${nome}%`);
+            }
+            if (cidade) {
+                query += ' AND e.Cidade LIKE ?';
+                params.push(`%${cidade}%`);
+            }
+            if (estado) {
+                query += ' AND e.Estado = ?';
+                params.push(estado);
+            }
+            if (sexo) {
+                query += ' AND p.Sexo = ?';
+                params.push(sexo);
+            }
+            if (idadeMin && idadeMax) {
+                const idadeMin = parseInt(idadeMin, 10);
+                const idadeMax = parseInt(idadeMax, 10);
+                query += ' AND p.Idade BETWEEN ? AND ?';
+                params.push(idadeMin, idadeMax);
+            }
+            
+            console.log(`Parametros: ${params}`);
+
+            const pacientes = await this.database.executaComando(query, params);
+            console.log("Pacientes retornados:", pacientes);
+            return pacientes;
+        } catch (error) {
+            console.error('Erro ao baixar relatório de pacientes:', error);
+            throw error;
+        }
+    }
+
     // Obter pacientes com filtros
     async obterRelatorioPacientes({ nome, cidade, estado, sexo, dataInicio, dataFim }) {
         let query = `

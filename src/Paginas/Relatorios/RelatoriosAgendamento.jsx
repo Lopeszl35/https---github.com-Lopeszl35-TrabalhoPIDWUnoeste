@@ -198,22 +198,22 @@ function DashboardRelatorios() {
 
   const handleGerarRelatorioExcel = async () => {
     try {
-      await relatoriosService.gerarRelatorioExcel("agendamentos");
+      await relatoriosService.gerarRelatorioExcel("agendamentos", filtros);
     } catch (error) {
       console.error("Erro ao gerar relatório Excel:", error);
       alert("Erro ao gerar relatório Excel!");
     }
   };
-
+  
   const handleGerarRelatorioPdf = async () => {
     try {
-      await relatoriosService.gerarRelatorioPdf("agendamentos");
+      await relatoriosService.gerarRelatorioPdf("agendamentos", filtros);
     } catch (error) {
       console.error("Erro ao gerar relatório PDF:", error);
       alert("Erro ao gerar relatório PDF!");
     }
   };
-
+  
   return (
     <div
       className={`${styles.containerDashboard} ${show ? styles.containerDashboardSideActive : ""}`}
